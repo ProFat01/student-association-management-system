@@ -3,7 +3,11 @@ from .base import BASE_DIR, env
 
 DEBUG = False
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])  # e.g. yourusername.pythonanywhere.com
+ALLOWED_HOSTS = [
+    "msaweb.pythonanywhere.com",
+    "127.0.0.1",
+    "localhost",
+]  # e.g. yourusername.pythonanywhere.com
 
 # CRITICAL for PythonAnywhere (and any reverse-proxy deployment): PA
 # terminates HTTPS at its own proxy and forwards plain HTTP to this WSGI
@@ -24,7 +28,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # proxy that terminates TLS, so this must be set explicitly (must
 # include the scheme) or every POST (registration, voting, the contact
 # form, admin logins) fails CSRF validation in production.
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])  # e.g. https://yourusername.pythonanywhere.com
+CSRF_TRUSTED_ORIGINS = [
+    "https://msaweb.pythonanywhere.com",
+]  # e.g. https://yourusername.pythonanywhere.com
 
 # Parsed from DATABASE_URL, same as development.py — see that file's
 # comment for why. Defaults to a SQLite file path that can also be set
