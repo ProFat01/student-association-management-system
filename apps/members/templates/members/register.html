@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+{% block meta_description %}Register for membership at Malam Sidi Students Association.{% endblock %}
+
+{% block content %}
+<div class="container section">
+<h1>Membership Registration</h1>
+
+{% if association_missing %}
+  <div class="alert alert-error">
+    <p>Registration is not currently available. Please contact the administrator.</p>
+  </div>
+{% else %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-error" role="alert">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+  {% endif %}
+
+  {% if show_recovery_cta %}
+    <div class="alert alert-info">
+      <p>You already have a registration record. Please use the Check Status page to view your application status or Membership ID.</p>
+      <a href="{% url 'members:status_check' %}" class="btn">Check Registration Status</a>
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" novalidate class="u-max-38">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="help-text" id="{{ field.id_for_label }}-help">{{ field.help_text }}</p>{% endif %}
+        {% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn">Submit Registration</button>
+  </form>
+
+{% endif %}
+</div>
+{% endblock %}

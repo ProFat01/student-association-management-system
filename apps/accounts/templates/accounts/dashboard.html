@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block meta_description %}Staff dashboard.{% endblock %}
+
+{% block content %}
+<div class="container section">
+<h1>Dashboard</h1>
+<p class="meta">
+  Signed in as {{ user.get_full_name|default:user.username }}
+  {% if user.role_names %}&mdash; {{ user.role_names|join:", " }}{% elif user.is_superuser %}&mdash; Superuser{% endif %}
+</p>
+
+{% if not sections.registration and not sections.elections and not sections.analytics and not sections.contact %}
+  <div class="alert alert-info">
+    <p>Your account doesn't have access to any dashboard section yet. Contact a Super Admin if you believe this is incorrect.</p>
+  </div>
+{% endif %}
+
+{% if not association %}
+  <div class="alert alert-info"><p>No association is configured yet — an administrator needs to set one up.</p></div>
+{% endif %}
+
+{% if association %}
+
+{% if sections.registration %}
+<section class="content-block">
+  <h2>Registration</h2>
+  <div class="summary-stats">
+    <div class="summary-stat"><div class="value record">{{ membership.total_members }}</div><div class="label">Total Members</div></div>
+    <div class="summary-stat"><div class="value record">{{ membership.total_pending }}</div><div class="label">Pending Applications</div></div>
+    <div class="summary-stat"><div class="value record">{{ membership.total_approved }}</div><div class="label">Approved</div></div>
+    <div class="summary-stat"><div class="value record">{{ membership.total_rejected }}</div><div class="label">Rejected</div></div>
+  </div>
+
+  {% if pending_applications %}
+    <table class="data-table">
+      <thead><tr><th>Application</th><th>Applicant</th><th>Submitted</th><th></th></tr></thead>
+      <tbody>
+        {% for application in pending_applications %}
+          <tr>
+            <td class="record">{{ application.application_number }}</td>
+            <td>{{ application.member.full_name }}</td>
+            <td>{{ application.submitted_at|date:"d M Y" }}</td>
+            <td><a href="{% url 'admin:members_registrationapplication_change' application.pk %}">Review &rarr;</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="meta">No pending applications right now.</p>
+  {% endif %}
+  <p><a href="{% url 'admin:members_registrationapplication_changelist' %}" class="btn">View All Applications</a></p>
+</section>
+{% endif %}
+
+{% if sections.elections %}
+<section class="content-block">
+  <h2>Elections</h2>
+  {% if election_overviews %}
+    <table class="data-table">
+      <thead><tr><th>Election</th><th>Status</th><th>Eligible</th><th>Votes Cast</th><th>Turnout</th><th></th></tr></thead>
+      <tbody>
+        {% for item in election_overviews %}
+          <tr>
+            <td>{{ item.election.name }}</td>
+            <td><span class="badge badge-{{ item.election.status }}">{{ item.election.status }}</span></td>
+            <td class="record">{{ item.eligible_voters }}</td>
+            <td class="record">{{ item.votes_cast }}</td>
+            <td class="record">{{ item.turnout_percentage }}%</td>
+            <td><a href="{% url 'elections:admin_dashboard' item.election.pk %}">Manage &rarr;</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="meta">No elections created yet.</p>
+  {% endif %}
+  <p><a href="{% url 'admin:elections_election_changelist' %}" class="btn">Manage Elections</a></p>
+</section>
+{% endif %}
+
+{% if sections.analytics %}
+<section class="content-block">
+  <h2>Analytics</h2>
+  <div class="summary-stats">
+    <div class="summary-stat"><div class="value record">{{ analytics_summary.total_members }}</div><div class="label">Total Members</div></div>
+    <div class="summary-stat"><div class="value record">{{ analytics_summary.total_undergraduate }}</div><div class="label">Undergraduates</div></div>
+    <div class="summary-stat"><div class="value record">{{ analytics_summary.total_alumni }}</div><div class="label">Alumni</div></div>
+  </div>
+  <p><a href="{% url 'analytics:overview' %}" class="btn">Open Analytics Dashboard</a></p>
+</section>
+{% endif %}
+
+{% if sections.contact %}
+<section class="content-block">
+  <h2>Contact Messages</h2>
+  <div class="summary-stats">
+    <div class="summary-stat"><div class="value record">{{ unread_contact_count }}</div><div class="label">Unread Messages</div></div>
+  </div>
+  {% if recent_contact_messages %}
+    <table class="data-table">
+      <thead><tr><th>From</th><th>Subject</th><th>Received</th><th></th></tr></thead>
+      <tbody>
+        {% for message in recent_contact_messages %}
+          <tr>
+            <td>{{ message.name }}{% if not message.is_read %} <span class="badge badge-active">New</span>{% endif %}</td>
+            <td>{{ message.subject }}</td>
+            <td>{{ message.submitted_at|date:"d M Y" }}</td>
+            <td><a href="{% url 'admin:core_contactmessage_change' message.pk %}">View &rarr;</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="meta">No messages yet.</p>
+  {% endif %}
+  <p><a href="{% url 'admin:core_contactmessage_changelist' %}" class="btn">View All Messages</a></p>
+</section>
+{% endif %}
+
+{% endif %}
+
+<p class="meta"><a href="{% url 'admin:index' %}">Open full admin site &rarr;</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,347 @@
+/* =============================================================
+   SAMS — base.css
+   Design tokens + reset + typography + site chrome.
+
+   Visual identity: a small civic institution, not a startup — the
+   data itself already reads like an official ledger (MSA-2026-0001,
+   APP-2026-00001, vote tallies, turnout %). Ink/civic-green/brass on a
+   cool paper background, with a monospace "record" face reserved for
+   IDs, counts, and percentages — never used for prose. See
+   PUBLIC_WEBSITE_MODULE.md for the full design rationale.
+   ============================================================= */
+
+:root {
+  /* --- Color --- */
+  --ink: #16212c;
+  --ink-soft: #3b4754;
+  --paper: #f6f7f5;
+  --surface: #ffffff;
+  --civic-green: #1a6b45;
+  --civic-green-deep: #0f4a30;
+  --civic-green-tint: #e8f3ec;
+  --brass: #a9762f;
+  --brass-tint: #f3e9d8;
+  --slate: #5c6670;
+  --line: #dde1e2;
+  --alert: #b23a2e;
+  --alert-tint: #fbeae8;
+
+  /* --- Type --- */
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-record: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* --- Spacing scale --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius: 8px;
+  --radius-lg: 14px;
+  --container-width: 1080px;
+}
+
+/* --- Reset --- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg { max-width: 100%; display: block; }
+ul, ol { margin: 0; padding: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* --- Base typography --- */
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  font-size: 1rem;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  line-height: 1.15;
+  margin: 0 0 var(--space-4);
+  font-weight: 600;
+}
+h1 { font-size: clamp(1.9rem, 4vw, 2.75rem); }
+h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+h3 { font-size: 1.2rem; }
+p { margin: 0 0 var(--space-4); color: var(--ink-soft); }
+
+a { color: var(--civic-green-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* A "record" — any official identifier, count, or percentage in the
+   system (membership IDs, application numbers, vote tallies, turnout)
+   gets the monospace data face with tabular figures and a touch of
+   letter-spacing, like a stamped serial number. Used sparingly and
+   consistently, never for prose. */
+.record {
+  font-family: var(--font-record);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* --- Accessibility: visible keyboard focus everywhere --- */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--ink);
+  color: #fff;
+  padding: var(--space-2) var(--space-4);
+  z-index: 200;
+}
+.skip-link:focus { left: var(--space-2); top: var(--space-2); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* --- Layout primitives --- */
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 var(--space-4); }
+.section { padding: var(--space-12) 0; }
+.section--tight { padding: var(--space-8) 0; }
+.section--alt { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+/* --- Header / Navigation --- */
+.site-header {
+  background: var(--ink);
+  color: #fff;
+}
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+.brand-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+.brand .brand-code {
+  font-family: var(--font-record);
+  font-size: 0.7rem;
+  color: var(--brass-tint);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+}
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius);
+  color: #fff;
+  padding: var(--space-2) var(--space-3);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+}
+.nav-links a {
+  color: rgba(255, 255, 255, 0.85);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.nav-links a:hover, .nav-links a:focus-visible { color: #fff; background: rgba(255, 255, 255, 0.08); text-decoration: none; }
+.nav-links .nav-cta {
+  background: var(--civic-green);
+  color: #fff;
+}
+.nav-links .nav-cta:hover { background: var(--civic-green-deep); }
+
+@media (max-width: 760px) {
+  /* ISSUE 5 FIX: The nav-bar is a flex row: brand | toggle | <nav>.
+     On mobile the toggle must sit at the far right. The <nav> wrapper
+     is a third flex sibling — if it stays in the flow (even when its
+     ul is hidden) flex:space-between puts the toggle in the middle.
+     Fix: collapse the wrapper itself to nothing when closed, expand it
+     to full width BELOW the brand/toggle row when open. The nav-bar
+     therefore becomes flex-wrap so the open menu wraps to a second row
+     spanning the full width of the container. */
+  .nav-bar { flex-wrap: wrap; }
+  .nav-toggle { display: inline-flex; align-items: center; gap: var(--space-2); }
+
+  /* Hidden state: zero size, out of the flex flow */
+  #primary-nav-wrapper {
+    display: none;
+    width: 100%;
+    order: 3;
+  }
+  /* Open state: full-width row below brand+toggle */
+  #primary-nav-wrapper.is-open { display: block; }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding-top: var(--space-2);
+  }
+  .nav-links a { padding: var(--space-3); }
+}
+
+/* --- Footer --- */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: var(--space-16);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-8);
+  padding: var(--space-12) 0;
+}
+.footer-grid .footer-heading { color: #fff; font-family: var(--font-body); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-3); font-weight: 700; }
+.footer-grid a { color: rgba(255, 255, 255, 0.75); }
+.footer-grid a:hover { color: #fff; }
+.footer-grid p { color: rgba(255, 255, 255, 0.65); margin-bottom: var(--space-2); }
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: var(--space-4) 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: space-between;
+}
+.social-links { display: flex; gap: var(--space-3); list-style: none; }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--civic-green);
+  color: #fff;
+  padding: 0.65rem 1.4rem;
+  border: 1px solid var(--civic-green);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.2;
+}
+.btn:hover, .btn:focus-visible { background: var(--civic-green-deep); border-color: var(--civic-green-deep); text-decoration: none; color: #fff; }
+.btn-outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn-outline:hover { background: var(--ink); color: #fff; }
+.btn-outline-on-dark { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+.btn-outline-on-dark:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.btn-on-dark { background: #fff; color: var(--ink); border-color: #fff; }
+.btn-on-dark:hover { background: var(--brass-tint); color: var(--ink); }
+.btn-group { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* --- Forms --- */
+.form-row { margin-bottom: var(--space-4); }
+label { display: block; font-weight: 600; margin-bottom: var(--space-2); font-size: 0.95rem; }
+input[type="text"], input[type="tel"], input[type="email"], input[type="date"],
+input[type="file"], select, textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--ink);
+}
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--civic-green); box-shadow: 0 0 0 3px var(--civic-green-tint); }
+
+.help-text { font-size: 0.85rem; color: var(--slate); margin: var(--space-2) 0 0; }
+.field-error { color: var(--alert); font-size: 0.85rem; margin: var(--space-2) 0 0; font-weight: 600; }
+
+fieldset { border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-4); }
+legend { font-weight: 600; padding: 0 var(--space-2); }
+.radio-label { display: inline-flex; align-items: center; gap: var(--space-2); margin-right: var(--space-4); font-weight: 400; }
+
+/* --- Alerts / flash messages --- */
+.alert {
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-4);
+  border: 1px solid transparent;
+}
+.alert p { margin: 0; }
+.alert + .alert { margin-top: -var(--space-2); }
+.alert-error { background: var(--alert-tint); color: var(--alert); border-color: #f0c9c4; }
+.alert-info { background: #eaf1fb; color: #1a3e7a; border-color: #c3d4f0; }
+.alert-success { background: var(--civic-green-tint); color: var(--civic-green-deep); border-color: #bfe0cd; }
+.alert .btn { margin-top: var(--space-3); }
+
+.sort-links { font-size: 0.85rem; margin-bottom: var(--space-4); }
+.sort-links a { margin-right: var(--space-4); }
+.sort-links .current { font-weight: 700; text-decoration: underline; }
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+.subnav a { color: var(--ink); font-size: 0.9rem; font-weight: 600; }
+
+/* --- Spacing/layout utilities ---
+   Replace one-off inline style="" attributes so the production CSP
+   (style-src 'self', no 'unsafe-inline') doesn't silently strip them.
+   See PRODUCTION_DEPLOYMENT.md "CSP audit" for the full story. */
+.u-mt-1 { margin-top: var(--space-2); }
+.u-mt-2 { margin-top: var(--space-4); }
+.u-mt-3 { margin-top: var(--space-6); }
+.u-max-30 { max-width: 30rem; }
+.u-max-32 { max-width: 32rem; }
+.u-max-38 { max-width: 38rem; }
+.u-inline { display: inline; margin: 0; }
+.u-justify-center { justify-content: center; }
+.u-pre-line { white-space: pre-line; }
+.u-my-2 { margin: var(--space-4) 0; }
+.u-strong { font-weight: 600; }

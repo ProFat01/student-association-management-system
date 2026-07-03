@@ -1,0 +1,110 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SAMS{% endblock %} — {% block title_suffix %}Malam Sidi Students Association{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Malam Sidi Students Association — membership registration, elections, and live results.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}SAMS — Malam Sidi Students Association{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Membership registration, elections, and live results for Malam Sidi Students Association.{% endblock %}">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container nav-bar">
+      <a href="{% url 'core:home' %}" class="brand">
+        {% if association.logo %}
+          <img src="{{ association.logo.url }}" alt="{{ association.short_name }} logo" class="brand-logo">
+        {% endif %}
+        SAMS
+        {% if association %}<span class="brand-code">{{ association.short_name }}</span>{% endif %}
+      </a>
+
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="primary-navigation" id="nav-toggle">
+        <span aria-hidden="true">&#9776;</span> Menu
+      </button>
+
+      <nav aria-label="Primary" id="primary-nav-wrapper">
+        <ul class="nav-links" id="primary-navigation">
+          <li><a href="{% url 'core:home' %}">Home</a></li>
+          <li><a href="{% url 'members:register' %}">Register</a></li>
+          <li><a href="{% url 'members:status_check' %}">Check Status</a></li>
+          <li><a href="{% url 'elections:election_list' %}">Elections</a></li>
+          <li><a href="{% url 'elections:election_list' %}">Results</a></li>
+          <li><a href="{% url 'core:about' %}">About</a></li>
+          <li><a href="{% url 'core:contact' %}">Contact</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'accounts:dashboard' %}" class="nav-cta">Dashboard</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    {% if messages %}
+      <div class="container u-mt-2" role="status" aria-live="polite">
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
+            <p>{{ message }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <p class="footer-heading">{{ association.short_name|default:"SAMS" }}</p>
+        <p>{{ association.name|default:"Malam Sidi Students Association" }}</p>
+      </div>
+      <div>
+        <p class="footer-heading">Quick Links</p>
+        <p><a href="{% url 'members:register' %}">Register</a></p>
+        <p><a href="{% url 'members:status_check' %}">Check Status</a></p>
+        <p><a href="{% url 'elections:election_list' %}">Elections &amp; Results</a></p>
+      </div>
+      <div>
+        <p class="footer-heading">Contact</p>
+        {% if site_settings.contact_email %}<p><a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></p>{% endif %}
+        {% if site_settings.contact_phone %}<p>{{ site_settings.contact_phone }}</p>{% endif %}
+        {% if site_settings.address %}<p>{{ site_settings.address }}</p>{% endif %}
+        <p><a href="{% url 'core:contact' %}">Send a message &rarr;</a></p>
+      </div>
+      {% if site_settings.donation_details %}
+      <div>
+        <p class="footer-heading">Support Us</p>
+        <p class="u-pre-line">{{ site_settings.donation_details }}</p>
+      </div>
+      {% endif %}
+      <div>
+        <p class="footer-heading">Follow</p>
+        <ul class="social-links">
+          {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}">Facebook</a></li>{% endif %}
+          {% if site_settings.x_url %}<li><a href="{{ site_settings.x_url }}">X</a></li>{% endif %}
+          {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}">Instagram</a></li>{% endif %}
+          {% if site_settings.whatsapp_url %}<li><a href="{{ site_settings.whatsapp_url }}">WhatsApp</a></li>{% endif %}
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>&copy; {% now "Y" %} {{ association.name|default:"Malam Sidi Students Association" }}.</span>
+      <span>Built on SAMS.</span>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/site.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

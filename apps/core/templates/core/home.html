@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block og_title %}{{ association.name|default:"SAMS" }} — Home{% endblock %}
+{% block meta_description %}{% if site_settings.welcome_message %}{{ site_settings.welcome_message|truncatewords:30 }}{% else %}Membership registration, elections, and live results for {{ association.name|default:"Malam Sidi Students Association" }}.{% endif %}{% endblock %}
+
+{% block content %}
+
+{% if not association %}
+  <div class="container section">
+    <div class="alert alert-info"><p>The site isn't fully configured yet — an administrator needs to set up the Association record.</p></div>
+  </div>
+{% else %}
+
+<!-- 1. Hero -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="hero-eyebrow">Student Association Management System</p>
+      <h1>{{ association.name }}</h1>
+      {% if site_settings.motto %}<p class="motto">&ldquo;{{ site_settings.motto }}&rdquo;</p>{% endif %}
+      <p class="welcome">
+        {% if site_settings.welcome_message %}{{ site_settings.welcome_message }}{% else %}
+          Welcome to {{ association.name }}. Register for membership, follow elections, and check live results — all in one place.
+        {% endif %}
+      </p>
+      <div class="btn-group u-mt-3">
+        <a href="{% url 'members:register' %}" class="btn">Register Now</a>
+        <a href="{% url 'members:status_check' %}" class="btn btn-on-dark">Check Status</a>
+        <a href="{% url 'elections:election_list' %}" class="btn btn-outline-on-dark">Vote Now</a>
+      </div>
+    </div>
+
+    <div aria-hidden="true">
+      <div class="member-card">
+        <div class="member-card-seal">{{ association.short_name|slice:":1" }}</div>
+        <p class="member-card-label">Membership Record</p>
+        <p class="member-card-id record">{{ association.short_name }}-{% now "Y" %}-0001</p>
+        <div class="member-card-rule"></div>
+        <div class="member-card-foot">
+          <span>{{ association.short_name }}</span>
+          <span>Approved Member</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Statistics -->
+{% if membership %}
+<section class="ledger">
+  <div class="container">
+    <h2 class="visually-hidden">Association statistics</h2>
+    <div class="ledger-row">
+      <div class="ledger-stat"><div class="value record">{{ membership.total_members }}</div><div class="label">Total Members</div></div>
+      <div class="ledger-stat"><div class="value record">{{ membership.total_undergraduate }}</div><div class="label">Undergraduates</div></div>
+      <div class="ledger-stat"><div class="value record">{{ membership.total_alumni }}</div><div class="label">Alumni</div></div>
+      <div class="ledger-stat"><div class="value record">{{ elections.active|length }}</div><div class="label">Active Elections</div></div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 2. About -->
+<section class="section">
+  <div class="container">
+    <h2>About {{ association.short_name }}</h2>
+    <div class="about-grid">
+      <div>
+        <h3>Our History</h3>
+        <p>{{ site_settings.about_text|default:"Our history will be added here soon." }}</p>
+      </div>
+      <div>
+        <h3>Our Mission</h3>
+        <p>{{ site_settings.mission|default:"Our mission will be added here soon." }}</p>
+      </div>
+      <div>
+        <h3>Our Vision</h3>
+        <p>{{ site_settings.vision|default:"Our vision will be added here soon." }}</p>
+      </div>
+    </div>
+    <p class="u-mt-3"><a href="{% url 'core:about' %}">Read more about us &rarr;</a></p>
+  </div>
+</section>
+
+<!-- 4. Election Status -->
+{% if elections %}
+<section class="section section--alt">
+  <div class="container">
+    <h2>Elections</h2>
+    <div class="status-columns">
+      <div class="status-column">
+        <h3><span class="badge badge-upcoming">Upcoming</span></h3>
+        {% for election in elections.upcoming %}
+          <div class="election-card">
+            <h3><a href="{% url 'elections:election_detail' election.pk %}">{{ election.name }}</a></h3>
+            <p class="meta">Opens {{ election.start_datetime|date:"d M Y, H:i" }}</p>
+          </div>
+        {% empty %}
+          <p class="meta">No upcoming elections right now.</p>
+        {% endfor %}
+      </div>
+
+      <div class="status-column">
+        <h3><span class="badge badge-active">Active</span></h3>
+        {% for election in elections.active %}
+          <div class="election-card">
+            <h3><a href="{% url 'elections:election_detail' election.pk %}">{{ election.name }}</a></h3>
+            <p class="meta">Closes {{ election.end_datetime|date:"d M Y, H:i" }}</p>
+            <div class="actions">
+              <a href="{% url 'elections:voting_login' election.pk %}" class="btn">Vote Now</a>
+              <a href="{% url 'elections:results' election.pk %}">Live Results</a>
+            </div>
+          </div>
+        {% empty %}
+          <p class="meta">No elections are open for voting right now.</p>
+        {% endfor %}
+      </div>
+
+      <div class="status-column">
+        <h3><span class="badge badge-closed">Recently Completed</span></h3>
+        {% for election in elections.recently_completed %}
+          <div class="election-card">
+            <h3><a href="{% url 'elections:results' election.pk %}">{{ election.name }}</a></h3>
+            <p class="meta">Closed {{ election.end_datetime|date:"d M Y" }}</p>
+            <div class="actions"><a href="{% url 'elections:results' election.pk %}">View results</a></div>
+          </div>
+        {% empty %}
+          <p class="meta">No elections have concluded yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Donation Section -->
+{% if site_settings.donation_details %}
+<section class="section">
+  <div class="container">
+    <h2>Support {{ association.short_name }}</h2>
+    <p class="u-pre-line">{{ site_settings.donation_details }}</p>
+  </div>
+</section>
+{% endif %}
+
+<!-- 5. Call To Action -->
+<section class="section cta-section">
+  <div class="container">
+    <h2>Get Involved</h2>
+    <p>Membership keeps {{ association.short_name }} running, and elections decide who leads it. Both start here.</p>
+    <div class="btn-group u-justify-center">
+      <a href="{% url 'members:register' %}" class="btn">Become A Member</a>
+      <a href="{% url 'elections:election_list' %}" class="btn btn-on-dark">Participate In Elections</a>
+    </div>
+  </div>
+</section>
+
+{% endif %}
+{% endblock %}

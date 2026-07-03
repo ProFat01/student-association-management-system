@@ -1,0 +1,246 @@
+/* =============================================================
+   SAMS — components.css
+   Reusable components shared across modules, plus the landing
+   page's signature elements (hero membership-card, stats ledger).
+   ============================================================= */
+
+/* --- Badges --- */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-upcoming { background: var(--brass-tint); color: var(--brass); }
+.badge-active { background: var(--civic-green-tint); color: var(--civic-green-deep); }
+.badge-closed { background: #eceef0; color: #4a4f55; }
+
+/* --- Cards --- */
+.election-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-4);
+}
+.election-card h2, .election-card h3 { margin: 0 0 var(--space-2); font-size: 1.1rem; }
+.election-card .meta { color: var(--slate); font-size: 0.9rem; margin-bottom: var(--space-2); }
+.election-card .actions { margin-top: var(--space-3); display: flex; gap: var(--space-4); flex-wrap: wrap; }
+
+/* --- Tables --- */
+table.data-table { width: 100%; border-collapse: collapse; background: var(--surface); margin-bottom: var(--space-6); border-radius: var(--radius); overflow: hidden; }
+table.data-table th, table.data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); text-align: left; }
+table.data-table th { background: var(--paper); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); }
+table.data-table tr:last-child td { border-bottom: none; }
+table.data-table td.is-number, table.data-table th.is-number { font-family: var(--font-record); }
+.results-candidate-photo {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: var(--space-2);
+}
+
+@media (max-width: 600px) {
+  table.data-table { display: block; overflow-x: auto; white-space: nowrap; border-radius: var(--radius); }
+}
+
+.summary-stats { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6); }
+.summary-stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); min-width: 150px; flex: 1; }
+.summary-stat .value { font-family: var(--font-record); font-size: 1.5rem; font-weight: 600; color: var(--ink); }
+.summary-stat .label { font-size: 0.8rem; color: var(--slate); margin-top: var(--space-1); }
+
+.vote-bar-track { background: #eceef0; border-radius: 3px; height: 8px; overflow: hidden; margin-top: var(--space-1); }
+.vote-bar-fill { background: var(--civic-green); height: 100%; width: 0; } /* width set by JS from data-percentage, see static/js/site.js */
+
+.position-block { margin-bottom: var(--space-8); }
+.position-block h3 { margin: 0 0 var(--space-3); }
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  max-width: 30rem;
+  margin-bottom: var(--space-6);
+}
+.info-card dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); margin-top: var(--space-4); }
+.info-card dt:first-child { margin-top: 0; }
+.info-card dd { margin: var(--space-1) 0 0; font-size: 1.05rem; }
+.info-card dd.record { font-size: 1.25rem; color: var(--civic-green-deep); }
+.candidate-option {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  cursor: pointer;
+  background: var(--surface);
+}
+.candidate-option:hover, .candidate-option:focus-within { border-color: var(--civic-green); }
+.candidate-option input { margin-right: var(--space-2); }
+.candidate-option-photo {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: var(--space-2);
+}
+.candidate-option .manifesto { color: var(--slate); font-size: 0.9rem; margin: var(--space-1) 0 0 1.6rem; }
+
+.candidate-profile {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  background: var(--surface);
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+.candidate-profile-photo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.candidate-profile-body { flex: 1; min-width: 0; }
+.candidate-profile .name { font-weight: 600; }
+.candidate-profile .manifesto { color: var(--slate); font-size: 0.9rem; margin: var(--space-1) 0 0; }
+
+/* =============================================================
+   Landing page
+   ============================================================= */
+
+/* --- Hero --- */
+.hero {
+  background: linear-gradient(160deg, var(--ink) 0%, var(--civic-green-deep) 130%);
+  color: #fff;
+  padding: var(--space-16) 0;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+.hero-eyebrow {
+  font-family: var(--font-record);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brass-tint);
+  margin-bottom: var(--space-3);
+}
+.hero h1 { color: #fff; margin-bottom: var(--space-2); }
+.hero .motto { font-family: var(--font-display); font-style: italic; font-size: 1.2rem; color: rgba(255, 255, 255, 0.85); margin-bottom: var(--space-4); }
+.hero .welcome { color: rgba(255, 255, 255, 0.82); font-size: 1.05rem; max-width: 38rem; }
+
+/* Signature element: a CSS-rendered membership card, echoing the real
+   MSA-2026-0001 identifiers used throughout the system. Not a literal
+   screenshot — a deliberately simplified motif of what a member
+   actually receives once approved, to make the "become a member"
+   action feel concrete. */
+.member-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  color: var(--ink);
+  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+.member-card::before {
+  content: "";
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 140px; height: 140px;
+  background: var(--civic-green-tint);
+  border-radius: 50%;
+}
+.member-card-seal {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--civic-green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+  position: relative;
+}
+.member-card-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--slate); margin-bottom: var(--space-1); position: relative; }
+.member-card-id { font-family: var(--font-record); font-size: 1.3rem; letter-spacing: 0.04em; margin-bottom: var(--space-4); position: relative; }
+.member-card-rule { border-top: 1px dashed var(--line); margin: var(--space-4) 0; position: relative; }
+.member-card-foot { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--slate); position: relative; }
+
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .member-card { max-width: 320px; }
+}
+
+/* --- Stats ledger strip --- */
+.ledger {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.ledger-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+.ledger-stat .value { font-family: var(--font-record); font-size: 2rem; font-weight: 600; color: var(--civic-green-deep); }
+.ledger-stat .label { font-size: 0.85rem; color: var(--slate); margin-top: var(--space-1); }
+
+/* --- About section (on landing page) --- */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-8);
+}
+.about-grid h3 { font-size: 1.05rem; color: var(--civic-green-deep); }
+
+/* --- Election status section --- */
+.status-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-6);
+}
+.status-column h3 { display: flex; align-items: center; gap: var(--space-2); }
+
+/* --- CTA section --- */
+.cta-section {
+  background: var(--ink);
+  color: #fff;
+  text-align: center;
+}
+.cta-section h2 { color: #fff; }
+.cta-section p { color: rgba(255, 255, 255, 0.78); max-width: 36rem; margin: 0 auto var(--space-6); }
+
+/* --- About page content blocks --- */
+.content-block { margin-bottom: var(--space-8); }
+.content-block h2 { color: var(--civic-green-deep); }
+.about-motto { font-family: var(--font-display); font-style: italic; color: var(--civic-green-deep); }
+
+/* --- Contact page --- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: var(--space-12);
+}
+.contact-detail { margin-bottom: var(--space-4); }
+.contact-detail dt { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); }
+.contact-detail dd { margin: var(--space-1) 0 0; }
+@media (max-width: 760px) {
+  .contact-grid { grid-template-columns: 1fr; }
+}
