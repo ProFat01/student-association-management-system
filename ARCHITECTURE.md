@@ -43,9 +43,10 @@ sams/
 See `REGISTRATION_MODULE.md` for the member registration module,
 `ELECTION_MODULE.md` for the election management module,
 `ANALYTICS_MODULE.md` for the analytics module,
-`PUBLIC_WEBSITE_MODULE.md` for the public website / UX layer, and
-`ROLE_DASHBOARDS.md` for the role-adaptive staff dashboard hub, all built
-on top of this foundation.
+`PUBLIC_WEBSITE_MODULE.md` for the public website / UX layer,
+`ROLE_DASHBOARDS.md` for the role-adaptive staff dashboard hub, and
+`FRONTEND_DESIGN_SYSTEM.md` for the Module 1 global design-system
+polish pass, all built on top of this foundation.
 
 Each app follows the same internal shape:
 

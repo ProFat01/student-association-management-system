@@ -29,20 +29,29 @@
       </a>
 
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="primary-navigation" id="nav-toggle">
-        <span aria-hidden="true">&#9776;</span> Menu
+        <span class="nav-toggle-icon-open" aria-hidden="true">&#9776;</span>
+        <span class="nav-toggle-icon-close" aria-hidden="true">&#10005;</span>
+        <span>Menu</span>
       </button>
 
+      {% url 'core:home' as url_home %}
+      {% url 'members:register' as url_register %}
+      {% url 'members:status_check' as url_status_check %}
+      {% url 'elections:election_list' as url_elections %}
+      {% url 'core:about' as url_about %}
+      {% url 'core:contact' as url_contact %}
       <nav aria-label="Primary" id="primary-nav-wrapper">
         <ul class="nav-links" id="primary-navigation">
-          <li><a href="{% url 'core:home' %}">Home</a></li>
-          <li><a href="{% url 'members:register' %}">Register</a></li>
-          <li><a href="{% url 'members:status_check' %}">Check Status</a></li>
-          <li><a href="{% url 'elections:election_list' %}">Elections</a></li>
-          <li><a href="{% url 'elections:election_list' %}">Results</a></li>
-          <li><a href="{% url 'core:about' %}">About</a></li>
-          <li><a href="{% url 'core:contact' %}">Contact</a></li>
+          <li><a href="{{ url_home }}" class="{% if request.path == url_home %}is-active{% endif %}">Home</a></li>
+          <li><a href="{{ url_register }}" class="{% if request.path == url_register %}is-active{% endif %}">Register</a></li>
+          <li><a href="{{ url_status_check }}" class="{% if request.path == url_status_check %}is-active{% endif %}">Check Status</a></li>
+          <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Elections</a></li>
+          <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Results</a></li>
+          <li><a href="{{ url_about }}" class="{% if request.path == url_about %}is-active{% endif %}">About</a></li>
+          <li><a href="{{ url_contact }}" class="{% if request.path == url_contact %}is-active{% endif %}">Contact</a></li>
           {% if user.is_authenticated %}
-            <li><a href="{% url 'accounts:dashboard' %}" class="nav-cta">Dashboard</a></li>
+            {% url 'accounts:dashboard' as url_dashboard %}
+            <li><a href="{{ url_dashboard }}" class="nav-cta {% if request.path == url_dashboard %}is-active{% endif %}">Dashboard</a></li>
           {% endif %}
         </ul>
       </nav>
@@ -53,7 +62,7 @@
     {% if messages %}
       <div class="container u-mt-2" role="status" aria-live="polite">
         {% for message in messages %}
-          <div class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
+          <div class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %}">
             <p>{{ message }}</p>
           </div>
         {% endfor %}

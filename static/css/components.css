@@ -1,5 +1,5 @@
 /* =============================================================
-   SAMS — components.css
+   SAMS -- components.css
    Reusable components shared across modules, plus the landing
    page's signature elements (hero membership-card, stats ledger).
    ============================================================= */
@@ -8,7 +8,7 @@
 .badge {
   display: inline-block;
   padding: 0.15rem 0.6rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -25,15 +25,20 @@
   border-radius: var(--radius-lg);
   padding: var(--space-4) var(--space-6);
   margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
+.election-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .election-card h2, .election-card h3 { margin: 0 0 var(--space-2); font-size: 1.1rem; }
 .election-card .meta { color: var(--slate); font-size: 0.9rem; margin-bottom: var(--space-2); }
 .election-card .actions { margin-top: var(--space-3); display: flex; gap: var(--space-4); flex-wrap: wrap; }
 
 /* --- Tables --- */
-table.data-table { width: 100%; border-collapse: collapse; background: var(--surface); margin-bottom: var(--space-6); border-radius: var(--radius); overflow: hidden; }
-table.data-table th, table.data-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); text-align: left; }
-table.data-table th { background: var(--paper); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); }
+table.data-table { width: 100%; border-collapse: collapse; background: var(--surface); margin-bottom: var(--space-6); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+table.data-table th, table.data-table td { padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); text-align: left; }
+table.data-table th { background: var(--surface-soft); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--slate); }
+table.data-table tbody tr { transition: background var(--transition-fast); }
+table.data-table tbody tr:hover { background: var(--paper); }
 table.data-table tr:last-child td { border-bottom: none; }
 table.data-table td.is-number, table.data-table th.is-number { font-family: var(--font-record); }
 .results-candidate-photo {
@@ -49,13 +54,38 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   table.data-table { display: block; overflow-x: auto; white-space: nowrap; border-radius: var(--radius); }
 }
 
-.summary-stats { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-6); }
-.summary-stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); min-width: 150px; flex: 1; }
-.summary-stat .value { font-family: var(--font-record); font-size: 1.5rem; font-weight: 600; color: var(--ink); }
+/* --- Statistic cards ---
+   Reused, unmodified in the templates, across every module's
+   dashboards (analytics x4, elections admin dashboard, registration
+   overview, the landing-page ledger) -- so improving this single
+   component upgrades every "Members / Alumni / Votes / Elections"
+   summary in the whole app at once. */
+.summary-stats { display: flex; flex-wrap: wrap; gap: var(--space-4); margin-bottom: var(--space-6); }
+.summary-stat {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 4px);
+  min-width: 150px;
+  flex: 1;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  overflow: hidden;
+}
+.summary-stat::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: var(--civic-green);
+}
+.summary-stat:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.summary-stat .value { font-family: var(--font-record); font-size: 1.65rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
 .summary-stat .label { font-size: 0.8rem; color: var(--slate); margin-top: var(--space-1); }
 
-.vote-bar-track { background: #eceef0; border-radius: 3px; height: 8px; overflow: hidden; margin-top: var(--space-1); }
-.vote-bar-fill { background: var(--civic-green); height: 100%; width: 0; } /* width set by JS from data-percentage, see static/js/site.js */
+.vote-bar-track { background: var(--surface-soft); border-radius: var(--radius-full); height: 8px; overflow: hidden; margin-top: var(--space-1); }
+.vote-bar-fill { background: var(--civic-green); height: 100%; width: 0; border-radius: var(--radius-full); transition: width 0.6s ease; } /* width set by JS from data-percentage, see static/js/site.js */
 
 .position-block { margin-bottom: var(--space-8); }
 .position-block h3 { margin: 0 0 var(--space-3); }
@@ -67,11 +97,13 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   padding: var(--space-6);
   max-width: 30rem;
   margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-sm);
 }
 .info-card dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); margin-top: var(--space-4); }
 .info-card dt:first-child { margin-top: 0; }
 .info-card dd { margin: var(--space-1) 0 0; font-size: 1.05rem; }
 .info-card dd.record { font-size: 1.25rem; color: var(--civic-green-deep); }
+
 .candidate-option {
   display: block;
   border: 1px solid var(--line);
@@ -80,8 +112,10 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   margin-bottom: var(--space-2);
   cursor: pointer;
   background: var(--surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
 }
-.candidate-option:hover, .candidate-option:focus-within { border-color: var(--civic-green); }
+.candidate-option:hover { border-color: var(--civic-green); background: var(--civic-green-tint); }
+.candidate-option:focus-within { border-color: var(--civic-green); box-shadow: 0 0 0 3px var(--civic-green-tint); }
 .candidate-option input { margin-right: var(--space-2); }
 .candidate-option-photo {
   width: 40px;
@@ -102,7 +136,10 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   display: flex;
   gap: var(--space-4);
   align-items: flex-start;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base);
 }
+.candidate-profile:hover { box-shadow: var(--shadow-md); }
 .candidate-profile-photo {
   width: 64px;
   height: 64px;
@@ -144,7 +181,7 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 
 /* Signature element: a CSS-rendered membership card, echoing the real
    MSA-2026-0001 identifiers used throughout the system. Not a literal
-   screenshot — a deliberately simplified motif of what a member
+   screenshot -- a deliberately simplified motif of what a member
    actually receives once approved, to make the "become a member"
    action feel concrete. */
 .member-card {
@@ -152,10 +189,12 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   color: var(--ink);
-  box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
+  transition: transform var(--transition-base);
 }
+.member-card:hover { transform: translateY(-4px); }
 .member-card::before {
   content: "";
   position: absolute;
