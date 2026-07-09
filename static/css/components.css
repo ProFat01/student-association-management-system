@@ -283,3 +283,187 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 @media (max-width: 760px) {
   .contact-grid { grid-template-columns: 1fr; }
 }
+
+/* =============================================================
+   Landing Page Experience (Module 2)
+   New sections only: Why Join, Active Election spotlight,
+   countdown timer, live results preview (progress bars + CSS-only
+   pie chart), and the hero's dynamic background-image support.
+   Statistics reuse the existing .summary-stat card from Module 1
+   unchanged; results-preview bars reuse the existing
+   .vote-bar-track/.vote-bar-fill unchanged.
+   ============================================================= */
+
+/* --- Hero: logo-in-seal, dynamic background image --- */
+.member-card-seal-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+/* Background image itself is applied by static/js/home.js via
+   el.style.backgroundImage (individual CSSOM property assignment --
+   CSP-safe, same pattern already used for vote-bar widths). This rule
+   only supplies the dark overlay gradient + sizing so text stays
+   legible over any photo without needing per-image tuning. */
+.hero--with-image {
+  background-size: cover;
+  background-position: center;
+}
+.hero--with-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(22, 33, 44, 0.92) 0%, rgba(15, 74, 48, 0.85) 130%);
+}
+.hero { position: relative; overflow: hidden; }
+.hero > .container { position: relative; z-index: 1; }
+
+/* --- Live statistics: cards that overlap the hero's bottom edge --- */
+.stats-overlap {
+  margin-top: -2.5rem;
+  position: relative;
+  z-index: 2;
+}
+@media (max-width: 760px) {
+  .stats-overlap { margin-top: -1.5rem; }
+}
+
+/* --- Why Join --- */
+.benefit-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  text-align: left;
+}
+.benefit-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.benefit-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  background: var(--civic-green-tint);
+  color: var(--civic-green-deep);
+  margin-bottom: var(--space-4);
+}
+.benefit-card-icon svg { width: 24px; height: 24px; }
+.benefit-card h3 { margin-bottom: var(--space-2); font-size: 1.05rem; }
+.benefit-card p { margin: 0; font-size: 0.92rem; }
+
+/* --- Active election spotlight --- */
+.spotlight-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+}
+.spotlight-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.spotlight-meta { color: var(--slate); font-size: 0.95rem; }
+
+.countdown {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin: var(--space-6) 0;
+}
+.countdown-unit {
+  background: var(--surface-soft);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  text-align: center;
+  min-width: 4.5rem;
+}
+.countdown-unit .value {
+  font-family: var(--font-record);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--civic-green-deep);
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+.countdown-unit .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--slate);
+}
+.countdown-ended {
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* --- Live results preview: ranking rows reuse .vote-bar-track/.vote-bar-fill --- */
+.results-preview-list { list-style: none; margin: 0 0 var(--space-6); padding: 0; }
+.results-preview-row { margin-bottom: var(--space-4); }
+.results-preview-row .row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-1);
+  gap: var(--space-2);
+}
+.results-preview-row .candidate-name { font-weight: 600; }
+.results-preview-row .vote-count { font-family: var(--font-record); color: var(--slate); font-size: 0.9rem; }
+.results-preview-row:first-child .candidate-name::before {
+  content: "\2605";
+  color: var(--brass);
+  margin-right: var(--space-1);
+}
+
+/* --- CSS-only pie chart preview ---
+   The conic-gradient itself is applied by home.js reading each legend
+   item's data-percentage (same established pattern as the vote bars);
+   this file only supplies the static geometry/legend styling. */
+.pie-chart-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+.pie-chart {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  flex-shrink: 0;
+}
+.pie-chart-legend { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 180px; }
+.pie-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-2);
+}
+.pie-chart-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .pie-chart-wrap { flex-direction: column; align-items: flex-start; }
+}
+
+/* --- No active election notice --- */
+.no-election-notice {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--slate);
+  background: var(--surface-soft);
+  border-radius: var(--radius-lg);
+}

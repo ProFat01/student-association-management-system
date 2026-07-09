@@ -37,8 +37,27 @@ def _elections_by_status(association):
 
 
 def home_view(request):
+    """
+    The landing page. Every piece of dynamic content here is read from
+    data that already exists elsewhere in the project — membership
+    counts via apps.analytics.services (the same functions the staff
+    dashboards call), elections via Election's own is_upcoming()/
+    is_active()/is_closed()/results_by_position()/voters_count() methods
+    (built in the election module, untouched here), and Site Settings
+    content fields. The one addition below (`contact_form`) is an
+    *unbound* form instance for rendering the landing page's embedded
+    mini contact section (Section 8) — it changes nothing about how a
+    submission is processed: that form posts straight to `core:contact`,
+    handled entirely by the existing, unmodified `contact_view` below.
+    """
     association = _default_association()
-    context = {"association": association, "site_settings": None, "membership": None, "elections": None}
+    context = {
+        "association": association,
+        "site_settings": None,
+        "membership": None,
+        "elections": None,
+        "contact_form": ContactForm(),
+    }
     if association is not None:
         context["site_settings"] = getattr(association, "site_settings", None)
         context["membership"] = analytics_services.membership_overview(association)

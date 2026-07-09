@@ -319,6 +319,7 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   gap: var(--space-8);
   padding: var(--space-12) 0;
 }
+.footer-logo { height: 32px; width: auto; object-fit: contain; margin-bottom: var(--space-3); border-radius: var(--radius-sm); }
 .footer-grid .footer-heading { color: #fff; font-family: var(--font-body); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-3); font-weight: 700; }
 .footer-grid a { color: rgba(255, 255, 255, 0.75); transition: color var(--transition-fast); }
 .footer-grid a:hover { color: #fff; }
@@ -519,7 +520,9 @@ legend { font-weight: 600; padding: 0 var(--space-2); }
 
 .u-max-30 { max-width: 30rem; }
 .u-max-32 { max-width: 32rem; }
+.u-max-34 { max-width: 34rem; }
 .u-max-38 { max-width: 38rem; }
+.u-m-0 { margin: 0; }
 .u-inline { display: inline; margin: 0; }
 .u-pre-line { white-space: pre-line; }
 .u-strong { font-weight: 600; }

@@ -75,6 +75,9 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
+        {% if association.logo %}
+          <img src="{{ association.logo.url }}" alt="{{ association.short_name }} logo" class="footer-logo">
+        {% endif %}
         <p class="footer-heading">{{ association.short_name|default:"SAMS" }}</p>
         <p>{{ association.name|default:"Malam Sidi Students Association" }}</p>
       </div>
@@ -83,6 +86,7 @@
         <p><a href="{% url 'members:register' %}">Register</a></p>
         <p><a href="{% url 'members:status_check' %}">Check Status</a></p>
         <p><a href="{% url 'elections:election_list' %}">Elections &amp; Results</a></p>
+        {% if site_settings.donation_details %}<p><a href="{% url 'core:home' %}#donate">Donate</a></p>{% endif %}
       </div>
       <div>
         <p class="footer-heading">Contact</p>

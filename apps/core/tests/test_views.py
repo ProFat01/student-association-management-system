@@ -47,7 +47,26 @@ class LandingPageTests(CoreViewsTestCase):
         response = self.client.get(reverse("core:home"))
         self.assertContains(response, "Register Now")
         self.assertContains(response, "Check Status")
+
+    def test_hero_vote_now_hidden_when_no_active_election(self):
+        """
+        Module 2 explicitly requires the hero's third CTA to be
+        conditional: "If an election is currently active, automatically
+        display a third button: Vote Now. Otherwise hide it." This
+        fixture has no Election at all, so it must not appear.
+        """
+        response = self.client.get(reverse("core:home"))
+        self.assertNotContains(response, "Vote Now")
+
+    def test_hero_vote_now_shown_when_election_is_active(self):
+        now = timezone.now()
+        election = Election.objects.create(
+            association=self.association, name="Active Poll",
+            start_datetime=now - datetime.timedelta(hours=1), end_datetime=now + datetime.timedelta(hours=1),
+        )
+        response = self.client.get(reverse("core:home"))
         self.assertContains(response, "Vote Now")
+        self.assertContains(response, reverse("elections:voting_login", args=[election.pk]))
 
     def test_statistics_section_shows_live_membership_counts(self):
         member = Member.objects.create(
@@ -60,8 +79,8 @@ class LandingPageTests(CoreViewsTestCase):
         application.save()
 
         response = self.client.get(reverse("core:home"))
-        self.assertContains(response, "Total Members")
-        # 1 total member, 1 undergraduate — both appear in the ledger strip.
+        self.assertContains(response, "Total Registered Members")
+        # 1 total member, 1 undergraduate — both appear in the statistics cards.
         self.assertContains(response, ">1<")
 
     def test_election_status_sections_show_upcoming_active_and_completed(self):
