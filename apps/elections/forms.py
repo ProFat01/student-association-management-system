@@ -12,6 +12,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from apps.members.models import Member
+from apps.members.services import find_member_by_credentials
 
 from .models import Candidate
 
@@ -62,18 +63,14 @@ class VotingLoginForm(forms.Form):
         Admin), without revealing anything sharper about why.
         """
         method = self.cleaned_data["method"]
-        phone = self.cleaned_data.get("phone_number", "").strip()
+        phone = self.cleaned_data.get("phone_number", "")
+        identifier_field = "membership_id" if method == self.BY_MEMBERSHIP_ID else "nin_number"
 
-        if method == self.BY_MEMBERSHIP_ID:
-            member = Member.objects.filter(
-                membership_id=self.cleaned_data.get("membership_id", "").strip(),
-                phone_number=phone,
-            ).first()
-        else:
-            member = Member.objects.filter(
-                nin_number=self.cleaned_data.get("nin_number", "").strip(),
-                phone_number=phone,
-            ).first()
+        member = find_member_by_credentials(
+            method,
+            self.cleaned_data.get(identifier_field, ""),
+            phone,
+        )
 
         if member is None:
             return None, "We couldn't verify your details. Please check your information and try again."

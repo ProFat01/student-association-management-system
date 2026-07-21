@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from .models import Member, RegistrationApplication
+from .services import BY_MEMBERSHIP_ID, BY_NIN, CREDENTIAL_METHOD_CHOICES, find_member_by_credentials
 from .validators import validate_image_size
 
 
@@ -165,3 +166,60 @@ class StatusCheckForm(forms.Form):
         # Most recent application — relevant after a rejection + reapply,
         # where the latest decision is the one the registrant cares about.
         return member.applications.order_by("-submitted_at").first()
+
+
+class PortalLoginForm(forms.Form):
+    """
+    Stage 8: Member Self-Service Portal login.
+
+    Verifies identity the exact same way apps.elections.forms.VotingLoginForm
+    does — (Membership ID + Phone) or (NIN + Phone) — via the shared
+    apps.members.services.find_member_by_credentials lookup, so this
+    doesn't re-implement that query. The one thing that's genuinely
+    different from voting login is eligibility: the portal only requires
+    the member to be Approved, not also voting_status-eligible (a
+    narrower, elections-specific concept), and the brief calls for its
+    own two distinct messages here rather than voting login's single
+    generic one — so authenticate() returns an error *code*, not text,
+    and lets the view own the actual copy.
+    """
+
+    NOT_FOUND = "not_found"
+    NOT_APPROVED = "not_approved"
+
+    method = forms.ChoiceField(
+        choices=CREDENTIAL_METHOD_CHOICES, widget=forms.RadioSelect, initial=BY_MEMBERSHIP_ID
+    )
+    membership_id = forms.CharField(required=False, max_length=30)
+    nin_number = forms.CharField(required=False, max_length=11)
+    phone_number = forms.CharField(required=False, max_length=11)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        method = cleaned_data.get("method")
+
+        if method == BY_MEMBERSHIP_ID:
+            if not cleaned_data.get("membership_id", "").strip() or not cleaned_data.get("phone_number", "").strip():
+                raise ValidationError("Please enter your Membership ID and phone number.")
+        elif method == BY_NIN:
+            if not cleaned_data.get("nin_number", "").strip() or not cleaned_data.get("phone_number", "").strip():
+                raise ValidationError("Please enter your NIN and phone number.")
+
+        return cleaned_data
+
+    def authenticate(self):
+        """Returns (member, error_code). error_code is None on success."""
+        method = self.cleaned_data["method"]
+        identifier_field = "membership_id" if method == BY_MEMBERSHIP_ID else "nin_number"
+        member = find_member_by_credentials(
+            method,
+            self.cleaned_data.get(identifier_field, ""),
+            self.cleaned_data.get("phone_number", ""),
+        )
+
+        if member is None:
+            return None, self.NOT_FOUND
+        if member.approval_status != Member.ApprovalStatus.APPROVED:
+            return None, self.NOT_APPROVED
+
+        return member, None

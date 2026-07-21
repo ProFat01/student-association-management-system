@@ -640,3 +640,61 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 .success-panel .info-card { text-align: left; margin: var(--space-6) 0; }
 .success-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); }
 .copy-feedback { display: inline-block; font-size: 0.85rem; color: var(--success); font-weight: 600; margin-left: var(--space-2); min-height: 1.2em; }
+
+/* =============================================================
+   Member self-service portal (Stage 8)
+   ============================================================= */
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+.profile-card-photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--civic-green-tint);
+  flex-shrink: 0;
+}
+.profile-card-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--civic-green-tint);
+  color: var(--civic-green-deep);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+}
+.profile-card-body h2 { margin: 0 0 var(--space-1); }
+.profile-status-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* Logout is a POST-only form in the nav (not a GET link) so it behaves
+   like every other state-changing action on the site, but it should
+   still look and sit exactly like the other nav items. .nav-links a's
+   base styling is `a`-selector-specific, so it's replicated here for
+   the <button> rather than relied on. */
+.nav-logout-form { margin: 0; display: contents; }
+.nav-links .nav-logout-btn {
+  display: inline-block;
+  border: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--civic-green);
+  color: #fff;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.nav-links .nav-logout-btn:hover,
+.nav-links .nav-logout-btn:focus-visible { background: var(--civic-green-deep); }
