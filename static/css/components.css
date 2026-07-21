@@ -467,3 +467,176 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   background: var(--surface-soft);
   border-radius: var(--radius-lg);
 }
+
+/* =============================================================
+   Registration wizard (Stage 8: Registration Experience)
+
+   Progressive enhancement over the plain single-page registration
+   form: register.js hides everything but the active .wizard-step and
+   drives this progress UI. Every rule here degrades harmlessly if the
+   JS never runs -- .wizard-progress ships `hidden` in the markup and
+   only register.js reveals it, so a no-JS visit just sees one long,
+   already-styled form with all fields visible, using the same
+   .form-row/.field-error primitives as every other form on the site.
+   ============================================================= */
+
+.wizard-progress { margin-bottom: var(--space-6); }
+.wizard-progress-steps { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.wizard-progress-dot {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--slate);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-record);
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+}
+.wizard-progress-dot.is-current { background: var(--civic-green); border-color: var(--civic-green); color: #fff; }
+.wizard-progress-dot.is-complete { background: var(--civic-green-tint); border-color: var(--civic-green); color: var(--civic-green-deep); }
+
+.wizard-progress-track { background: var(--surface-soft); border-radius: var(--radius-full); height: 6px; overflow: hidden; }
+.wizard-progress-fill {
+  background: var(--civic-green);
+  height: 100%;
+  width: 25%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+.wizard-progress-label { font-size: 0.9rem; color: var(--slate); margin: var(--space-2) 0 0; font-weight: 600; }
+
+.wizard-step-title { margin-bottom: var(--space-4); }
+.wizard-step-title:focus-visible { outline: none; }
+
+.wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+.wizard-nav .btn:only-child { margin-left: auto; }
+
+/* --- Live phone / NIN feedback --- */
+.input-with-feedback { position: relative; display: flex; align-items: center; }
+.input-with-feedback input { padding-right: 2.4rem; }
+.input-feedback-icon {
+  position: absolute;
+  right: var(--space-3);
+  font-weight: 700;
+  font-size: 1rem;
+  pointer-events: none;
+}
+.input-feedback-icon.is-valid { color: var(--success); }
+.input-feedback-icon.is-invalid { color: var(--error); }
+.field-live-feedback { font-size: 0.85rem; margin: var(--space-2) 0 0; font-weight: 600; }
+.field-live-feedback.is-valid { color: var(--success); }
+.field-live-feedback.is-invalid { color: var(--error); }
+.field-live-feedback:empty { margin: 0; }
+
+/* --- Upload preview --- */
+.upload-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.upload-preview-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.upload-preview-meta { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.upload-preview-name { font-weight: 600; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upload-preview-size { font-family: var(--font-record); font-size: 0.8rem; color: var(--slate); }
+.upload-preview-status { font-size: 0.78rem; color: var(--civic-green-deep); }
+.upload-preview-remove {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--slate);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.upload-preview-remove:hover { background: var(--error-tint); color: var(--error); border-color: transparent; }
+.upload-warning { color: var(--warning); background: var(--warning-tint); border-radius: var(--radius); padding: var(--space-2) var(--space-3); font-size: 0.85rem; font-weight: 600; margin-top: var(--space-3); }
+
+/* --- Review step --- */
+.wizard-review { display: flex; flex-direction: column; gap: var(--space-6); }
+.review-section { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4); }
+.review-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+.review-section-head h3 { margin: 0; font-size: 1rem; }
+.review-edit-btn {
+  background: transparent;
+  border: 1px solid var(--civic-green);
+  color: var(--civic-green-deep);
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.review-edit-btn:hover { background: var(--civic-green); color: #fff; }
+.review-fields { display: grid; grid-template-columns: minmax(120px, 1fr) 2fr; gap: var(--space-2) var(--space-3); margin: 0; }
+.review-fields dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); font-weight: 600; }
+.review-fields dd { margin: 0; display: flex; align-items: center; gap: var(--space-2); word-break: break-word; }
+.review-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); flex-shrink: 0; }
+
+@media (max-width: 600px) {
+  .review-fields { grid-template-columns: 1fr; }
+  .review-fields dd { margin-bottom: var(--space-2); }
+}
+
+/* --- Friendly error / recovery cards (duplicate registration etc.) --- */
+.error-card { flex-direction: column; align-items: stretch; }
+.error-card .btn { align-self: flex-start; }
+
+/* --- Registration success panel --- */
+.success-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  margin: 0 auto;
+}
+.success-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto var(--space-4);
+  border-radius: 50%;
+  background: var(--success-tint);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.success-panel .info-card { text-align: left; margin: var(--space-6) 0; }
+.success-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); }
+.copy-feedback { display: inline-block; font-size: 0.85rem; color: var(--success); font-weight: 600; margin-left: var(--space-2); min-height: 1.2em; }
