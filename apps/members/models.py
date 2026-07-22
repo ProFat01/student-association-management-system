@@ -12,6 +12,8 @@ overwriting it on resubmission. `RegistrationApplication.member` is a
 plain ForeignKey (not OneToOne) specifically so re-application keeps a
 trail — see ARCHITECTURE.md "Relationships".
 """
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -59,6 +61,21 @@ class Member(models.Model):
     institution = models.CharField(max_length=255)
     course = models.CharField(max_length=255)
     category = models.CharField(max_length=20, choices=Category.choices)
+
+    class Gender(models.TextChoices):
+        MALE = "male", "Male"
+        FEMALE = "female", "Female"
+
+    # Optional, added for Membership Card System v1 (see MembershipCard
+    # below). Blank on purpose: no existing registration flow collects
+    # these, so every pre-existing Member has them empty until an admin
+    # fills them in via the admin form — the card template renders each
+    # one only "if available", exactly like registration_number already
+    # does for membership_id.
+    gender = models.CharField(max_length=10, choices=Gender.choices, blank=True)
+    faculty = models.CharField(max_length=255, blank=True)
+    department = models.CharField(max_length=255, blank=True)
+    level = models.CharField(max_length=20, blank=True, help_text="e.g. '100', 'ND1', 'Year 3'.")
     passport_photo = models.ImageField(
         upload_to="members/passports/%Y/%m/", validators=[validate_image_size]
     )
@@ -221,3 +238,37 @@ class AlumniRecord(models.Model):
 
     def __str__(self):
         return f"Alumni record — {self.member.full_name}"
+
+
+class MembershipCard(models.Model):
+    """
+    Membership Card System v1. One row per Member, created lazily
+    (`MembershipCard.get_or_create_for(member)`) the first time a card is
+    viewed, printed, or its QR is generated — not via a signal on
+    approval, so this stays entirely additive and never touches
+    members/signals.py or the approval workflow it already owns.
+
+    `card_uuid` — never `membership_id` — is what the QR code encodes and
+    what the public verification page looks up by. `membership_id` is
+    sequential (see SequenceCounter in core) and therefore guessable;
+    a UUID4 default here is the "avoid predictable IDs / prevent
+    enumeration" requirement enforced at the schema level, the same way
+    `Vote`'s UniqueConstraint enforces one-vote-per-position at the
+    schema level rather than trusting every call site to check first.
+    """
+
+    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="membership_card")
+    card_uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    issued_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Membership Card"
+        verbose_name_plural = "Membership Cards"
+
+    def __str__(self):
+        return f"Card — {self.member.full_name}"
+
+    @classmethod
+    def get_or_create_for(cls, member):
+        card, _ = cls.objects.get_or_create(member=member)
+        return card

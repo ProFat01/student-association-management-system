@@ -1,0 +1,176 @@
+/* Membership Card System v1 — scoped to card.html and verify.html only.
+   Reuses the existing design tokens from base.css (--ink, --civic-green,
+   --radius-lg, --shadow-lg, --font-display, etc.) rather than inventing
+   new colors, so the card matches the rest of the site automatically. */
+
+.card-page {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+}
+
+.membership-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(160deg, var(--civic-green-deep) 0%, var(--civic-green) 62%);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+
+.membership-card::after {
+  /* subtle corner accent, purely decorative */
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.membership-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.membership-card-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.membership-card-assoc-name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.15;
+}
+
+.membership-card-body {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.membership-card-photo {
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.membership-card-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  margin: 0 0 var(--space-1);
+}
+
+.membership-card-id {
+  font-family: var(--font-record);
+  font-size: var(--text-sm);
+  opacity: 0.9;
+  margin: 0 0 var(--space-2);
+}
+
+.membership-card-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px var(--space-2);
+  font-size: var(--text-xs);
+  opacity: 0.95;
+}
+
+.membership-card-facts dt {
+  opacity: 0.7;
+}
+
+.membership-card-facts dd {
+  margin: 0;
+}
+
+.membership-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.membership-card-qr {
+  background: #fff;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  width: 72px;
+  height: 72px;
+  display: block;
+}
+
+.membership-card-verify-note {
+  font-size: var(--text-xs);
+  opacity: 0.85;
+  max-width: 220px;
+}
+
+.card-actions {
+  max-width: 420px;
+  margin: var(--space-4) auto 0;
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.verify-result {
+  max-width: 420px;
+  margin: var(--space-8) auto;
+  text-align: center;
+}
+
+.verify-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+
+.verify-badge-valid {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.verify-badge-invalid {
+  background: var(--error-tint);
+  color: var(--error);
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .card-actions,
+  .no-print {
+    display: none !important;
+  }
+
+  .card-page {
+    padding: 0;
+  }
+
+  .membership-card {
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

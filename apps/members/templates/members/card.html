@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Membership Card{% endblock %}
+{% block meta_description %}Your SAMS digital membership card.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/card.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container section">
+<h1>{% if is_staff_view %}Membership Card — {{ member.full_name }}{% else %}My Membership Card{% endif %}</h1>
+
+<div class="card-page">
+  <div class="membership-card">
+    <div class="membership-card-header">
+      {% if member.association.logo %}
+        <img src="{{ member.association.logo.url }}" alt="" class="membership-card-logo">
+      {% endif %}
+      <div>
+        <div class="membership-card-assoc-name">{{ member.association.name }}</div>
+        <div style="font-size: var(--text-xs); opacity: 0.85;">Membership Card</div>
+      </div>
+    </div>
+
+    <div class="membership-card-body">
+      {% if member.passport_photo %}
+        <img src="{{ member.passport_photo.url }}" alt="{{ member.full_name }}" class="membership-card-photo">
+      {% else %}
+        <div class="membership-card-photo" aria-hidden="true"></div>
+      {% endif %}
+      <div>
+        <p class="membership-card-name">{{ member.full_name }}</p>
+        <p class="membership-card-id">{{ member.membership_id|default:"ID pending" }}</p>
+        <dl class="membership-card-facts">
+          {% if member.gender %}<dt>Gender</dt><dd>{{ member.get_gender_display }}</dd>{% endif %}
+          {% if member.faculty %}<dt>Faculty</dt><dd>{{ member.faculty }}</dd>{% endif %}
+          {% if member.department %}<dt>Department</dt><dd>{{ member.department }}</dd>{% endif %}
+          {% if member.level %}<dt>Level</dt><dd>{{ member.level }}</dd>{% endif %}
+          {% if member.phone_number %}<dt>Phone</dt><dd>{{ member.phone_number }}</dd>{% endif %}
+          <dt>Status</dt><dd>{{ member.get_approval_status_display }}</dd>
+          <dt>Issued</dt><dd>{{ card.issued_at|date:"d M Y" }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="membership-card-footer">
+      <p class="membership-card-verify-note">Verify this member at<br>{{ qr_url }}</p>
+      {% if is_staff_view %}
+        <img src="{% url 'members:staff_card_qr' member.pk %}" alt="QR code" class="membership-card-qr">
+      {% else %}
+        <img src="{% url 'members:portal_card_qr' %}" alt="QR code" class="membership-card-qr">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card-actions no-print">
+  <button type="button" class="btn" onclick="window.print()">Print / Save as PDF</button>
+  {% if not is_staff_view %}
+    <a href="{% url 'members:portal_dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
+  {% endif %}
+</div>
+</div>
+{% endblock %}

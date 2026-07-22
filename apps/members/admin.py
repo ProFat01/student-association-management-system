@@ -1,8 +1,9 @@
 from django.contrib import admin
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 
-from .models import AlumniRecord, Member, RegistrationApplication
+from .models import AlumniRecord, Member, MembershipCard, RegistrationApplication
 
 
 class RegistrationApplicationInline(admin.TabularInline):
@@ -38,7 +39,7 @@ class MemberAdmin(admin.ModelAdmin):
     )
     list_filter = ("association", "approval_status", "category", "alumni_status", "voting_status")
     search_fields = ("full_name", "phone_number", "nin_number", "membership_id")
-    readonly_fields = ("membership_id", "registration_date", "voting_status")
+    readonly_fields = ("membership_id", "registration_date", "voting_status", "card_link")
     autocomplete_fields = ("association", "user")
     date_hierarchy = "registration_date"
     inlines = [RegistrationApplicationInline, AlumniRecordInline]
@@ -50,14 +51,22 @@ class MemberAdmin(admin.ModelAdmin):
     list_select_related = ("association",)
 
     fieldsets = (
-        ("Identity", {"fields": ("association", "user", "full_name", "date_of_birth", "passport_photo")}),
+        ("Identity", {"fields": ("association", "user", "full_name", "date_of_birth", "gender", "passport_photo")}),
         ("Contact", {"fields": ("phone_number", "nin_number")}),
-        ("Academic", {"fields": ("institution", "course", "category")}),
+        ("Academic", {"fields": ("institution", "course", "faculty", "department", "level", "category")}),
         (
             "Membership status",
             {"fields": ("approval_status", "membership_id", "voting_status", "alumni_status", "registration_date")},
         ),
+        ("Membership Card", {"fields": ("card_link",)}),
     )
+
+    @admin.display(description="Membership card")
+    def card_link(self, obj):
+        if not obj.pk:
+            return "Save the member first."
+        url = reverse("members:staff_card", args=[obj.pk])
+        return format_html('<a class="button" href="{}" target="_blank">View / Print Card</a>', url)
 
     @admin.action(description="Convert selected members to alumni")
     def convert_selected_to_alumni(self, request, queryset):

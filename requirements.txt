@@ -9,7 +9,8 @@
 
 Django==6.0.6
 django-environ==0.11.2          # clean env-var based settings -> trivial Postgres swap later
-Pillow==11.3.0                  # required for ImageField (passport_photo, receipts, candidate photo)
+Pillow==11.3.0                  # required for ImageField (passport_photo, receipts, candidate photo) and QR code image rendering
+qrcode==8.2                      # offline QR generation for the membership card verification code (uses Pillow above, no native deps, no network calls)
 whitenoise==6.12.0               # static file serving on PythonAnywhere without a separate web server config
 
 # --- uncomment when you move off SQLite (see PRODUCTION_DEPLOYMENT.md "SQLite limitations") ---

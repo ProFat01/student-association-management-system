@@ -11,13 +11,16 @@ session marker set after PortalLoginForm.authenticate() succeeds, not
 request.login(). See _get_portal_member below.
 """
 from django.conf import settings
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.core.models import Association
 
+from . import card_services
 from .forms import MemberRegistrationForm, PortalLoginForm, StatusCheckForm
-from .models import Member, RegistrationApplication
+from .models import Member, MembershipCard, RegistrationApplication
 
 PORTAL_SESSION_KEY = "portal_member_id"
 
@@ -200,3 +203,78 @@ def portal_logout_view(request):
     # boundary rather than a partial clear.
     request.session.flush()
     return redirect("members:portal_login")
+
+
+# ---------------------------------------------------------------------------
+# Membership Card System v1
+# ---------------------------------------------------------------------------
+def portal_card_view(request):
+    """Member-facing digital card — same portal-session gate as the rest of the portal."""
+    member = _get_portal_member(request)
+    if member is None:
+        return redirect("members:portal_login")
+
+    card = MembershipCard.get_or_create_for(member)
+    return render(
+        request,
+        "members/card.html",
+        {"member": member, "card": card, "qr_url": card_services.build_verification_url(request, card)},
+    )
+
+
+def portal_card_qr_view(request):
+    """Streams the card's QR code as a PNG. Generated on the fly, never written to disk."""
+    member = _get_portal_member(request)
+    if member is None:
+        return redirect("members:portal_login")
+
+    card = MembershipCard.get_or_create_for(member)
+    verification_url = card_services.build_verification_url(request, card)
+    png_bytes = card_services.generate_qr_png(verification_url)
+    return HttpResponse(png_bytes, content_type="image/png")
+
+
+def verify_member_view(request, card_uuid):
+    """
+    Public page a scanned QR code opens. Deliberately exposes only safe,
+    non-sensitive fields (name, membership ID, status, photo) — no phone
+    number, NIN, date of birth, or address, matching the brief's "show
+    only safe public information" requirement. An unknown/invalid
+    card_uuid renders the same template with card=None rather than a
+    404, so the page never confirms or denies via response shape whether
+    a given UUID exists — a 404 vs 200 timing/behavior difference is
+    itself a small enumeration signal.
+    """
+    card = MembershipCard.objects.select_related("member").filter(card_uuid=card_uuid).first()
+    member = card.member if card else None
+    is_valid = bool(member and member.approval_status == Member.ApprovalStatus.APPROVED)
+    return render(request, "members/verify.html", {"member": member, "card": card, "is_valid": is_valid})
+
+
+@login_required
+@permission_required("members.view_member", raise_exception=True)
+def staff_card_view(request, pk):
+    """Staff-facing view/print of any member's card, gated by the existing members.view_member permission."""
+    member = get_object_or_404(Member, pk=pk)
+    card = MembershipCard.get_or_create_for(member)
+    return render(
+        request,
+        "members/card.html",
+        {
+            "member": member,
+            "card": card,
+            "qr_url": card_services.build_verification_url(request, card),
+            "is_staff_view": True,
+        },
+    )
+
+
+@login_required
+@permission_required("members.view_member", raise_exception=True)
+def staff_card_qr_view(request, pk):
+    """Streams the QR PNG for a staff-viewed card — same permission gate as staff_card_view."""
+    member = get_object_or_404(Member, pk=pk)
+    card = MembershipCard.get_or_create_for(member)
+    verification_url = card_services.build_verification_url(request, card)
+    png_bytes = card_services.generate_qr_png(verification_url)
+    return HttpResponse(png_bytes, content_type="image/png")
