@@ -1,6 +1,13 @@
 from django.contrib import admin
 
+from apps.core.admin_badges import status_badge
+
 from .models import Candidate, Election, Position, Vote
+
+# Version 1.2 "Admin Experience" polish -- display-only colour map,
+# mirrors the .badge-upcoming/.badge-active/.badge-closed classes the
+# public site already uses for the same three Election.status values.
+_ELECTION_STATUS_VARIANT = {"upcoming": "warning", "active": "success", "closed": "neutral"}
 
 
 class CandidateInline(admin.TabularInline):
@@ -52,7 +59,7 @@ class ElectionAdmin(admin.ModelAdmin):
 
     @admin.display(description="Status")
     def status_display(self, obj):
-        return obj.status.capitalize()
+        return status_badge(obj.status.capitalize(), _ELECTION_STATUS_VARIANT.get(obj.status))
 
     @admin.display(description="Positions")
     def contested_positions(self, obj):

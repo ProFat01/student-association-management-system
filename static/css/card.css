@@ -17,6 +17,19 @@
   display: flex;
   justify-content: center;
   padding: var(--space-8) var(--space-4);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* belt-and-suspenders: the card itself never exceeds its parent, but this guarantees no horizontal scroll regardless */
+  box-sizing: border-box;
+}
+
+@media (max-width: 380px) {
+  /* Very narrow phones (e.g. 320-360px wide): claw back a little
+     horizontal room from the page padding rather than the card. */
+  .card-page {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
 }
 
 /* =============================================================
@@ -35,7 +48,8 @@
   --id-slate: #5f6d66;
 
   width: 100%;
-  max-width: 480px;
+  max-width: 420px;
+  min-width: 0; /* let it shrink below its content's natural size instead of overflowing on very narrow screens */
   /* CR80 card ratio (85.60mm x 53.98mm) preserved at every screen size;
      the print stylesheet below locks this to the true physical mm. */
   aspect-ratio: 85.6 / 53.98;
@@ -47,10 +61,10 @@
 
   background: var(--id-cream);
   border: 1px solid var(--id-gray);
-  border-radius: 14px;
+  border-radius: 16px;
   box-shadow:
-    0 20px 45px -16px rgba(15, 93, 62, 0.38),
-    0 3px 10px rgba(15, 23, 20, 0.08);
+    0 22px 48px -18px rgba(15, 93, 62, 0.4),
+    0 4px 12px rgba(15, 23, 20, 0.09);
 
   font-family: var(--font-body);
   color: var(--id-ink);
@@ -125,6 +139,10 @@
   flex: 0 0 auto;
   width: 27%;
   max-width: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
 }
 
 .id-card-photo,
@@ -147,6 +165,33 @@
   font-weight: 700;
   font-size: clamp(1.1rem, 4.6vw, 1.7rem);
   color: var(--id-green);
+}
+
+/* --- Signature area: a blank rule for the holder/registrar to sign
+   by hand on the printed card, same as a physical university ID —
+   purely decorative, no member data involved. --- */
+
+.id-card-signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.id-card-signature-line {
+  display: block;
+  width: 100%;
+  border-top: 1px dotted var(--id-slate);
+}
+
+.id-card-signature-label {
+  margin-top: 2px;
+  font-size: clamp(0.36rem, 1.4vw, 0.48rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--id-slate);
+  text-align: center;
 }
 
 .id-card-info {
@@ -269,11 +314,47 @@
    ============================================================= */
 
 .card-actions {
-  max-width: 480px;
+  max-width: 420px;
   margin: var(--space-4) auto 0;
   display: flex;
   gap: var(--space-2);
   justify-content: center;
+  flex-wrap: wrap; /* two buttons side by side on desktop, stacked-safe on very narrow phones */
+}
+
+/* --- Mobile print-tip dialog (Task 2) --- */
+
+.card-print-dialog {
+  width: min(90vw, 360px);
+  padding: var(--space-6);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-print-dialog::backdrop {
+  background: rgba(15, 23, 20, 0.55);
+}
+
+.card-print-dialog-title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+
+.card-print-dialog-body {
+  margin: 0 0 var(--space-4);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.card-print-dialog-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 /* =============================================================
@@ -310,29 +391,43 @@
    ============================================================= */
 
 @media print {
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+
   .site-header,
   .site-footer,
   .card-actions,
+  .alert,
   .no-print {
     display: none !important;
   }
 
+  body {
+    background: #fff;
+  }
+
   .card-page {
+    display: block;
     padding: 0;
+    overflow: visible;
   }
 
   .id-card {
     width: 85.6mm;
     height: 53.98mm;
     max-width: none;
+    min-width: 0;
     aspect-ratio: auto;
-    margin: 0;
+    margin: 0 auto; /* centred on the printed page */
     border-radius: 3mm;
     border-color: #ccc;
     box-shadow: none;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     break-inside: avoid;
+    page-break-inside: avoid; /* legacy alias for print engines that predate break-inside */
   }
 
   .id-card-header { padding: 2.2mm 3.2mm 1.6mm; gap: 2mm; }
@@ -342,10 +437,11 @@
   .id-card-divider { height: 0.6mm; }
 
   .id-card-body { padding: 2.4mm 3.2mm; gap: 2.6mm; }
-  .id-card-photo-frame { max-width: 17mm; }
+  .id-card-photo-frame { max-width: 17mm; gap: 1mm; }
   .id-card-name { font-size: 3mm; }
   .id-card-badge { font-size: 1.9mm; padding: 0.4mm 2mm; margin-bottom: 1mm; }
   .id-card-facts { font-size: 2mm; column-gap: 1.5mm; }
+  .id-card-signature-label { font-size: 1.5mm; }
 
   .id-card-footer { padding: 1.6mm 3.2mm 2.2mm; }
   .id-card-footer-label,

@@ -698,3 +698,76 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 }
 .nav-links .nav-logout-btn:hover,
 .nav-links .nav-logout-btn:focus-visible { background: var(--civic-green-deep); }
+
+/* =============================================================
+   Version 1.2 "Admin Experience" polish -- dashboard hub additions.
+   Purely additive: .summary-stat itself is untouched, these are new
+   optional child/sibling classes so existing usages of .summary-stat
+   elsewhere (that don't opt in to them) render exactly as before.
+   ============================================================= */
+.summary-stat-icon { font-size: 1.2rem; margin-bottom: var(--space-1); line-height: 1; }
+.summary-stat-desc { font-size: 0.78rem; color: var(--slate); margin-top: var(--space-1); }
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1.05rem;
+}
+.section-heading .section-heading-icon { font-size: 1.1em; line-height: 1; }
+
+/* --- Quick Actions panel --- */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-2) 0 var(--space-8);
+}
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  text-decoration: none !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+}
+.quick-action-card:hover, .quick-action-card:focus-visible {
+  border-color: var(--civic-green);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.quick-action-card .quick-action-icon {
+  flex: none;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--civic-green-tint);
+  border-radius: var(--radius-sm);
+  font-size: 1.15rem;
+}
+.quick-action-card .quick-action-label { font-weight: 600; font-size: 0.92rem; }
+
+/* --- Empty states --- */
+.empty-state {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--surface);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  color: var(--slate);
+  margin-bottom: var(--space-6);
+}
+.empty-state .empty-state-icon { font-size: 2.2rem; margin-bottom: var(--space-2); opacity: 0.6; }
+.empty-state p { margin: 0 0 var(--space-3); }
+
+/* --- Table: sticky header + striped rows (Section 5) ---
+   Additive rules on the existing .data-table selector -- every
+   template that already uses this class picks these up automatically. */
+table.data-table thead th { position: sticky; top: 0; z-index: 1; }
+table.data-table tbody tr:nth-child(odd) { background: var(--paper); }
+table.data-table tbody tr:nth-child(even) { background: var(--surface); }
+table.data-table tbody tr:hover { background: var(--civic-green-tint); }

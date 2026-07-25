@@ -33,6 +33,10 @@
         {% else %}
           <div class="id-card-photo id-card-photo-placeholder" aria-hidden="true">{{ member.full_name|first|upper }}</div>
         {% endif %}
+        <div class="id-card-signature" aria-hidden="true">
+          <span class="id-card-signature-line"></span>
+          <span class="id-card-signature-label">Signature</span>
+        </div>
       </div>
 
       <div class="id-card-info">
@@ -79,10 +83,24 @@
 </div>
 
 <div class="card-actions no-print">
-  <button type="button" class="btn" onclick="window.print()">Print / Save as PDF</button>
+  <button type="button" class="btn" id="print-card-btn">Print / Save as PDF</button>
   {% if not is_staff_view %}
     <a href="{% url 'members:portal_dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
   {% endif %}
 </div>
+
+<dialog id="mobile-print-dialog" class="no-print card-print-dialog">
+  <p class="card-print-dialog-title">Best results on mobile</p>
+  <p class="card-print-dialog-body">
+    Open this page in Chrome and use <strong>Share &rarr; Print &rarr; Save as PDF</strong> for a cleaner result
+    than the in-page print button on some phones.
+  </p>
+  <div class="card-print-dialog-actions">
+    <button type="button" class="btn btn-outline" id="mobile-print-dismiss">Got it</button>
+    <button type="button" class="btn" id="mobile-print-anyway">Print Anyway</button>
+  </div>
+</dialog>
 </div>
 {% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/card.js' %}" defer></script>{% endblock %}

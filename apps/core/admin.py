@@ -2,6 +2,14 @@ from django.contrib import admin
 
 from .models import Association, ContactMessage, SequenceCounter, SiteSettings
 
+# Version 1.2 "Admin Experience" polish -- cosmetic labelling only via
+# the AdminSite's own documented attributes, not a template override, so
+# the stock admin/base_site.html (including its login-page colour-theme
+# toggle) is left completely untouched.
+admin.site.site_header = "SAMS Administration"
+admin.site.site_title = "SAMS Admin"
+admin.site.index_title = "Dashboard"
+
 
 class SiteSettingsInline(admin.StackedInline):
     model = SiteSettings
