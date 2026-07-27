@@ -18,7 +18,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 from .models import Member, RegistrationApplication
-from .utils import generate_membership_id
 
 
 @receiver(pre_save, sender=RegistrationApplication)
@@ -53,10 +52,13 @@ def _sync_member_on_review(sender, instance, created, **kwargs):
 
     if instance.status == RegistrationApplication.Status.APPROVED:
         member.approval_status = Member.ApprovalStatus.APPROVED
-        member.voting_status = True
-        if not member.membership_id:
-            member.membership_id = generate_membership_id(member.association)
-        member.save(update_fields=["approval_status", "voting_status", "membership_id"])
+        # membership_id and voting_status are no longer set here — as of
+        # v1.2.1, Member.save() itself guarantees both whenever
+        # approval_status is Approved (see models.py), so this signal
+        # only needs to make the transition; the invariant is enforced
+        # in exactly one place regardless of which path approved the
+        # member.
+        member.save(update_fields=["approval_status"])
         instance.clear_receipt()  # PART 6: receipt is no longer needed once a decision exists
 
     elif instance.status == RegistrationApplication.Status.REJECTED:

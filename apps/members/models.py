@@ -21,7 +21,7 @@ from django.utils import timezone
 
 from apps.core.models import Association
 
-from .utils import generate_application_number
+from .utils import generate_application_number, generate_membership_id
 from .validators import nin_validator, phone_number_validator, validate_image_size
 
 
@@ -117,6 +117,76 @@ class Member(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.membership_id or 'unapproved'})"
+
+    def save(self, *args, **kwargs):
+        """
+        v1.2.1 bug fix (root cause, not a patch): "Approved" is a promise
+        this model makes about itself — a membership_id, and voting
+        eligibility. Before this fix, that promise was only kept as a
+        *side effect* of members/signals.py reacting to a
+        RegistrationApplication transitioning to Approved. Any other way
+        approval_status could become "approved" (directly editing a
+        Member in the admin — approval_status was never made read-only
+        there — a future API, a script, a data fix) silently produced an
+        Approved member with no membership_id and voting_status still
+        False, because nothing was watching THIS model.
+
+        Fixing it here instead means the invariant holds no matter which
+        door someone comes through, and is self-healing: any save of an
+        Approved member (including one that pre-dates this fix, sitting
+        in production right now with a missing membership_id) repairs
+        itself the moment it's next saved — no migration, no manual SQL.
+
+        membership_id: healed unconditionally whenever it's missing on
+        an Approved member. There's no legitimate reason for that
+        combination to ever exist, so it's always safe to fix.
+
+        voting_status: healed to True whenever it's False on an Approved
+        member — EXCEPT when this specific save is a targeted
+        voting_status-only write that does NOT also touch
+        approval_status (`update_fields` contains "voting_status" but
+        not "approval_status"). That one case is deliberate voting
+        *suspension* of an otherwise-fine member — a real, pre-existing,
+        tested feature (see
+        elections/tests/test_voting_access.py::test_member_with_voting_status_revoked_rejected,
+        "PART 4's 'Not suspended'") — and auto-healing must not silently
+        overwrite an admin's intentional decision. Every other save
+        (a fresh approval, a full form save, a script) still self-heals.
+
+        Idempotent by construction: membership_id is only ever generated
+        when missing, so re-saving an already-consistent Approved member
+        is a no-op here, and uniqueness is guaranteed by the same
+        select_for_update-guarded SequenceCounter every membership_id has
+        always gone through (see core/utils.py:get_next_sequence) —
+        concurrent approvals still serialise to distinct numbers, never
+        a collision.
+        """
+        healed_fields = []
+        update_fields = kwargs.get("update_fields")
+
+        if self.approval_status == self.ApprovalStatus.APPROVED:
+            if not self.membership_id:
+                self.membership_id = generate_membership_id(self.association)
+                healed_fields.append("membership_id")
+
+            is_targeted_suspension_edit = (
+                update_fields is not None
+                and "voting_status" in update_fields
+                and "approval_status" not in update_fields
+            )
+            if not self.voting_status and not is_targeted_suspension_edit:
+                self.voting_status = True
+                healed_fields.append("voting_status")
+
+        # A caller may have restricted the write with update_fields (as
+        # members/signals.py does) — if healing touched a field that
+        # wasn't already in that list, it has to be added, or the healed
+        # value would stay correct only in memory and never reach the
+        # database.
+        if healed_fields and update_fields is not None:
+            kwargs["update_fields"] = set(update_fields) | set(healed_fields)
+
+        super().save(*args, **kwargs)
 
     def convert_to_alumni(self, graduation_year=None, converted_by=None, **extra_fields):
         """
