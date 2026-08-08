@@ -3,6 +3,18 @@ from .base import BASE_DIR, env
 
 DEBUG = False
 
+# base.py's SECRET_KEY falls back to a fixed, publicly-known
+# "django-insecure-..." string when the environment variable isn't set —
+# a sane default for a throwaway local dev run, but a real security hole
+# in production: `manage.py check --deploy` does not flag it, so a
+# deploy with a forgotten SECRET_KEY env var would silently start up and
+# serve real traffic while signing sessions/CSRF tokens/password-reset
+# tokens with a secret anyone can read in this file's history. Require
+# it explicitly here instead — a missing SECRET_KEY must fail loudly at
+# startup, not fall back to something insecure. Found during this
+# project's own production audit.
+SECRET_KEY = env("SECRET_KEY")
+
 ALLOWED_HOSTS = [
     "msaweb.pythonanywhere.com",
     "127.0.0.1",

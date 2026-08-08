@@ -35,8 +35,12 @@ class MemberRegistrationForm(forms.ModelForm):
             "phone_number",
             "nin_number",
             "date_of_birth",
+            "email",
             "institution",
             "course",
+            "faculty",
+            "department",
+            "level",
             "category",
             "passport_photo",
         ]
@@ -48,9 +52,12 @@ class MemberRegistrationForm(forms.ModelForm):
     # Member fields, exactly matching the PART 1 field order — Django
     # would otherwise put class-declared fields like receipt_image
     # *before* the Meta-derived ones.
+    # v1.1: email added after date_of_birth (personal info step);
+    # faculty/department/level added inside the academic step.
     field_order = [
-        "full_name", "phone_number", "nin_number", "date_of_birth",
-        "institution", "course", "category", "passport_photo", "receipt_image",
+        "full_name", "phone_number", "nin_number", "date_of_birth", "email",
+        "institution", "course", "faculty", "department", "level",
+        "category", "passport_photo", "receipt_image",
     ]
 
     def validate_unique(self):

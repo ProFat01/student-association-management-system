@@ -1,18 +1,24 @@
-__pycache__/
-*.py[cod]
-*.sqlite3
-*.sqlite3-journal
-*.sqlite3-wal
-*.sqlite3-shm
+# Secrets — .env.example is the template; the real .env must never be committed.
 .env
-/staticfiles/
-/media/**
-!/media/.gitkeep
-.venv/
+
+# Python
+__pycache__/
+*.pyc
 venv/
-*.log
+.venv/
+*.egg-info/
+
+# Django
+db.sqlite3
+db.sqlite3-*
+/staticfiles/
+/media/
 /logs/
+
+# Backups produced by apps.core's backup management command
 /backups/
-.DS_Store
+
+# Editors / OS
 .vscode/
 .idea/
+.DS_Store

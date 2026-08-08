@@ -21,6 +21,7 @@ from django.db import models
 from django.utils import timezone
 
 from apps.core.models import Association
+from apps.members.models import Member
 
 
 class Position(models.Model):
@@ -59,11 +60,79 @@ class Position(models.Model):
 
 
 class Election(models.Model):
+    class Scope(models.TextChoices):
+        """
+        What level of the organisation this election is held at. This is
+        primarily a UX hint — it drives which eligibility filters the
+        admin form shows (see apps/elections/admin.py) and is what the
+        validation rules below key off — but the filters themselves
+        (below) are what the eligibility engine actually evaluates.
+        "Level Representative" and "Female Representative" style
+        elections are expressed as Scope.CUSTOM with just the relevant
+        filter(s) set, rather than as their own scope values, so adding
+        a new kind of representative election never requires a schema
+        change — only a different combination of the filters below.
+        """
+
+        NATIONAL = "national", "National"
+        INSTITUTION = "institution", "Institution"
+        FACULTY = "faculty", "Faculty"
+        DEPARTMENT = "department", "Department"
+        CUSTOM = "custom", "Custom"
+
     association = models.ForeignKey(
         Association, on_delete=models.PROTECT, related_name="elections"
     )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+
+    # --- Version 2.0: Election Eligibility Engine ------------------------
+    # Every field below is nullable/blank with a backward-compatible
+    # default, and an unset filter is simply never applied (see
+    # apps/elections/eligibility.py) — so every election that existed
+    # before this version automatically keeps behaving exactly as it did:
+    # scope defaults to National, approved_members_only defaults to True,
+    # and every other filter defaults to "not set" = "no restriction".
+    # This is a UI/validation aid; eligibility.py is the actual source of
+    # truth and does not care what scope was chosen, only which filters
+    # are non-blank.
+    scope = models.CharField(
+        max_length=20,
+        choices=Scope.choices,
+        default=Scope.NATIONAL,
+        help_text="Determines which eligibility filters apply. Existing elections default to National.",
+    )
+    eligibility_institution = models.CharField(
+        max_length=255, blank=True, verbose_name="Institution",
+        help_text="Only members of this institution are eligible. Leave blank for no institution restriction.",
+    )
+    eligibility_faculty = models.CharField(
+        max_length=255, blank=True, verbose_name="Faculty",
+        help_text="Requires Institution to also be set.",
+    )
+    eligibility_department = models.CharField(
+        max_length=255, blank=True, verbose_name="Department",
+        help_text="Requires Faculty to also be set.",
+    )
+    eligibility_level = models.CharField(
+        max_length=20, blank=True, verbose_name="Level",
+        help_text="e.g. '100', 'ND1', 'Year 3' — matched against Member.level.",
+    )
+    eligibility_gender = models.CharField(
+        max_length=10, choices=Member.Gender.choices, blank=True, verbose_name="Gender",
+    )
+    # Reuses Member.Category (Undergraduate / Graduate-Alumni) rather than
+    # introducing a second, duplicate "membership category" concept — see
+    # PROJECT BACKGROUND: "If this field already exists, reuse it."
+    eligibility_membership_category = models.CharField(
+        max_length=20, choices=Member.Category.choices, blank=True, verbose_name="Membership Category",
+        help_text="Applies even for National elections (e.g. 'Undergraduate only').",
+    )
+    approved_members_only = models.BooleanField(
+        default=True,
+        verbose_name="Approved members only",
+        help_text="When on (default), only members who are Approved and currently eligible to vote are considered.",
+    )
     # The explicit "contains multiple positions" relationship: defines the
     # ballot structure (which offices are being contested) independently
     # of candidates being nominated yet. Candidate.clean() below requires
@@ -120,6 +189,19 @@ class Election(models.Model):
         if self.start_datetime and self.end_datetime and self.end_datetime <= self.start_datetime:
             raise ValidationError({"end_datetime": "End time must be after the start time."})
 
+        # Eligibility filter validation. National elections ignore every
+        # location filter (see eligibility.py), so there is nothing to
+        # validate for them even if stray values are present.
+        if self.scope != self.Scope.NATIONAL:
+            if self.eligibility_department and not self.eligibility_faculty:
+                raise ValidationError(
+                    {"eligibility_faculty": "Faculty is required when Department is set."}
+                )
+            if self.eligibility_faculty and not self.eligibility_institution:
+                raise ValidationError(
+                    {"eligibility_institution": "Institution is required when Faculty is set."}
+                )
+
     # --- Status: computed on every access, never stored. ---------------
     # Storing a "status" column that has to be kept in sync with the clock
     # is exactly the kind of staleness this project avoids elsewhere (see
@@ -165,19 +247,54 @@ class Election(models.Model):
     def has_member_voted(self, member) -> bool:
         return self.votes.filter(member=member).exists()
 
+    def eligible_members(self):
+        """
+        QuerySet of every Member eligible to vote in this election, per
+        the Election Eligibility Engine (apps/elections/eligibility.py).
+        The engine — not this method — is the single source of truth;
+        this is just the convenient access point every other module
+        (voting views, analytics, admin) should call through.
+        """
+        from .eligibility import eligible_members as _eligible_members
+
+        return _eligible_members(self)
+
+    def is_member_eligible(self, member) -> bool:
+        """Whether `member` may vote in this specific election. See eligibility.py."""
+        from .eligibility import is_member_eligible as _is_member_eligible
+
+        return _is_member_eligible(member, self)
+
     def eligible_voters_count(self) -> int:
-        """Members of this election's association currently flagged eligible to vote."""
-        return self.association.members.filter(voting_status=True).count()
+        """
+        Count of members currently eligible to vote in this election.
+        Pre-2.0 this only ever meant "voting_status=True members of the
+        association" (equivalent to a National election with default
+        filters) — eligible_members() reduces to exactly that query when
+        no eligibility filters are set, so every existing election keeps
+        the same count it always had.
+        """
+        return self.eligible_members().count()
 
     def voters_count(self) -> int:
         """Distinct members who have cast at least one vote — i.e. ballots submitted, not Vote rows."""
         return self.votes.values("member_id").distinct().count()
 
-    def turnout_percentage(self) -> float:
-        eligible = self.eligible_voters_count()
+    def turnout_percentage(self, eligible=None, voters=None) -> float:
+        """
+        `eligible`/`voters` let a caller that has already computed
+        eligible_voters_count()/voters_count() (e.g. to display them
+        separately alongside turnout, as every dashboard in this project
+        does) pass those numbers straight through instead of this method
+        silently re-running both queries. Purely an optimization — with
+        no arguments this computes both itself exactly as before, so
+        every existing caller keeps working unchanged.
+        """
+        eligible = self.eligible_voters_count() if eligible is None else eligible
         if not eligible:
             return 0.0
-        return round(self.voters_count() / eligible * 100, 1)
+        voters = self.voters_count() if voters is None else voters
+        return round(voters / eligible * 100, 1)
 
     def results_by_position(self):
         """
@@ -303,6 +420,14 @@ class Vote(models.Model):
             raise ValidationError({"member": "This member is not currently eligible to vote."})
         if self.election_id and not self.election.is_voting_open:
             raise ValidationError({"election": "Voting is not currently open for this election."})
+        # Election Eligibility Engine (v2.0): re-checked here, at the
+        # model layer, on top of the view-level check in
+        # elections/views.py — this is the check that still holds even
+        # if a vote is ever created through some path other than the
+        # ballot view (an admin action, a future API, a script), so
+        # eligibility can never be bypassed by skipping the view.
+        if self.member_id and self.election_id and not self.election.is_member_eligible(self.member):
+            raise ValidationError({"member": "This member is not eligible to vote in this election."})
 
     def save(self, *args, **kwargs):
         self._assign_position()

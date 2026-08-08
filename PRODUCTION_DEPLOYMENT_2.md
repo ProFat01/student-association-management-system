@@ -41,7 +41,41 @@ wired up in both settings files (it wasn't before the audit; this was the
 
 ---
 
-## Backup and restore procedure
+## Communication Center: synchronous bulk-send limit
+
+`send_announcement()` (`apps/accounts/notifications.py`) sends the whole
+recipient batch inline, in the same request that submitted the compose
+form — one open SMTP connection reused for every message, but still one
+HTTP request per announcement. Verified during the v2.0 load-testing
+pass: Django/DB overhead alone is ~0.36ms per recipient, but that's with
+the local in-memory email backend — real SMTP round-trips (even pooled
+over one connection) are what actually dominate, typically far more
+than that per message on a free/shared SMTP relay. At a few hundred
+recipients this is unnoticeable; **at thousands of recipients with real
+SMTP, expect the request to run long enough to hit a typical web-server
+or reverse-proxy timeout before the loop finishes.**
+
+Worth knowing if that happens: `announcement.sent_count`,
+`.failed_count`, and `.status` are only written **after** the full loop
+completes (`send_announcement`'s final `.save(...)`). If the request is
+killed mid-send, none of that gets persisted — the Announcement row is
+left showing its initial state even though some emails already went
+out through the SMTP connection that was open at the time. There's
+currently no way to recover how many actually sent in that case.
+
+This is a known, accepted tradeoff, not a bug: background sending
+(Celery/Redis) was explicitly out of scope for this project and isn't
+something this validation pass adds — that would be a genuine
+architecture change, not a fix. Two practical mitigations that don't
+require a new dependency, if this is ever hit in practice:
+- Send to smaller recipient groups (e.g. per-faculty rather than
+  "All Members") when the association's total membership climbs into
+  the thousands.
+- Increase the web server / reverse-proxy request timeout for the
+  `communication_compose_view` POST path specifically, if your
+  PythonAnywhere plan allows it.
+
+
 
 ### Taking a backup
 
@@ -184,3 +218,20 @@ python manage.py collectstatic --noinput
 | `apps/core/management/commands/backup_db.py` | New — the entire backup mechanism |
 | `apps/core/tests/test_backup_command.py` | 6 new tests for backup_db |
 | `deploy/pythonanywhere_wsgi.py` | New WSGI configuration file |
+
+## v2.0 Final Validation Phase — what changed
+
+Load-tested at 500 / 1,000 / 5,000 / 10,000 members, plus a full
+security/UI/documentation review. Full findings in the engineering
+report delivered alongside this pass. Code/doc changes:
+
+| File | What changed |
+|---|---|
+| `apps/members/models.py` | New `(association, registration_date)` index — backs the Registration Growth dashboard's GROUP BY, which was doing a full unindexed scan+sort at scale |
+| `apps/members/migrations/0005_*.py` | Migration for the index above |
+| `apps/members/services.py` | `member_filter_choices()` now cached 5 minutes per association — was 3 unindexed `DISTINCT` scans on every single staff member-list page view (~37ms of ~130ms at 10,000 members) |
+| `apps/members/tests/test_staff_list.py` | 3 new tests locking in the cache's correctness and per-association isolation |
+| `apps/accounts/notifications.py` | Fixed a dangling doc reference to a "Known limitation" write-up that didn't actually exist anywhere — now points at this file |
+| `.env.example` | Removed a duplicated header line |
+| `PRODUCTION_DEPLOYMENT.md` | Corrected stale "158 tests" to the current 328; documented that `SECRET_KEY` is now enforced in code, not just checklist-recommended |
+| `PRODUCTION_DEPLOYMENT_2.md` | This section, plus the new Communication Center limitation section above |

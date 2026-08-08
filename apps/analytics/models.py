@@ -20,6 +20,117 @@ from apps.core.models import Association
 from apps.elections.models import Candidate, Election
 
 
+class PageVisit(models.Model):
+    """
+    v2.1 — Visitor & Usage Analytics (see VISITOR_ANALYTICS.md for the
+    full design writeup). One compact row per meaningful public page
+    view — a single INSERT per tracked request, nothing more.
+
+    Deliberately NOT a raw-IP / raw-request log:
+      - `visitor_hash` is a one-way HMAC-SHA256 of (IP, User-Agent,
+        association, calendar day) using a server-side secret
+        (settings.SECRET_KEY, or VISITOR_HASH_SALT if set) — never the
+        raw IP. The calendar day is baked into the hash itself (not a
+        separate stored field) specifically so the same visitor gets a
+        *different* hash on different days: this is what makes
+        "unique visitors" a privacy-preserving approximation rather
+        than a persistent cross-day tracking ID (see
+        apps.analytics.tracking.hash_visitor). A consequence is that
+        weekly/monthly "unique visitors" are really "unique
+        visitor-days" summed across the range — documented in the
+        dashboard and in VISITOR_ANALYTICS.md, not hidden.
+      - `path` stores Django's resolved URL name ("core:home",        "elections:election_detail", ...), never the raw querystring
+        or POST body, so dynamic paths like /elections/3/ and
+        /elections/7/ aggregate under one "Elections" row instead of
+        fragmenting "most visited pages" by primary key.
+      - device/browser/referrer are broad categories, not full
+        User-Agent/Referer strings — no fingerprint-grade detail is
+        retained.
+
+    `visit_date` is a plain DateField (not derived from `visited_at` at
+    query time) purely so every dashboard/retention query can filter on
+    an indexed field directly instead of a __date lookup on a
+    DateTimeField, which SQLite cannot use an index for.
+    """
+
+    class VisitorType(models.TextChoices):
+        ANONYMOUS = "anonymous", "Anonymous"
+        MEMBER = "member", "Authenticated Member"
+
+    class DeviceCategory(models.TextChoices):
+        MOBILE = "mobile", "Mobile"
+        DESKTOP = "desktop", "Desktop"
+        TABLET = "tablet", "Tablet"
+        UNKNOWN = "unknown", "Unknown"
+
+    class BrowserCategory(models.TextChoices):
+        CHROME = "chrome", "Chrome"
+        FIREFOX = "firefox", "Firefox"
+        EDGE = "edge", "Edge"
+        SAFARI = "safari", "Safari"
+        OTHER = "other", "Other"
+
+    class ReferrerCategory(models.TextChoices):
+        DIRECT = "direct", "Direct"
+        SEARCH = "search", "Search Engine"
+        SOCIAL = "social", "Social Media"
+        OTHER_WEBSITE = "other_website", "Other Website"
+        UNKNOWN = "unknown", "Unknown"
+
+    association = models.ForeignKey(
+        Association, on_delete=models.CASCADE, related_name="page_visits", null=True, blank=True,
+        help_text="Null if no association is configured yet at request time.",
+    )
+    visit_date = models.DateField(help_text="Calendar date of the visit, for indexed date-range filtering.")
+    visited_at = models.DateTimeField(auto_now_add=True)
+    page_key = models.CharField(
+        max_length=100,
+        help_text="Resolved URL name (e.g. 'core:home', 'elections:election_detail'), not the raw path.",
+    )
+    path = models.CharField(max_length=255, help_text="Raw request path, for reference only.")
+    visitor_hash = models.CharField(
+        max_length=64, help_text="One-way HMAC of IP+User-Agent+day. Never the raw IP.",
+    )
+    visitor_type = models.CharField(max_length=10, choices=VisitorType.choices, default=VisitorType.ANONYMOUS)
+    device_category = models.CharField(max_length=10, choices=DeviceCategory.choices, default=DeviceCategory.UNKNOWN)
+    browser_category = models.CharField(max_length=10, choices=BrowserCategory.choices, default=BrowserCategory.OTHER)
+    referrer_category = models.CharField(
+        max_length=15, choices=ReferrerCategory.choices, default=ReferrerCategory.UNKNOWN
+    )
+
+    class Meta:
+        indexes = [
+            # Retention cleanup: no association filter, all rows by age.
+            models.Index(fields=["visit_date"], name="pv_visit_date_idx"),
+            # Every dashboard query filters (association, visit_date range)
+            # together (see querysets.page_visits_for_range) — this is the
+            # composite that actually gets chosen by the query planner over
+            # the FK's own single-column index; verified with EXPLAIN QUERY
+            # PLAN at 10k rows, see VISITOR_ANALYTICS.md "Performance".
+            models.Index(fields=["association", "visit_date"], name="pv_assoc_date_idx"),
+            # "Most visited pages" for a date range.
+            models.Index(fields=["association", "visit_date", "page_key"], name="pv_assoc_date_page_idx"),
+            # Device / browser / referrer breakdowns for a date range.
+            models.Index(
+                fields=["association", "visit_date", "device_category"], name="pv_assoc_date_device_idx"
+            ),
+            models.Index(
+                fields=["association", "visit_date", "browser_category"], name="pv_assoc_date_browser_idx"
+            ),
+            models.Index(
+                fields=["association", "visit_date", "referrer_category"], name="pv_assoc_date_referrer_idx"
+            ),
+        ]
+        permissions = [
+            ("view_visitor_analytics", "Can view the visitor analytics dashboard"),
+        ]
+        verbose_name = "Page Visit"
+        verbose_name_plural = "Page Visits"
+
+    def __str__(self):
+        return f"{self.page_key} @ {self.visit_date}"
+
+
 class MembershipSnapshot(models.Model):
     association = models.ForeignKey(
         Association, on_delete=models.CASCADE, related_name="membership_snapshots"

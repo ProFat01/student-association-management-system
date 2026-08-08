@@ -61,6 +61,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # v2.1: needs request.session (member portal) and request.user
+    # (staff exclusion) already populated, hence placed after both
+    # Session and Authentication middleware. See apps/analytics/
+    # middleware.py for what it does and doesn't track.
+    "apps.analytics.middleware.VisitorTrackingMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Django 6.0 built-in CSP support. Left inert (no SECURE_CSP defined)
@@ -149,6 +154,23 @@ MAX_UPLOAD_SIZE_MB = 5
 # Slug of the association new admin commands / fixtures default to when one
 # isn't explicitly specified (set up via the admin once MSA is created).
 DEFAULT_ASSOCIATION_SLUG = env("DEFAULT_ASSOCIATION_SLUG", default="msa")
+
+# ---------------------------------------------------------------------------
+# v2.1 Visitor & Usage Analytics
+# ---------------------------------------------------------------------------
+# How many days of raw PageVisit rows to keep — enforced by the
+# `cleanup_visitor_analytics` management command, not automatically (see
+# VISITOR_ANALYTICS.md "Retention" for why no scheduled job is wired up
+# on PythonAnywhere Free). 90 days is enough for month-over-month trend
+# comparison without the table growing unbounded.
+VISITOR_ANALYTICS_RETENTION_DAYS = env.int("VISITOR_ANALYTICS_RETENTION_DAYS", default=90)
+
+# Dedicated secret for the visitor-hash HMAC (apps.analytics.tracking.
+# hash_visitor), independent of SECRET_KEY so it can be rotated on its
+# own without also invalidating sessions/CSRF tokens/password-reset
+# links. Optional: falls back to SECRET_KEY if unset, since either way
+# the value never leaves the server and is only ever used one-way.
+VISITOR_HASH_SALT = env("VISITOR_HASH_SALT", default="")
 
 # ---------------------------------------------------------------------------
 # Logging

@@ -115,12 +115,17 @@ in a clean venv.
 Items marked **[BLOCKER]** will cause an immediate outage or data loss.
 
 ### Code
-- [ ] **[BLOCKER]** `python manage.py test` passes all 158 tests
+- [ ] **[BLOCKER]** `python manage.py test` passes all 328 tests
 - [ ] **[BLOCKER]** `python manage.py check --deploy` (with real `SECRET_KEY`) returns 0 issues
 - [ ] `python manage.py makemigrations --check --dry-run` shows "No changes detected"
 
 ### Secrets and env vars
-- [ ] **[BLOCKER]** `SECRET_KEY` ≥ 50 chars from `python -c "import secrets; print(secrets.token_urlsafe(50))"`
+- [ ] **[BLOCKER]** `SECRET_KEY` ≥ 50 chars from `python -c "import secrets; print(secrets.token_urlsafe(50))"` —
+  `config/settings/production.py` requires this env var outright (`env("SECRET_KEY")`,
+  no fallback) since the v2.0 production audit, so a genuinely missing
+  `SECRET_KEY` now fails startup with `ImproperlyConfigured` instead of silently
+  running on `base.py`'s dev-only insecure default. This checklist item still
+  matters — a *present but weak* key isn't caught by that guard.
 - [ ] **[BLOCKER]** `ALLOWED_HOSTS=yourusername.pythonanywhere.com`
 - [ ] **[BLOCKER]** `CSRF_TRUSTED_ORIGINS=https://yourusername.pythonanywhere.com` (with `https://`)
 - [ ] `DJANGO_ADMINS=Name:email@example.com` (at least one, or server errors are silent)

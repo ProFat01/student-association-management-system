@@ -85,6 +85,13 @@
           {% if form.date_of_birth.help_text %}<p class="help-text">{{ form.date_of_birth.help_text }}</p>{% endif %}
           {% for error in form.date_of_birth.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
         </div>
+
+        <div class="form-row" data-field="email">
+          <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span class="u-text-muted">(optional)</span></label>
+          {{ form.email }}
+          {% if form.email.help_text %}<p class="help-text">{{ form.email.help_text }}</p>{% endif %}
+          {% for error in form.email.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
       </div>
 
       <div class="wizard-step" data-step="2" aria-labelledby="step-heading-2">
@@ -102,6 +109,27 @@
           {{ form.course }}
           {% if form.course.help_text %}<p class="help-text">{{ form.course.help_text }}</p>{% endif %}
           {% for error in form.course.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-row" data-field="faculty">
+          <label for="{{ form.faculty.id_for_label }}">{{ form.faculty.label }} <span class="u-text-muted">(optional)</span></label>
+          {{ form.faculty }}
+          {% if form.faculty.help_text %}<p class="help-text">{{ form.faculty.help_text }}</p>{% endif %}
+          {% for error in form.faculty.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-row" data-field="department">
+          <label for="{{ form.department.id_for_label }}">{{ form.department.label }} <span class="u-text-muted">(optional)</span></label>
+          {{ form.department }}
+          {% if form.department.help_text %}<p class="help-text">{{ form.department.help_text }}</p>{% endif %}
+          {% for error in form.department.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-row" data-field="level">
+          <label for="{{ form.level.id_for_label }}">{{ form.level.label }} <span class="u-text-muted">(optional)</span></label>
+          {{ form.level }}
+          {% if form.level.help_text %}<p class="help-text">{{ form.level.help_text }}</p>{% endif %}
+          {% for error in form.level.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
         </div>
 
         <div class="form-row" data-field="category">

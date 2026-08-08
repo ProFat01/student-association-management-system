@@ -45,10 +45,10 @@ class PositionAdmin(admin.ModelAdmin):
 @admin.register(Election)
 class ElectionAdmin(admin.ModelAdmin):
     list_display = (
-        "name", "association", "start_datetime", "end_datetime",
-        "status_display", "is_enabled", "contested_positions",
+        "name", "association", "scope_display", "start_datetime", "end_datetime",
+        "status_display", "is_enabled", "eligible_voters_display", "contested_positions",
     )
-    list_filter = ("association", "is_enabled")
+    list_filter = ("association", "is_enabled", "scope")
     search_fields = ("name",)
     date_hierarchy = "start_datetime"
     autocomplete_fields = ("association", "created_by")
@@ -57,9 +57,53 @@ class ElectionAdmin(admin.ModelAdmin):
     inlines = [CandidateInline]
     list_select_related = ("association",)
 
+    # Version 2.0: Election Eligibility Engine. Fields are grouped in
+    # their own "Voter Eligibility" section, kept separate from ballot
+    # structure (positions) and scheduling — and progressively hidden/
+    # shown per-scope in the browser by election_scope_toggle.js (a pure
+    # UI convenience: every filter is still fully validated and enforced
+    # server-side regardless of which fields the browser happens to show,
+    # see Election.clean() and apps/elections/eligibility.py).
+    fieldsets = (
+        (None, {"fields": ("association", "name", "description")}),
+        ("Schedule", {"fields": ("start_datetime", "end_datetime", "is_enabled")}),
+        ("Ballot", {"fields": ("positions",)}),
+        (
+            "Voter Eligibility",
+            {
+                "fields": (
+                    "scope",
+                    "approved_members_only",
+                    "eligibility_institution",
+                    "eligibility_faculty",
+                    "eligibility_department",
+                    "eligibility_level",
+                    "eligibility_gender",
+                    "eligibility_membership_category",
+                ),
+                "description": (
+                    "Who may vote in this election. A blank filter is not applied. "
+                    "National elections ignore every filter except Membership Category."
+                ),
+            },
+        ),
+        ("Record", {"fields": ("created_by", "created_at")}),
+    )
+
+    class Media:
+        js = ("elections/admin/election_scope_toggle.js",)
+
     @admin.display(description="Status")
     def status_display(self, obj):
         return status_badge(obj.status.capitalize(), _ELECTION_STATUS_VARIANT.get(obj.status))
+
+    @admin.display(description="Scope")
+    def scope_display(self, obj):
+        return obj.get_scope_display()
+
+    @admin.display(description="Eligible voters")
+    def eligible_voters_display(self, obj):
+        return obj.eligible_voters_count()
 
     @admin.display(description="Positions")
     def contested_positions(self, obj):

@@ -53,7 +53,7 @@ class MemberAdmin(admin.ModelAdmin):
         "registration_date",
     )
     list_filter = ("association", "approval_status", "category", "alumni_status", "voting_status")
-    search_fields = ("full_name", "phone_number", "nin_number", "membership_id")
+    search_fields = ("full_name", "phone_number", "nin_number", "membership_id", "email")
     readonly_fields = ("membership_id", "registration_date", "voting_status", "card_link")
     autocomplete_fields = ("association", "user")
     date_hierarchy = "registration_date"
@@ -74,7 +74,7 @@ class MemberAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Personal Information",
-            {"fields": ("association", "user", "full_name", "date_of_birth", "gender", "passport_photo")},
+            {"fields": ("association", "user", "full_name", "date_of_birth", "gender", "email", "passport_photo")},
         ),
         ("Identity Verification", {"fields": ("phone_number", "nin_number")}),
         ("Academic Information", {"fields": ("institution", "course", "faculty", "department", "level", "category")}),

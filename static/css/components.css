@@ -674,6 +674,12 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   font-size: 2rem;
   font-weight: 600;
 }
+/* Modifier for use inside a centered ancestor (e.g. .verify-result on
+   the public verification page) where the card itself must stay
+   left-aligned. Kept as a class, not an inline style="", so
+   style-src stays 'self'-only in production (see CSP config in
+   config/settings/production.py). */
+.profile-card--left { text-align: left; }
 .profile-card-body h2 { margin: 0 0 var(--space-1); }
 .profile-status-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 
@@ -771,3 +777,43 @@ table.data-table thead th { position: sticky; top: 0; z-index: 1; }
 table.data-table tbody tr:nth-child(odd) { background: var(--paper); }
 table.data-table tbody tr:nth-child(even) { background: var(--surface); }
 table.data-table tbody tr:hover { background: var(--civic-green-tint); }
+
+/* --- v1.2: filter bar (member-management dashboard, staff members list,
+   Communication Center targeting) — one shared look for every place a
+   Faculty/Department/Level/Gender/Status filter form appears. --- */
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.filter-bar .form-row { margin-bottom: 0; }
+.filter-bar .filter-actions { display: flex; gap: var(--space-2); }
+.filter-chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+
+/* --- v1.2: row-level quick actions (staff Members list) --- */
+.row-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.row-actions .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+.row-action-reserved {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.6rem; font-size: 0.8rem;
+  color: var(--slate); background: var(--surface-soft);
+  border: 1px dashed var(--line); border-radius: var(--radius-sm);
+  cursor: not-allowed; opacity: 0.75;
+}
+
+/* --- v1.2: Communication Center --- */
+.provider-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-6); }
+.provider-card { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--surface); }
+.provider-card.is-disabled { opacity: 0.6; }
+.provider-card .provider-name { font-weight: 600; margin-bottom: var(--space-1); }
+.provider-card .provider-status { font-size: 0.8rem; color: var(--slate); }
+
+/* --- v1.2: simple pagination nav (staff Members list, announcement history) --- */
+.pagination { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
+.pagination a { font-weight: 600; }

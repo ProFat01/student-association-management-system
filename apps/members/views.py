@@ -12,6 +12,7 @@ request.login(). See _get_portal_member below.
 """
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -21,6 +22,7 @@ from apps.core.models import Association
 from . import card_services
 from .forms import MemberRegistrationForm, PortalLoginForm, StatusCheckForm
 from .models import Member, MembershipCard, RegistrationApplication
+from .services import FILTERABLE_MEMBER_FIELDS, filter_members, member_filter_choices
 
 PORTAL_SESSION_KEY = "portal_member_id"
 
@@ -278,3 +280,44 @@ def staff_card_qr_view(request, pk):
     verification_url = card_services.build_verification_url(request, card)
     png_bytes = card_services.generate_qr_png(verification_url)
     return HttpResponse(png_bytes, content_type="image/png")
+
+
+# ---------------------------------------------------------------------------
+# v1.2 Feature 2 & 3: staff Members list ("Open Members" from the analytics
+# member-management dashboard) + per-row quick actions.
+#
+# Gated on the existing `members.view_member` permission — the same
+# permission that already lets a role see Member in the Django admin — so
+# no new permission was needed for a page that only *views* members.
+# Filtering goes through the exact same apps.members.services.filter_members()
+# call the analytics dashboard uses, via the exact same querystring keys, so
+# "Open Members" always lands on precisely the set that was just counted.
+# ---------------------------------------------------------------------------
+@login_required
+@permission_required("members.view_member", raise_exception=True)
+def staff_member_list_view(request):
+    association = _get_default_association()
+    filters = {field: request.GET.get(field, "") for field in FILTERABLE_MEMBER_FIELDS}
+    active_filters = {key: value for key, value in filters.items() if value}
+
+    if association is None:
+        members_page = None
+        choices = {}
+    else:
+        members_qs = filter_members(association, filters)
+        paginator = Paginator(members_qs, 25)
+        members_page = paginator.get_page(request.GET.get("page"))
+        choices = member_filter_choices(association)
+
+    return render(
+        request,
+        "members/staff_list.html",
+        {
+            "association": association,
+            "members": members_page,
+            "filters": filters,
+            "has_active_filters": bool(active_filters),
+            "filter_choices": choices,
+            "querystring": request.GET.urlencode(),
+        },
+    )

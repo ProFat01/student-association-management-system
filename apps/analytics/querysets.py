@@ -19,6 +19,19 @@ def members_for_association(association):
     return Member.objects.filter(association=association)
 
 
+def page_visits_for_range(association, start_date, end_date):
+    """
+    v2.1: base queryset every visitor-analytics aggregation builds on —
+    always filtered to an indexed [start_date, end_date] range so no
+    caller can accidentally issue an unbounded full-table scan.
+    """
+    from .models import PageVisit
+
+    return PageVisit.objects.filter(
+        association=association, visit_date__gte=start_date, visit_date__lte=end_date
+    )
+
+
 def course_counts(association):
     """[{"course": "Chemistry", "count": 120}, ...] — unordered; services.py applies sort order."""
     return (

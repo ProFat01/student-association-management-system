@@ -21,4 +21,6 @@ urlpatterns = [
     path("verify/<uuid:card_uuid>/", views.verify_member_view, name="verify_member"),
     path("<int:pk>/card/", views.staff_card_view, name="staff_card"),
     path("<int:pk>/card/qr/", views.staff_card_qr_view, name="staff_card_qr"),
+    # v1.2 Feature 2 & 3: staff Members list + quick actions
+    path("staff/list/", views.staff_member_list_view, name="staff_list"),
 ]

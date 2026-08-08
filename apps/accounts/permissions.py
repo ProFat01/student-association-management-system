@@ -54,6 +54,10 @@ ROLE_PERMISSIONS = {
         "analytics.view_membershipsnapshot", "analytics.view_agedistributionsnapshot",
         "analytics.view_electionresultsnapshot", "analytics.change_electionresultsnapshot",
         "analytics.view_analytics_dashboard",
+        # v2.1: Visitor & Usage Analytics
+        "analytics.view_pagevisit", "analytics.view_visitor_analytics",
+        # accounts — v1.2 Communication Center (new capability, Super Admin only)
+        "accounts.view_announcement", "accounts.send_announcement",
     ],
     ROLE_REGISTRATION_ADMIN: [
         "core.view_association", "core.view_sitesettings",
@@ -76,5 +80,7 @@ ROLE_PERMISSIONS = {
         "elections.view_election", "elections.view_vote",
         "analytics.view_membershipsnapshot", "analytics.view_agedistributionsnapshot",
         "analytics.view_electionresultsnapshot", "analytics.view_analytics_dashboard",
+        # v2.1: Visitor & Usage Analytics
+        "analytics.view_pagevisit", "analytics.view_visitor_analytics",
     ],
 }

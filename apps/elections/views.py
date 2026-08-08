@@ -15,8 +15,16 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.db import IntegrityError, transaction
 from django.shortcuts import get_object_or_404, redirect, render
 
+from .eligibility import is_member_eligible
 from .forms import VotingLoginForm, build_ballot_form_class
 from .models import Candidate, Election, Vote
+
+# Election Eligibility Engine (v2.0): the one, generic, never-more-specific
+# message shown to a voter who is authenticated but not eligible for this
+# particular election. Deliberately does not say *why* — see eligibility.py
+# module docstring: internal eligibility rules (institution/faculty/level/
+# gender/etc.) are never exposed to the voter.
+NOT_ELIGIBLE_MESSAGE = "You are not eligible to participate in this election."
 
 VOTING_SESSION_KEY_TEMPLATE = "voting_member_{election_id}"
 
@@ -84,6 +92,15 @@ def voting_login_view(request, pk):
         form = VotingLoginForm(request.POST)
         if form.is_valid():
             member, error_message = form.authenticate()
+            if member is not None and not is_member_eligible(member, election):
+                # Credentials were valid, but the Eligibility Engine says
+                # this member isn't in scope for *this* election (wrong
+                # institution/faculty/department/level/gender/membership
+                # category). Treated as a login failure, same as bad
+                # credentials, so the form stays up and nothing about the
+                # actual rule is revealed.
+                member = None
+                error_message = NOT_ELIGIBLE_MESSAGE
             if member is not None:
                 if election.has_member_voted(member):
                     # Not an error — they're already done. Send them
@@ -120,6 +137,18 @@ def ballot_view(request, pk):
         return render(request, "elections/voting_login.html", {
             "election": election,
             "voting_closed_message": "Voting is not currently open for this election.",
+        })
+
+    # Election Eligibility Engine (v2.0): re-checked here too, not just at
+    # login — belt-and-braces server-side enforcement per "Client-side
+    # checks are never sufficient" / "Eligibility must always be verified
+    # server-side before voting". Session is cleared so a stale session
+    # can't be replayed against the ballot form directly.
+    if not is_member_eligible(member, election):
+        request.session.pop(_voting_session_key(election), None)
+        return render(request, "elections/voting_login.html", {
+            "election": election,
+            "voting_closed_message": NOT_ELIGIBLE_MESSAGE,
         })
     if election.has_member_voted(member):
         return redirect("elections:vote_success", pk=election.pk)
@@ -187,6 +216,8 @@ def vote_success_view(request, pk):
 # ---------------------------------------------------------------------------
 def results_view(request, pk):
     election = get_object_or_404(Election.objects.select_related("association"), pk=pk)
+    voters_count = election.voters_count()
+    eligible_voters_count = election.eligible_voters_count()
     return render(
         request,
         "elections/results.html",
@@ -195,9 +226,11 @@ def results_view(request, pk):
             # Computed fresh on every request — see Election.results_by_position()
             # for why this deliberately doesn't read from a cached snapshot.
             "results": election.results_by_position(),
-            "voters_count": election.voters_count(),
-            "eligible_voters_count": election.eligible_voters_count(),
-            "turnout_percentage": election.turnout_percentage(),
+            "voters_count": voters_count,
+            "eligible_voters_count": eligible_voters_count,
+            # Reuses the two counts already computed above instead of
+            # having turnout_percentage() silently re-run both queries.
+            "turnout_percentage": election.turnout_percentage(eligible=eligible_voters_count, voters=voters_count),
         },
     )
 
@@ -209,14 +242,16 @@ def results_view(request, pk):
 @permission_required("elections.manage_election", raise_exception=True)
 def admin_dashboard_view(request, pk):
     election = get_object_or_404(Election.objects.select_related("association"), pk=pk)
+    voters_count = election.voters_count()
+    eligible_voters_count = election.eligible_voters_count()
     return render(
         request,
         "elections/admin_dashboard.html",
         {
             "election": election,
             "results": election.results_by_position(),
-            "voters_count": election.voters_count(),
-            "eligible_voters_count": election.eligible_voters_count(),
-            "turnout_percentage": election.turnout_percentage(),
+            "voters_count": voters_count,
+            "eligible_voters_count": eligible_voters_count,
+            "turnout_percentage": election.turnout_percentage(eligible=eligible_voters_count, voters=voters_count),
         },
     )

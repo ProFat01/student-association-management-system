@@ -11,8 +11,13 @@ urlpatterns = [
     path("courses/", views.course_dashboard_view, name="course_dashboard"),
     path("institutions/", views.institution_dashboard_view, name="institution_dashboard"),
     path("age/", views.age_dashboard_view, name="age_dashboard"),
+    # v1.2 Feature 1 & 2: filterable member-management dashboard + "Open Members"
+    path("members/", views.member_management_dashboard_view, name="member_management_dashboard"),
     path("elections/", views.election_dashboard_list_view, name="election_dashboard_list"),
     path("elections/<int:pk>/", views.election_dashboard_detail_view, name="election_dashboard_detail"),
+    # v2.1: Visitor & Usage Analytics
+    path("visitors/", views.visitor_analytics_dashboard_view, name="visitor_analytics_dashboard"),
+    path("api/visitors/", views.api_visitor_analytics, name="api_visitor_analytics"),
     # PART 11: JSON API
     path("api/membership/", views.api_membership_statistics, name="api_membership"),
     path("api/courses/", views.api_course_statistics, name="api_courses"),

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from . import services
-from .models import AgeDistributionSnapshot, ElectionResultSnapshot, MembershipSnapshot
+from .models import AgeDistributionSnapshot, ElectionResultSnapshot, MembershipSnapshot, PageVisit
 
 
 class GeneratedSnapshotAdminMixin:
@@ -88,3 +88,26 @@ class ElectionResultSnapshotAdmin(admin.ModelAdmin):
         for election in elections:
             services.generate_election_result_snapshots(election)
         self.message_user(request, f"Refreshed results for {len(elections)} election(s).")
+
+
+@admin.register(PageVisit)
+class PageVisitAdmin(admin.ModelAdmin):
+    """
+    Read-only in the admin — rows are written exclusively by
+    VisitorTrackingMiddleware, and hand-editing/creating a visit record
+    would just corrupt the aggregates. Kept registered purely so staff
+    with the right permission can spot-check raw rows during
+    troubleshooting; day-to-day use is the Visitor Analytics dashboard.
+    """
+
+    list_display = ("visit_date", "page_key", "association", "visitor_type", "device_category", "browser_category", "referrer_category")
+    list_filter = ("visit_date", "visitor_type", "device_category", "browser_category", "referrer_category", "association")
+    date_hierarchy = "visit_date"
+    list_select_related = ("association",)
+    search_fields = ("page_key", "path")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

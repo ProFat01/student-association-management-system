@@ -170,7 +170,12 @@
       <div class="label">Alumni</div>
     </div>
   </div>
-  <p><a href="{% url 'analytics:overview' %}" class="btn">Open Analytics Dashboard</a></p>
+  <p>
+    <a href="{% url 'analytics:overview' %}" class="btn">Open Analytics Dashboard</a>
+    {% if perms.analytics.view_visitor_analytics %}
+      <a href="{% url 'analytics:visitor_analytics_dashboard' %}" class="btn">Visitor Analytics</a>
+    {% endif %}
+  </p>
 </section>
 {% endif %}
 

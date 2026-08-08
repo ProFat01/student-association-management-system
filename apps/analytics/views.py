@@ -10,6 +10,7 @@ render a template or return JsonResponse. Kept deliberately thin so the
 JSON endpoints and the HTML dashboards that show the same numbers can
 never drift apart — both call the exact same service function.
 """
+from datetime import datetime
 from functools import wraps
 
 from django.conf import settings
@@ -21,6 +22,25 @@ from apps.core.models import Association
 from apps.elections.models import Election
 
 from . import services
+
+
+def visitor_analytics_required(view_func):
+    """
+    Same login_required + permission_required(raise_exception=True)
+    combination as analytics_staff_required, but gated on the dedicated
+    `analytics.view_visitor_analytics` permission (PART 11) instead of
+    `view_analytics_dashboard` — visitor traffic data is deliberately a
+    separate grant so it can be handed to a role without also exposing
+    membership/election analytics, and vice versa.
+    """
+
+    @wraps(view_func)
+    @login_required
+    @permission_required("analytics.view_visitor_analytics", raise_exception=True)
+    def wrapped(request, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+
+    return wrapped
 
 
 def analytics_staff_required(view_func):
@@ -131,6 +151,44 @@ def election_dashboard_detail_view(request, pk):
 
 
 # ---------------------------------------------------------------------------
+# v1.2 Feature 1 & 2: member-management filter dashboard + "Open Members"
+# ---------------------------------------------------------------------------
+def _member_filters_from_request(request):
+    from apps.members.services import FILTERABLE_MEMBER_FIELDS
+
+    return {field: request.GET.get(field, "") for field in FILTERABLE_MEMBER_FIELDS}
+
+
+@analytics_staff_required
+def member_management_dashboard_view(request):
+    """
+    Feature 1: filterable management view over Member — Faculty,
+    Department, Level, Gender, Approval Status, independently and
+    combined. Feature 2: the "Open Members" button reuses the exact same
+    querystring on the staff Members list (apps.members.views.
+    staff_member_list_view), which filters through the identical
+    apps.members.services.filter_members() call — so what this page
+    counts is always exactly what that page lists, by construction, not
+    by keeping two implementations in sync by hand.
+    """
+    from apps.members.services import member_filter_choices
+
+    association = _default_association()
+    filters = _member_filters_from_request(request)
+    active_filters = {key: value for key, value in filters.items() if value}
+
+    context = {
+        "association": association,
+        "filters": filters,
+        "querystring": request.GET.urlencode(),
+        "overview": services.member_management_overview(association, filters) if association else None,
+        "filter_choices": member_filter_choices(association) if association else {},
+        "has_active_filters": bool(active_filters),
+    }
+    return render(request, "analytics/member_management_dashboard.html", context)
+
+
+# ---------------------------------------------------------------------------
 # PART 11: JSON API endpoints — clean, chart-library-ready data only.
 # No JS charting is wired up here on purpose; these just return JSON.
 # ---------------------------------------------------------------------------
@@ -205,5 +263,70 @@ def api_election_turnout(request, pk):
             "total_positions": overview["total_positions"],
             "total_candidates": overview["total_candidates"],
             "age_participation": services.age_participation(election),
+        }
+    )
+
+
+# ---------------------------------------------------------------------------
+# v2.1: Visitor & Usage Analytics
+# ---------------------------------------------------------------------------
+def _parse_date(value):
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return None
+
+
+def _visitor_date_range_from_request(request):
+    range_key = request.GET.get("range", "30d")
+    if range_key not in services.DATE_RANGE_CHOICES:
+        range_key = "30d"
+    start = _parse_date(request.GET.get("start"))
+    end = _parse_date(request.GET.get("end"))
+    if range_key == "custom" and not (start and end):
+        # Malformed/missing custom bounds — fall back cleanly rather
+        # than erroring on a hand-edited querystring.
+        range_key = "30d"
+    start_date, end_date = services.resolve_date_range(range_key, start, end)
+    return range_key, start_date, end_date
+
+
+@visitor_analytics_required
+def visitor_analytics_dashboard_view(request):
+    association = _default_association()
+    range_key, start_date, end_date = _visitor_date_range_from_request(request)
+    context = {
+        "association": association,
+        "range_key": range_key,
+        "start_date": start_date,
+        "end_date": end_date,
+        "overview": services.visitor_overview(association),
+        "trend": services.traffic_trend(association, start_date, end_date),
+        "pages": services.top_pages(association, start_date, end_date),
+        "devices": services.device_breakdown(association, start_date, end_date),
+        "browsers": services.browser_breakdown(association, start_date, end_date),
+        "referrers": services.referrer_breakdown(association, start_date, end_date),
+    }
+    return render(request, "analytics/visitor_analytics_dashboard.html", context)
+
+
+@visitor_analytics_required
+def api_visitor_analytics(request):
+    association = _default_association()
+    range_key, start_date, end_date = _visitor_date_range_from_request(request)
+    return JsonResponse(
+        {
+            "range": range_key,
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "overview": services.visitor_overview(association),
+            "trend": [
+                {"date": row["date"].isoformat(), "visits": row["visits"], "unique_visitors": row["unique_visitors"]}
+                for row in services.traffic_trend(association, start_date, end_date)
+            ],
+            "pages": services.top_pages(association, start_date, end_date),
+            "devices": services.device_breakdown(association, start_date, end_date),
+            "browsers": services.browser_breakdown(association, start_date, end_date),
+            "referrers": services.referrer_breakdown(association, start_date, end_date),
         }
     )

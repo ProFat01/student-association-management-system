@@ -73,6 +73,10 @@
           {% if user.is_authenticated %}
             {% url 'accounts:dashboard' as url_dashboard %}
             <li><a href="{{ url_dashboard }}" class="nav-cta {% if request.path == url_dashboard %}is-active{% endif %}">Dashboard</a></li>
+            {% if perms.accounts.send_announcement %}
+              {% url 'accounts:communication_center' as url_comm_center %}
+              <li><a href="{{ url_comm_center }}" class="{% if request.path == url_comm_center %}is-active{% endif %}">Communications</a></li>
+            {% endif %}
           {% endif %}
         </ul>
       </nav>

@@ -80,6 +80,15 @@ class Member(models.Model):
         upload_to="members/passports/%Y/%m/", validators=[validate_image_size]
     )
 
+    # v1.1 addition: optional email for approval notifications.
+    # blank=True (no null=True) — EmailField stores empty string for "not
+    # provided", consistent with Django's convention for text fields and
+    # avoids two falsy states (None vs "") for the same concept.
+    email = models.EmailField(
+        blank=True,
+        help_text="Optional. Used to send the welcome email when your application is approved.",
+    )
+
     # Intentionally blank/null: only assigned once an application is
     # approved (see members/signals.py), never at registration time.
     membership_id = models.CharField(
@@ -107,6 +116,18 @@ class Member(models.Model):
             models.Index(fields=["association", "approval_status"]),
             models.Index(fields=["association", "alumni_status"]),
             models.Index(fields=["association", "category"]),
+            # Backs apps.analytics.querysets.registration_counts_by_period()
+            # (the Registration Growth dashboard/API): that query GROUPs BY
+            # a truncated registration_date per association. Without this,
+            # SQLite has nowhere to read rows already sorted by
+            # registration_date within an association, so it falls back to
+            # "USE TEMP B-TREE FOR GROUP BY" (confirmed via EXPLAIN QUERY
+            # PLAN during the v2.0 load-testing pass) — a full sort of every
+            # member row on every request. With the index, SQLite can walk
+            # rows in registration_date order per association and group them
+            # in a single pass instead. Read-only addition: no existing
+            # query's results change, only how this one gets its rows.
+            models.Index(fields=["association", "registration_date"]),
         ]
         permissions = [
             ("approve_member", "Can approve or reject a member's registration"),

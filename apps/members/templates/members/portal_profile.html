@@ -27,12 +27,28 @@
   <dd class="record">{{ member.phone_number }}</dd>
   <dt>NIN Number</dt>
   <dd class="record">{{ member.nin_number }}</dd>
+  {% if member.email %}
+  <dt>Email Address</dt>
+  <dd>{{ member.email }}</dd>
+  {% endif %}
   <dt>Date of Birth</dt>
   <dd>{{ member.date_of_birth|date:"d M Y" }}</dd>
   <dt>Institution</dt>
   <dd>{{ member.institution }}</dd>
   <dt>Course</dt>
   <dd>{{ member.course }}</dd>
+  {% if member.faculty %}
+  <dt>Faculty</dt>
+  <dd>{{ member.faculty }}</dd>
+  {% endif %}
+  {% if member.department %}
+  <dt>Department</dt>
+  <dd>{{ member.department }}</dd>
+  {% endif %}
+  {% if member.level %}
+  <dt>Level</dt>
+  <dd>{{ member.level }}</dd>
+  {% endif %}
   <dt>Category</dt>
   <dd>{{ member.get_category_display }}</dd>
   <dt>Membership ID</dt>
