@@ -87,6 +87,13 @@
   --transition-base: 220ms ease;
 
   --container-width: 1080px;
+
+  /* --- Breakpoint scale ---
+     CSS custom properties can't be read inside @media conditions, so
+     this is the canonical reference every @media (max-width: …) in
+     base.css / components.css / card.css / admin.css is written
+     against -- pick the nearest value below rather than inventing a
+     new number. xs=380 / sm=480 / md=600 / lg=768 / xl=900. */
 }
 
 /* --- Reset --- */
@@ -252,6 +259,9 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .nav-toggle .nav-toggle-icon-close { display: none; }
 .nav-toggle[aria-expanded="true"] .nav-toggle-icon-open { display: none; }
 .nav-toggle[aria-expanded="true"] .nav-toggle-icon-close { display: inline; }
+.nav-toggle .nav-toggle-label-close { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-label-open { display: none; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-label-close { display: inline; }
 
 .nav-links {
   display: flex;
@@ -283,7 +293,17 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .nav-links .nav-cta:hover { background: var(--civic-green-deep); }
 .nav-links .nav-cta.is-active { background: var(--civic-green-deep); }
 
-@media (max-width: 760px) {
+/* Divider between the public nav and the staff-only links (Dashboard,
+   Communications). A thin vertical rule inline on desktop; becomes a
+   full-width horizontal rule once the mobile column layout kicks in. */
+.nav-sep {
+  align-self: stretch;
+  width: 1px;
+  margin: var(--space-2) var(--space-1);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 768px) {
   .nav-bar { flex-wrap: wrap; }
   .nav-toggle { display: inline-flex; }
 
@@ -294,16 +314,64 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
     overflow: hidden;
     transition: max-height var(--transition-base);
   }
-  #primary-nav-wrapper.is-open { max-height: 32rem; }
+  /* Sized to the viewport with its own scroll, not a fixed rem value --
+     a menu with more items (e.g. a staff account) always fits and is
+     always fully reachable, instead of clipping its last entry. */
+  #primary-nav-wrapper.is-open {
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Lifts the open panel visually off the page content beneath it,
+       so the handoff from menu to content reads as a distinct layer
+       rather than the list simply stopping. */
+    box-shadow: 0 16px 24px -18px rgba(0, 0, 0, 0.55);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
 
   .nav-links {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     width: 100%;
-    padding: var(--space-2) 0 var(--space-3);
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-1) var(--space-4);
   }
-  .nav-links a { padding: var(--space-3); }
+  /* Purpose-built mobile touch target: taller than the desktop pill,
+     consistent left inset for every item (links, the CTA and the
+     logout button alike) so the list reads as one aligned column
+     instead of a shrunk desktop bar. */
+  .nav-links a {
+    padding: var(--space-3) var(--space-3);
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  .nav-links .nav-cta { margin-top: var(--space-2); }
+
+  /* Divider between public nav and the staff-only links, labelled so
+     the group break is legible rather than just a stray rule -- this
+     is what gives Dashboard/Communications clear hierarchy instead of
+     letting them trail off at the bottom of the list. */
+  .nav-sep {
+    position: relative;
+    width: 100%;
+    height: 1px;
+    margin: var(--space-5) var(--space-3) var(--space-3);
+    background: rgba(255, 255, 255, 0.16);
+  }
+  .nav-sep::after {
+    content: "Staff Access";
+    position: absolute;
+    top: -0.6em;
+    left: 0;
+    background: var(--ink);
+    padding: 0 var(--space-2) 0 0;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
 }
 
 /* --- Footer --- */
@@ -352,6 +420,45 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .footer-credit a:focus-visible {
   color: var(--brass);
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  /* A deliberate mobile composition rather than the desktop auto-fit
+     grid at a smaller size: the brand block runs full width so the
+     logo/name aren't squeezed into a half column, Quick Links and
+     Contact share a balanced two-column row since both are short link
+     lists, and Support Us / Follow each get the full width they need
+     -- Support Us because donation details are a wrapped paragraph of
+     text, Follow so it reads as its own row instead of stranding a
+     single link opposite an empty column. */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand   brand"
+      "links   contact"
+      "support support"
+      "follow  follow";
+    gap: var(--space-6) var(--space-5);
+    padding: var(--space-8) 0;
+  }
+  .footer-brand { grid-area: brand; }
+  .footer-quicklinks { grid-area: links; }
+  .footer-contact { grid-area: contact; }
+  .footer-support { grid-area: support; }
+  .footer-follow { grid-area: follow; }
+
+  .footer-brand { display: flex; flex-direction: column; }
+  .footer-brand .footer-heading { margin-top: var(--space-1); margin-bottom: var(--space-1); font-size: 1rem; letter-spacing: 0.04em; }
+  .footer-brand p:last-child { margin-bottom: 0; font-size: 0.92rem; }
+
+  .footer-grid .footer-heading { font-size: 0.78rem; margin-bottom: var(--space-2); }
+  .footer-grid p { font-size: 0.9rem; margin-bottom: var(--space-2); }
+  .footer-contact a, .footer-contact p { overflow-wrap: anywhere; }
+
+  .footer-support .footer-heading { margin-bottom: var(--space-2); }
+  .footer-support p { font-size: 0.88rem; line-height: 1.5; }
+
+  .footer-follow .social-links { margin-top: var(--space-1); gap: var(--space-4); }
 }
 
 /* --- Buttons --- */
@@ -557,10 +664,18 @@ legend { font-weight: 600; padding: 0 var(--space-2); }
 .u-gap-2 { gap: var(--space-4); }
 .u-gap-3 { gap: var(--space-6); }
 
-.u-grid { display: grid; gap: var(--space-6); }
-.u-grid-2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.u-grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-.u-grid-4 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+/* Fixed column counts per breakpoint -- matches what the class name
+   promises (u-grid-3 is always at most 3 columns), so a 5-card grid
+   wraps to a balanced 3+2 instead of an auto-fit count that can leave
+   a single orphaned card alone on its own row. */
+.u-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-6); }
+@media (min-width: 600px) {
+  .u-grid-2, .u-grid-3, .u-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 768px) {
+  .u-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .u-grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
 
 .chip {
   display: inline-flex;

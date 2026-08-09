@@ -84,6 +84,15 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 .summary-stat .value { font-family: var(--font-record); font-size: 1.65rem; font-weight: 600; color: var(--ink); line-height: 1.2; }
 .summary-stat .label { font-size: 0.8rem; color: var(--slate); margin-top: var(--space-1); }
 
+@media (max-width: 768px) {
+  .summary-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+  .summary-stat {
+    min-width: 0;
+    padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 4px);
+  }
+  .summary-stat .value { font-size: 1.35rem; }
+}
+
 .vote-bar-track { background: var(--surface-soft); border-radius: var(--radius-full); height: 8px; overflow: hidden; margin-top: var(--space-1); }
 .vote-bar-fill { background: var(--civic-green); height: 100%; width: 0; border-radius: var(--radius-full); transition: width 0.6s ease; } /* width set by JS from data-percentage, see static/js/site.js */
 
@@ -221,7 +230,7 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 .member-card-rule { border-top: 1px dashed var(--line); margin: var(--space-4) 0; position: relative; }
 .member-card-foot { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--slate); position: relative; }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; }
   .member-card { max-width: 320px; }
 }
@@ -280,7 +289,7 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 .contact-detail { margin-bottom: var(--space-4); }
 .contact-detail dt { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--slate); }
 .contact-detail dd { margin: var(--space-1) 0 0; }
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .contact-grid { grid-template-columns: 1fr; }
 }
 
@@ -325,7 +334,7 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   position: relative;
   z-index: 2;
 }
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .stats-overlap { margin-top: -1.5rem; }
 }
 
@@ -455,7 +464,7 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
   flex-shrink: 0;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   .pie-chart-wrap { flex-direction: column; align-items: flex-start; }
 }
 
@@ -704,6 +713,18 @@ table.data-table td.is-number, table.data-table th.is-number { font-family: var(
 }
 .nav-links .nav-logout-btn:hover,
 .nav-links .nav-logout-btn:focus-visible { background: var(--civic-green-deep); }
+
+/* Keeps the logout button's touch target and type size in step with
+   the rest of the mobile nav column (base.css bumps .nav-links a to
+   the same values at this breakpoint) -- without this the button was
+   the one item left at desktop density, breaking the vertical rhythm. */
+@media (max-width: 768px) {
+  .nav-links .nav-logout-btn {
+    padding: var(--space-3) var(--space-3);
+    font-size: 1rem;
+    margin-top: var(--space-2);
+  }
+}
 
 /* =============================================================
    Version 1.2 "Admin Experience" polish -- dashboard hub additions.

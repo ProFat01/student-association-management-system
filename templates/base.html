@@ -31,7 +31,8 @@
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="primary-navigation" id="nav-toggle">
         <span class="nav-toggle-icon-open" aria-hidden="true">&#9776;</span>
         <span class="nav-toggle-icon-close" aria-hidden="true">&#10005;</span>
-        <span>Menu</span>
+        <span class="nav-toggle-label-open">Menu</span>
+        <span class="nav-toggle-label-close">Close</span>
       </button>
 
       {% url 'core:home' as url_home %}
@@ -46,20 +47,17 @@
       {% url 'core:contact' as url_contact %}
       <nav aria-label="Primary" id="primary-nav-wrapper">
         <ul class="nav-links" id="primary-navigation">
-          <li><a href="{{ url_home }}" class="{% if request.path == url_home %}is-active{% endif %}">Home</a></li>
+          <li><a href="{{ url_home }}" class="{% if request.path == url_home %}is-active{% endif %}" {% if request.path == url_home %}aria-current="page"{% endif %}>Home</a></li>
           {% if request.session.portal_member_id %}
-            <li><a href="{{ url_portal_dashboard }}" class="{% if request.path == url_portal_dashboard %}is-active{% endif %}">My Dashboard</a></li>
-            <li><a href="{{ url_portal_card }}" class="{% if request.path == url_portal_card %}is-active{% endif %}">My Card</a></li>
-            <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Vote</a></li>
+            <li><a href="{{ url_portal_dashboard }}" class="{% if request.path == url_portal_dashboard %}is-active{% endif %}" {% if request.path == url_portal_dashboard %}aria-current="page"{% endif %}>My Dashboard</a></li>
+            <li><a href="{{ url_portal_card }}" class="{% if request.path == url_portal_card %}is-active{% endif %}" {% if request.path == url_portal_card %}aria-current="page"{% endif %}>My Card</a></li>
           {% else %}
-            <li><a href="{{ url_register }}" class="{% if request.path == url_register %}is-active{% endif %}">Register</a></li>
-            <li><a href="{{ url_status_check }}" class="{% if request.path == url_status_check %}is-active{% endif %}">Check Status</a></li>
-            <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Vote</a></li>
+            <li><a href="{{ url_register }}" class="{% if request.path == url_register %}is-active{% endif %}" {% if request.path == url_register %}aria-current="page"{% endif %}>Register</a></li>
+            <li><a href="{{ url_status_check }}" class="{% if request.path == url_status_check %}is-active{% endif %}" {% if request.path == url_status_check %}aria-current="page"{% endif %}>Check Status</a></li>
           {% endif %}
-          <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Elections</a></li>
-          <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}">Results</a></li>
-          <li><a href="{{ url_about }}" class="{% if request.path == url_about %}is-active{% endif %}">About</a></li>
-          <li><a href="{{ url_contact }}" class="{% if request.path == url_contact %}is-active{% endif %}">Contact</a></li>
+          <li><a href="{{ url_elections }}" class="{% if request.path == url_elections %}is-active{% endif %}" {% if request.path == url_elections %}aria-current="page"{% endif %}>Elections</a></li>
+          <li><a href="{{ url_about }}" class="{% if request.path == url_about %}is-active{% endif %}" {% if request.path == url_about %}aria-current="page"{% endif %}>About</a></li>
+          <li><a href="{{ url_contact }}" class="{% if request.path == url_contact %}is-active{% endif %}" {% if request.path == url_contact %}aria-current="page"{% endif %}>Contact</a></li>
           {% if request.session.portal_member_id %}
             <li>
               <form action="{{ url_portal_logout }}" method="post" class="nav-logout-form">
@@ -68,14 +66,15 @@
               </form>
             </li>
           {% else %}
-            <li><a href="{{ url_portal_login }}" class="nav-cta {% if request.path == url_portal_login %}is-active{% endif %}">Member Login</a></li>
+            <li><a href="{{ url_portal_login }}" class="nav-cta {% if request.path == url_portal_login %}is-active{% endif %}" {% if request.path == url_portal_login %}aria-current="page"{% endif %}>Member Login</a></li>
           {% endif %}
           {% if user.is_authenticated %}
+            <li class="nav-sep" role="separator" aria-hidden="true"></li>
             {% url 'accounts:dashboard' as url_dashboard %}
-            <li><a href="{{ url_dashboard }}" class="nav-cta {% if request.path == url_dashboard %}is-active{% endif %}">Dashboard</a></li>
+            <li><a href="{{ url_dashboard }}" class="nav-cta {% if request.path == url_dashboard %}is-active{% endif %}" {% if request.path == url_dashboard %}aria-current="page"{% endif %}>Dashboard</a></li>
             {% if perms.accounts.send_announcement %}
               {% url 'accounts:communication_center' as url_comm_center %}
-              <li><a href="{{ url_comm_center }}" class="{% if request.path == url_comm_center %}is-active{% endif %}">Communications</a></li>
+              <li><a href="{{ url_comm_center }}" class="{% if request.path == url_comm_center %}is-active{% endif %}" {% if request.path == url_comm_center %}aria-current="page"{% endif %}>Communications</a></li>
             {% endif %}
           {% endif %}
         </ul>
@@ -99,21 +98,21 @@
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <div>
+      <div class="footer-brand">
         {% if association.logo %}
           <img src="{{ association.logo.url }}" alt="{{ association.short_name }} logo" class="footer-logo">
         {% endif %}
         <p class="footer-heading">{{ association.short_name|default:"SAMS" }}</p>
         <p>{{ association.name|default:"Malam Sidi Students Association" }}</p>
       </div>
-      <div>
+      <div class="footer-quicklinks">
         <p class="footer-heading">Quick Links</p>
         <p><a href="{% url 'members:register' %}">Register</a></p>
         <p><a href="{% url 'members:status_check' %}">Check Status</a></p>
         <p><a href="{% url 'elections:election_list' %}">Elections &amp; Results</a></p>
         {% if site_settings.donation_details %}<p><a href="{% url 'core:home' %}#donate">Donate</a></p>{% endif %}
       </div>
-      <div>
+      <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         {% if site_settings.contact_email %}<p><a href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></p>{% endif %}
         {% if site_settings.contact_phone %}<p>{{ site_settings.contact_phone }}</p>{% endif %}
@@ -121,12 +120,12 @@
         <p><a href="{% url 'core:contact' %}">Send a message &rarr;</a></p>
       </div>
       {% if site_settings.donation_details %}
-      <div>
+      <div class="footer-support">
         <p class="footer-heading">Support Us</p>
         <p class="u-pre-line">{{ site_settings.donation_details }}</p>
       </div>
       {% endif %}
-      <div>
+      <div class="footer-follow">
         <p class="footer-heading">Follow</p>
         <ul class="social-links">
           {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}">Facebook</a></li>{% endif %}

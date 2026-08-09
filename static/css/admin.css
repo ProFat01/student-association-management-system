@@ -373,7 +373,7 @@ ul.messagelist li.error { border-left-color: var(--sams-alert); }
 /* -----------------------------------------------------------
    11. Mobile admin (Section 10)
    ----------------------------------------------------------- */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .sams-stat-grid, .sams-action-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .sams-stat-card { padding: 14px; }
   .sams-stat-card .sams-stat-value { font-size: 1.35rem; }
