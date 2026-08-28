@@ -174,8 +174,8 @@ MAILJET_SECRET_KEY = env("MAILJET_SECRET_KEY", default="")
 # Sender identity for all Mailjet-delivered mail. DEFAULT_FROM_EMAIL must
 # be an address verified in the Mailjet account — this project does not
 # and cannot bypass Mailjet's own sender verification.
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@example.com")
-DEFAULT_FROM_NAME = env("DEFAULT_FROM_NAME", default="SAMS")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="")
+DEFAULT_FROM_NAME = env("DEFAULT_FROM_NAME", default="")
 
 # ---------------------------------------------------------------------------
 # v2.1 Visitor & Usage Analytics
