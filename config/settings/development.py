@@ -30,6 +30,14 @@ if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
         "init_command": "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA foreign_keys=ON;",
     }
 
+# Django's own EMAIL_BACKEND — kept as console for any incidental use of
+# django.core.mail directly. Member-facing email (approval emails,
+# Communication Center announcements) no longer goes through this at all;
+# it calls apps.core.mailjet_service directly, which — when
+# MAILJET_API_KEY/MAILJET_SECRET_KEY aren't set, the default for local
+# dev — logs the email instead of calling the real Mailjet API, giving
+# the same "nothing actually gets sent, but you can see what would have
+# been" developer experience this console backend used to provide for it.
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Permissive locally; never use these two in production.

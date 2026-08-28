@@ -2,15 +2,22 @@
 v1.2 Features 4-10: Communication Center — permissions, targeting,
 sending, and history. Kept in its own file so apps/accounts/tests/
 test_views.py (the existing dashboard test suite) stays untouched.
+
+Mailjet migration note: ComposeAndSendTests no longer checks
+django.core.mail.outbox — member-facing email is delivered through
+apps.core.mailjet_service, which is mocked here instead. No test in this
+file makes a real HTTPS call to Mailjet.
 """
+from unittest.mock import patch
+
 from django.contrib.auth.models import Group
-from django.core import mail
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from apps.accounts.models import Announcement, User
 from apps.accounts.notifications import PROVIDERS
+from apps.core.mailjet_service import MailjetServiceError
 from apps.core.models import Association
 from apps.members.models import Member
 from apps.members.services import resolve_announcement_recipients
@@ -154,32 +161,37 @@ class ComposeAndSendTests(TestCase):
         self.client.login(username="root", password="x")
 
     def test_preview_does_not_create_an_announcement_or_send_mail(self):
-        response = self.client.post(
-            reverse("accounts:communication_compose"),
-            {
-                "action": "preview",
-                "subject": "Hello",
-                "message": "Body",
-                "recipient_type": Announcement.RecipientType.ALL,
-                "delivery_method": Announcement.DeliveryMethod.EMAIL,
-            },
-        )
+        with patch("apps.accounts.notifications.mailjet_service.send_email") as mock_send:
+            response = self.client.post(
+                reverse("accounts:communication_compose"),
+                {
+                    "action": "preview",
+                    "subject": "Hello",
+                    "message": "Body",
+                    "recipient_type": Announcement.RecipientType.ALL,
+                    "delivery_method": Announcement.DeliveryMethod.EMAIL,
+                },
+            )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Announcement.objects.count(), 0)
-        self.assertEqual(len(mail.outbox), 0)
+        mock_send.assert_not_called()
         self.assertEqual(response.context["preview"]["count"], 2)
 
     def test_send_creates_announcement_and_sends_only_to_members_with_email(self):
-        response = self.client.post(
-            reverse("accounts:communication_compose"),
-            {
-                "action": "send",
-                "subject": "Welcome",
-                "message": "Hello everyone",
-                "recipient_type": Announcement.RecipientType.ALL,
-                "delivery_method": Announcement.DeliveryMethod.EMAIL,
-            },
-        )
+        # member_b has no email — EmailProvider skips it before ever calling
+        # mailjet_service, so simulating a real API failure isn't needed to
+        # reproduce the same "1 sent, 1 failed" outcome as before.
+        with patch("apps.accounts.notifications.mailjet_service.send_email") as mock_send:
+            response = self.client.post(
+                reverse("accounts:communication_compose"),
+                {
+                    "action": "send",
+                    "subject": "Welcome",
+                    "message": "Hello everyone",
+                    "recipient_type": Announcement.RecipientType.ALL,
+                    "delivery_method": Announcement.DeliveryMethod.EMAIL,
+                },
+            )
         self.assertEqual(response.status_code, 302)
 
         announcement = Announcement.objects.get()
@@ -190,24 +202,54 @@ class ComposeAndSendTests(TestCase):
         self.assertEqual(announcement.status, Announcement.Status.PARTIAL)
         self.assertEqual(announcement.created_by, self.super_admin)
 
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, ["a@example.com"])
-        self.assertEqual(mail.outbox[0].subject, "Welcome")
+        mock_send.assert_called_once()
+        self.assertEqual(mock_send.call_args.kwargs["to_email"], "a@example.com")
+        self.assertEqual(mock_send.call_args.kwargs["subject"], "Welcome")
+
+    def test_one_failed_mailjet_delivery_does_not_stop_the_batch(self):
+        """A Mailjet API failure for one recipient must not abort the rest."""
+        member_c = _member(
+            self.association, full_name="Member C", phone_number="0803333333", nin_number="33333333333",
+            email="c@example.com",
+        )
+        with patch(
+            "apps.accounts.notifications.mailjet_service.send_email",
+            side_effect=MailjetServiceError("Mailjet API request failed: ConnectionError"),
+        ) as mock_send:
+            response = self.client.post(
+                reverse("accounts:communication_compose"),
+                {
+                    "action": "send",
+                    "subject": "Welcome",
+                    "message": "Hello everyone",
+                    "recipient_type": Announcement.RecipientType.ALL,
+                    "delivery_method": Announcement.DeliveryMethod.EMAIL,
+                },
+            )
+        self.assertEqual(response.status_code, 302)
+        announcement = Announcement.objects.get()
+        # member_a and member_c both have email (2 API calls attempted, both
+        # fail); member_b has no email (skipped before any API call).
+        self.assertEqual(mock_send.call_count, 2)
+        self.assertEqual(announcement.sent_count, 0)
+        self.assertEqual(announcement.failed_count, 2)
+        self.assertEqual(announcement.status, Announcement.Status.FAILED)
 
     def test_sms_delivery_method_is_rejected_by_form_validation(self):
-        response = self.client.post(
-            reverse("accounts:communication_compose"),
-            {
-                "action": "send",
-                "subject": "Welcome",
-                "message": "Hello",
-                "recipient_type": Announcement.RecipientType.ALL,
-                "delivery_method": Announcement.DeliveryMethod.SMS,
-            },
-        )
+        with patch("apps.accounts.notifications.mailjet_service.send_email") as mock_send:
+            response = self.client.post(
+                reverse("accounts:communication_compose"),
+                {
+                    "action": "send",
+                    "subject": "Welcome",
+                    "message": "Hello",
+                    "recipient_type": Announcement.RecipientType.ALL,
+                    "delivery_method": Announcement.DeliveryMethod.SMS,
+                },
+            )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Announcement.objects.count(), 0)
-        self.assertEqual(len(mail.outbox), 0)
+        mock_send.assert_not_called()
 
     def test_selected_recipient_type_without_any_ids_is_rejected(self):
         response = self.client.post(
@@ -225,22 +267,23 @@ class ComposeAndSendTests(TestCase):
         self.assertEqual(Announcement.objects.count(), 0)
 
     def test_selected_recipient_type_sends_only_to_chosen_members(self):
-        response = self.client.post(
-            reverse("accounts:communication_compose"),
-            {
-                "action": "send",
-                "subject": "Just You",
-                "message": "Hi",
-                "recipient_type": Announcement.RecipientType.SELECTED,
-                "delivery_method": Announcement.DeliveryMethod.EMAIL,
-                "selected_member_ids": str(self.member_a.pk),
-            },
-        )
+        with patch("apps.accounts.notifications.mailjet_service.send_email") as mock_send:
+            response = self.client.post(
+                reverse("accounts:communication_compose"),
+                {
+                    "action": "send",
+                    "subject": "Just You",
+                    "message": "Hi",
+                    "recipient_type": Announcement.RecipientType.SELECTED,
+                    "delivery_method": Announcement.DeliveryMethod.EMAIL,
+                    "selected_member_ids": str(self.member_a.pk),
+                },
+            )
         self.assertEqual(response.status_code, 302)
         announcement = Announcement.objects.get()
         self.assertEqual(announcement.recipient_count, 1)
         self.assertEqual(announcement.sent_count, 1)
-        self.assertEqual(mail.outbox[0].to, ["a@example.com"])
+        self.assertEqual(mock_send.call_args.kwargs["to_email"], "a@example.com")
 
 
 @override_settings(DEFAULT_ASSOCIATION_SLUG="msa")

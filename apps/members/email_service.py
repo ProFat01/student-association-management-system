@@ -1,33 +1,36 @@
 """
-apps.members.email_service — SAMS v1.1
+apps.members.email_service — SAMS v1.1 (Mailjet migration)
 
 Sends the post-approval welcome email to a newly-approved member.
 
-Design constraints (all non-negotiable, per the v1.1 spec):
+Design constraints (all non-negotiable, per the v1.1 spec, preserved
+across the Mailjet migration):
 
 1. The approval transaction MUST complete before this is called.
    This module is called from the signal handler AFTER the member's
    approval_status and membership_id have been committed — never inside
    the atomic block that performs the approval itself.
 
-2. SMTP failure MUST NOT roll back the approval or raise to the admin.
-   Every exception is caught here, logged, and silently swallowed.
-   The member is approved either way.
+2. Email delivery failure MUST NOT roll back the approval or raise to
+   the admin. Every exception is caught here, logged, and silently
+   swallowed. The member is approved either way.
 
 3. No email → no attempt, no error. The caller checks member.email
    before calling; this module does the same as a defence-in-depth guard.
 
-4. No third-party packages. Django's built-in email infrastructure only.
+4. Delivery goes through apps.core.mailjet_service — the Mailjet Email
+   API over HTTPS — not SMTP. See apps/core/mailjet_service.py for why.
 
-5. No inline secrets. SMTP credentials come from Django settings
-   (EMAIL_HOST_USER etc.) set via .env — never hardcoded here.
+5. No inline secrets. Mailjet credentials come from Django settings
+   (MAILJET_API_KEY / MAILJET_SECRET_KEY) set via .env — never hardcoded
+   here.
 """
 import logging
 
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+
+from apps.core import mailjet_service
 
 logger = logging.getLogger("apps.members.email_service")
 
@@ -70,8 +73,8 @@ def send_approval_email(member, request=None):
         )
         return True
     except Exception:
-        # Deliberately broad: SMTP auth failure, connection timeout,
-        # misconfigured EMAIL_HOST — all of these are configuration /
+        # Deliberately broad: Mailjet auth failure, connection timeout,
+        # a rejected sender/recipient — all of these are configuration /
         # infrastructure problems that must not surface as a Django error
         # to the approving admin.
         logger.exception(
@@ -85,8 +88,9 @@ def send_approval_email(member, request=None):
 
 def _send(member, request):
     """
-    Internal: build and dispatch the email. Any exception propagates to
-    send_approval_email() which catches and logs it.
+    Internal: build the email content and dispatch it via the Mailjet
+    Email API. Any exception propagates to send_approval_email() which
+    catches and logs it.
     """
     # Build the portal and card URLs.  When a real request is available we
     # get proper scheme+host (e.g. https://DevProf.pythonanywhere.com/…).
@@ -120,19 +124,19 @@ def _send(member, request):
     }
 
     html_body = render_to_string(_HTML_TEMPLATE, context)
-    # Plain-text fallback stripped from the HTML (removes tags, keeps
-    # readable structure) — always sent alongside HTML for email clients
+    # Plain-text fallback — always sent alongside HTML for email clients
     # that prefer or require it.
     text_body = render_to_string(_TXT_TEMPLATE, context)
 
     from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "noreply@example.com")
-    to_email = member.email
+    from_name = getattr(settings, "DEFAULT_FROM_NAME", "")
 
-    msg = EmailMultiAlternatives(
+    mailjet_service.send_email(
+        to_email=member.email,
         subject=APPROVAL_EMAIL_SUBJECT,
-        body=text_body,
+        html_body=html_body,
+        text_body=text_body,
+        to_name=member.full_name,
         from_email=from_email,
-        to=[to_email],
+        from_name=from_name,
     )
-    msg.attach_alternative(html_body, "text/html")
-    msg.send()

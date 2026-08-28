@@ -110,13 +110,28 @@ SECURE_CSP = {
     "font-src": [CSP.SELF, "https://fonts.gstatic.com"],
 }
 
+# Member-facing email (approval emails, Communication Center announcements)
+# no longer uses this Django EMAIL_BACKEND at all — as of the Mailjet
+# migration, apps.core.mailjet_service calls the Mailjet HTTPS Send API
+# directly (see that module's docstring). DEFAULT_FROM_EMAIL and
+# DEFAULT_FROM_NAME, used by mailjet_service, are defined once in base.py
+# and read the same MAILJET_API_KEY / MAILJET_SECRET_KEY / DEFAULT_FROM_*
+# env vars in every environment.
+#
+# The SMTP settings below are kept only for Django's own built-in
+# mail_admins() error notifications (see LOGGING's "mail_admins" handler
+# further down this file) — unrelated to member email and out of scope
+# for this migration. Note that these were never confirmed to work on
+# PythonAnywhere Free either, for the exact same outbound-SMTP restriction
+# that motivated the Mailjet migration in the first place; if admin error
+# emails matter in production, the cleanest fix would be pointing
+# mail_admins at Mailjet too in a future change, not part of this one.
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER)
 SERVER_EMAIL = env("SERVER_EMAIL", default=EMAIL_HOST_USER)
 
 # Surface server errors to maintainers instead of failing silently.

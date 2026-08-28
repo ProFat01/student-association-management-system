@@ -156,6 +156,28 @@ MAX_UPLOAD_SIZE_MB = 5
 DEFAULT_ASSOCIATION_SLUG = env("DEFAULT_ASSOCIATION_SLUG", default="msa")
 
 # ---------------------------------------------------------------------------
+# Mailjet Email API (member-facing email: approval emails, announcements)
+# ---------------------------------------------------------------------------
+# Used by apps.core.mailjet_service, the single place in SAMS that talks to
+# Mailjet's HTTPS Send API — never SMTP (see that module's docstring for
+# why: PythonAnywhere Free blocks outbound SMTP but allows HTTPS).
+#
+# Defined here (not just in production.py) so the same setting names work
+# in every environment: local development can optionally point at a real
+# Mailjet account too, and tests can override them with @override_settings.
+# When left unset (the default for a fresh clone / .env.example), the
+# service module logs the email instead of making a real API call — see
+# apps/core/mailjet_service.py's "Local development convenience" note.
+MAILJET_API_KEY = env("MAILJET_API_KEY", default="")
+MAILJET_SECRET_KEY = env("MAILJET_SECRET_KEY", default="")
+
+# Sender identity for all Mailjet-delivered mail. DEFAULT_FROM_EMAIL must
+# be an address verified in the Mailjet account — this project does not
+# and cannot bypass Mailjet's own sender verification.
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@example.com")
+DEFAULT_FROM_NAME = env("DEFAULT_FROM_NAME", default="SAMS")
+
+# ---------------------------------------------------------------------------
 # v2.1 Visitor & Usage Analytics
 # ---------------------------------------------------------------------------
 # How many days of raw PageVisit rows to keep — enforced by the
