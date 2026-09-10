@@ -13,6 +13,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+from .courses import COURSE_CHOICES, OTHER_COURSE_VALUE
+from .institutions import INSTITUTION_CHOICES, OTHER_INSTITUTION_VALUE
 from .models import Member, RegistrationApplication
 from .services import BY_MEMBERSHIP_ID, BY_NIN, CREDENTIAL_METHOD_CHOICES, find_member_by_credentials
 from .validators import validate_image_size
@@ -28,6 +30,64 @@ class MemberRegistrationForm(forms.ModelForm):
         help_text="Upload your payment receipt (image, max 5 MB).",
     )
 
+    # Member.gender stays blank=True at the model level (see models.py --
+    # pre-existing Members from before this field was collected still have
+    # it empty, so the model can't require it without a data migration).
+    # The registration *form*, however, now requires an answer from every
+    # new applicant. Declared explicitly (rather than left to ModelForm
+    # auto-generation) to keep the "---" blank-option label consistent with
+    # apps.accounts.forms's Communication Center targeting field, which
+    # uses this same Member.Gender choice set; the blank option here is
+    # just an unselected placeholder, not a valid submission -- required=True
+    # rejects it like any other required field.
+    gender = forms.ChoiceField(
+        choices=[("", "---")] + list(Member.Gender.choices),
+        required=True,
+    )
+
+    # Institution is presented as a searchable dropdown seeded from
+    # institutions.py, with an "Other" option at the end. Declared
+    # explicitly (rather than left to ModelForm auto-generation, which
+    # would otherwise just render a plain <input type="text"> for a
+    # CharField) so choices come from a module constant. Member.institution
+    # itself is untouched -- still a plain CharField -- so this is
+    # presentation-only; see clean() below for how the final string is
+    # resolved.
+    institution = forms.ChoiceField(
+        choices=INSTITUTION_CHOICES,
+        required=True,
+        error_messages={"invalid_choice": "Select an institution from the list, or choose Other."},
+    )
+    # Not a Member field (like receipt_image above) -- only used when
+    # institution == "other". Required=False at the field level because
+    # its actual requiredness is conditional; enforced explicitly in
+    # clean() instead.
+    institution_other = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Type your institution",
+    )
+
+    # Course is presented the same way institution is above: a grouped
+    # dropdown seeded from courses.py, with an "Other" option at the end.
+    # Declared explicitly (same reasoning as institution) so Member.course
+    # -- still a plain CharField -- gets a real choice widget instead of
+    # ModelForm's default plain text input; see clean() below for how the
+    # final string is resolved.
+    course = forms.ChoiceField(
+        choices=COURSE_CHOICES,
+        required=True,
+        error_messages={"invalid_choice": "Select a course from the list, or choose Other."},
+    )
+    # Not a Member field (like institution_other above) -- only used when
+    # course == "other". Required=False at the field level; enforced
+    # explicitly in clean() instead.
+    course_other = forms.CharField(
+        required=False,
+        max_length=255,
+        label="Type your course",
+    )
+
     class Meta:
         model = Member
         fields = [
@@ -35,6 +95,7 @@ class MemberRegistrationForm(forms.ModelForm):
             "phone_number",
             "nin_number",
             "date_of_birth",
+            "gender",
             "email",
             "institution",
             "course",
@@ -54,9 +115,15 @@ class MemberRegistrationForm(forms.ModelForm):
     # *before* the Meta-derived ones.
     # v1.1: email added after date_of_birth (personal info step);
     # faculty/department/level added inside the academic step.
+    # v1.2: gender added after date_of_birth (personal info step),
+    # alongside the other Member.gender consumers (admin, staff list,
+    # analytics, election eligibility) — see forms.py class comment above.
+    # v1.3: institution_other placed right after institution, course_other
+    # placed right after course, so the "type your own" fallback always
+    # sits directly beside the dropdown it belongs to.
     field_order = [
-        "full_name", "phone_number", "nin_number", "date_of_birth", "email",
-        "institution", "course", "faculty", "department", "level",
+        "full_name", "phone_number", "nin_number", "date_of_birth", "gender", "email",
+        "institution", "institution_other", "course", "course_other", "faculty", "department", "level",
         "category", "passport_photo", "receipt_image",
     ]
 
@@ -71,6 +138,33 @@ class MemberRegistrationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        # Resolve the institution dropdown's "Other" sentinel into the
+        # actual string Member.institution will store. Must happen here
+        # (form-level clean, before ModelForm._post_clean() calls
+        # construct_instance()) so the resolved value -- not the "other"
+        # sentinel -- is what ends up on the model instance. See
+        # institutions.py for why "other" can never collide with a real
+        # institution name.
+        institution = cleaned_data.get("institution")
+        if institution == OTHER_INSTITUTION_VALUE:
+            typed_institution = (cleaned_data.get("institution_other") or "").strip()
+            if not typed_institution:
+                self.add_error("institution_other", "Please type your institution.")
+            else:
+                cleaned_data["institution"] = typed_institution
+
+        # Same "Other" resolution as institution above, for course ->
+        # Member.course. Must also happen here, before ModelForm's
+        # construct_instance() runs.
+        course = cleaned_data.get("course")
+        if course == OTHER_COURSE_VALUE:
+            typed_course = (cleaned_data.get("course_other") or "").strip()
+            if not typed_course:
+                self.add_error("course_other", "Please type your course.")
+            else:
+                cleaned_data["course"] = typed_course
+
         phone = cleaned_data.get("phone_number")
         nin = cleaned_data.get("nin_number")
 

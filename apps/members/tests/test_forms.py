@@ -11,7 +11,8 @@ def _valid_form_data(**overrides):
         "phone_number": "08012345678",
         "nin_number": "12345678901",
         "date_of_birth": "2002-05-14",
-        "institution": "Malam Sidi College",
+        "gender": Member.Gender.FEMALE,
+        "institution": "Gombe State University (GSU), Tudun Wada",
         "course": "Computer Science",
         "category": Member.Category.UNDERGRADUATE,
     }
@@ -98,3 +99,109 @@ class MemberRegistrationFormTests(MediaIsolatedTestCase):
         form = MemberRegistrationForm(data=_valid_form_data(), files=self._files())
         self.assertTrue(form.is_valid())
         self.assertFalse(getattr(form, "duplicate_detected", False))
+
+    def test_gender_is_required(self):
+        # Unlike Member.gender's own blank=True at the model level (which
+        # stays permissive for pre-existing records), the registration
+        # form now requires every new applicant to pick one.
+        form = MemberRegistrationForm(data=_valid_form_data(gender=""), files=self._files())
+        self.assertFalse(form.is_valid())
+        self.assertIn("gender", form.errors)
+
+    def test_valid_gender_choice_is_saved_on_the_member(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(gender=Member.Gender.FEMALE), files=self._files()
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        application = form.save(association=self.association)
+        self.assertEqual(application.member.gender, Member.Gender.FEMALE)
+
+    def test_invalid_gender_value_rejected(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(gender="nonbinary-not-a-real-choice"), files=self._files()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("gender", form.errors)
+
+    def test_selecting_a_listed_institution_saves_it_verbatim(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(institution="Federal University Kashere (FUK)"), files=self._files()
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        application = form.save(association=self.association)
+        self.assertEqual(application.member.institution, "Federal University Kashere (FUK)")
+
+    def test_selecting_other_and_typing_a_custom_institution_saves_the_typed_value(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(institution="other", institution_other="Kwalsa Community College"),
+            files=self._files(),
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        application = form.save(association=self.association)
+        self.assertEqual(application.member.institution, "Kwalsa Community College")
+
+    def test_selecting_other_without_typing_anything_is_rejected(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(institution="other", institution_other=""), files=self._files()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("institution_other", form.errors)
+
+    def test_arbitrary_institution_text_not_in_the_seed_list_is_rejected(self):
+        # Anything not in institutions.INSTITUTION_CHOICES and not routed
+        # through the "other" + institution_other pair must fail --
+        # otherwise the seeded dropdown would be trivially bypassable.
+        form = MemberRegistrationForm(
+            data=_valid_form_data(institution="Some Made Up University"), files=self._files()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("institution", form.errors)
+
+    # -----------------------------------------------------------------
+    # Course (courses.py) -- same "grouped choices + Other" pattern as
+    # institution above.
+    # -----------------------------------------------------------------
+
+    def test_selecting_a_listed_course_saves_it_verbatim(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(course="Electrical Engineering"), files=self._files()
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        application = form.save(association=self.association)
+        self.assertEqual(application.member.course, "Electrical Engineering")
+
+    def test_selecting_other_and_typing_a_custom_course_saves_the_typed_value(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(course="other", course_other="Underwater Basket Weaving"),
+            files=self._files(),
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        application = form.save(association=self.association)
+        self.assertEqual(application.member.course, "Underwater Basket Weaving")
+
+    def test_selecting_other_course_without_typing_anything_is_rejected(self):
+        form = MemberRegistrationForm(
+            data=_valid_form_data(course="other", course_other=""), files=self._files()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("course_other", form.errors)
+
+    def test_arbitrary_course_text_not_in_the_seed_list_is_rejected(self):
+        # Same anti-bypass rule as institution: anything not in
+        # courses.COURSE_CHOICES and not routed through "other" +
+        # course_other must fail.
+        form = MemberRegistrationForm(
+            data=_valid_form_data(course="Some Made Up Course"), files=self._files()
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("course", form.errors)
+
+    def test_form_renders_grouped_course_choices_and_other_option(self):
+        form = MemberRegistrationForm()
+        rendered = str(form)
+        self.assertIn("Computer Science", rendered)
+        self.assertIn("Electrical Engineering", rendered)
+        self.assertIn("Other (type your course)", rendered)
+        # Grouped choices render as <optgroup> labels in the widget.
+        self.assertIn("Computing and ICT", rendered)
+        self.assertIn("Engineering and Technology", rendered)

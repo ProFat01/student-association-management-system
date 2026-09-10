@@ -1,9 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
-{# Version 1.2 "Admin Experience" polish. Only extrahead/extrastyle are
-   overridden -- every other block (branding, nav, content structure)
-   keeps Django's own default exactly as before, via {{ block.super }}. #}
+{% comment %}
+Version 1.2 "Admin Experience" polish. Only extrahead/extrastyle are
+overridden -- every other block (branding, nav, content structure)
+keeps Django's own default exactly as before, via {{ block.super }}.
+{% endcomment %}
 
 {% block extrahead %}
 {{ block.super }}

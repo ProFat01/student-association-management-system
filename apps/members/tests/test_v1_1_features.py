@@ -21,7 +21,7 @@ from django.urls import reverse
 from apps.core.mailjet_service import MailjetServiceError
 from apps.core.models import Association
 from apps.members.models import Member, RegistrationApplication
-from apps.members.email_service import send_approval_email, APPROVAL_EMAIL_SUBJECT
+from apps.members.email_service import send_approval_email, approval_email_subject
 
 from .helpers import MediaIsolatedTestCase, make_image
 
@@ -126,7 +126,8 @@ class EmailFieldRegistrationFormTests(MediaIsolatedTestCase):
             "phone_number": "08055556666",
             "nin_number": "55556666777",
             "date_of_birth": "2001-03-20",
-            "institution": "Malam Sidi College",
+            "gender": Member.Gender.MALE,
+            "institution": "Gombe State University (GSU), Tudun Wada",
             "course": "Electrical Engineering",
             "category": Member.Category.UNDERGRADUATE,
             "passport_photo": make_image("photo.png"),
@@ -182,7 +183,8 @@ class AcademicFieldsRegistrationTests(MediaIsolatedTestCase):
             "phone_number": "08077778888",
             "nin_number": "77778888999",
             "date_of_birth": "2003-09-12",
-            "institution": "Malam Sidi College",
+            "gender": Member.Gender.FEMALE,
+            "institution": "Gombe State University (GSU), Tudun Wada",
             "course": "Biology",
             "category": Member.Category.UNDERGRADUATE,
             "passport_photo": make_image("photo.png"),
@@ -303,7 +305,10 @@ class ApprovalEmailServiceTests(MediaIsolatedTestCase):
         member = self._make_approved_member(email="sub@example.com", phone="08044441114", nin="44441114222")
         with patch("apps.members.email_service.mailjet_service.send_email") as mock_send:
             send_approval_email(member)
-        self.assertEqual(mock_send.call_args.kwargs["subject"], APPROVAL_EMAIL_SUBJECT)
+        self.assertEqual(
+            mock_send.call_args.kwargs["subject"],
+            approval_email_subject(member.association),
+        )
 
     def test_send_approval_email_body_contains_membership_id(self):
         member = self._make_approved_member(email="body@example.com", phone="08044441115", nin="44441115222")

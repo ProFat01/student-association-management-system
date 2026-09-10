@@ -229,10 +229,13 @@ class ComposeAndSendTests(TestCase):
         self.assertEqual(response.status_code, 302)
         announcement = Announcement.objects.get()
         # member_a and member_c both have email (2 API calls attempted, both
-        # fail); member_b has no email (skipped before any API call).
+        # fail); member_b has no email (skipped before any API call, but
+        # still counted as a failed delivery — consistent with
+        # test_send_creates_announcement_and_sends_only_to_members_with_email
+        # above, where the same no-email member counts toward failed_count).
         self.assertEqual(mock_send.call_count, 2)
         self.assertEqual(announcement.sent_count, 0)
-        self.assertEqual(announcement.failed_count, 2)
+        self.assertEqual(announcement.failed_count, 3)
         self.assertEqual(announcement.status, Announcement.Status.FAILED)
 
     def test_sms_delivery_method_is_rejected_by_form_validation(self):

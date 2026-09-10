@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Register{% endblock %}
-{% block meta_description %}Register for membership at Malam Sidi Students Association.{% endblock %}
+{% block meta_description %}Register for membership at {{ association.name|default:"SAMS" }}.{% endblock %}
 
 {% block content %}
 <div class="container section">
@@ -86,6 +86,13 @@
           {% for error in form.date_of_birth.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
         </div>
 
+        <div class="form-row" data-field="gender">
+          <label for="{{ form.gender.id_for_label }}">{{ form.gender.label }}{% if form.gender.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+          {{ form.gender }}
+          {% if form.gender.help_text %}<p class="help-text">{{ form.gender.help_text }}</p>{% endif %}
+          {% for error in form.gender.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
         <div class="form-row" data-field="email">
           <label for="{{ form.email.id_for_label }}">{{ form.email.label }} <span class="u-text-muted">(optional)</span></label>
           {{ form.email }}
@@ -104,11 +111,25 @@
           {% for error in form.institution.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
         </div>
 
+        <div class="form-row" data-field="institution_other">
+          <label for="{{ form.institution_other.id_for_label }}">{{ form.institution_other.label }}</label>
+          {{ form.institution_other }}
+          <p class="help-text">Only needed if you picked &ldquo;Other&rdquo; above.</p>
+          {% for error in form.institution_other.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
         <div class="form-row" data-field="course">
           <label for="{{ form.course.id_for_label }}">{{ form.course.label }}{% if form.course.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
           {{ form.course }}
           {% if form.course.help_text %}<p class="help-text">{{ form.course.help_text }}</p>{% endif %}
           {% for error in form.course.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="form-row" data-field="course_other">
+          <label for="{{ form.course_other.id_for_label }}">{{ form.course_other.label }}</label>
+          {{ form.course_other }}
+          <p class="help-text">Only needed if you picked &ldquo;Other&rdquo; above.</p>
+          {% for error in form.course_other.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
         </div>
 
         <div class="form-row" data-field="faculty">
