@@ -18,6 +18,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.core.models import Association
+from apps.core.utils import is_registration_open
 
 from . import card_services
 from .forms import MemberRegistrationForm, PortalLoginForm, StatusCheckForm
@@ -44,6 +45,18 @@ def register_view(request):
     association = _get_default_association()
     if association is None:
         return render(request, "members/register.html", {"association_missing": True})
+
+    # Checked BEFORE any form handling, so a POST sent while registration is
+    # closed (a stale open tab, a script) can never create a Member or an
+    # application. Only this public registration path is gated; status check,
+    # member login, elections and admin are untouched.
+    if not is_registration_open(association):
+        return render(
+            request,
+            "members/register.html",
+            {"association": association, "association_missing": False, "registration_closed": True},
+            status=403 if request.method == "POST" else 200,
+        )
 
     if request.method == "POST":
         form = MemberRegistrationForm(request.POST, request.FILES)

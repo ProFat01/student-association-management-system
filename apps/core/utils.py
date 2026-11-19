@@ -1,6 +1,24 @@
 from django.db import IntegrityError, transaction
 
-from .models import SequenceCounter
+from .models import SequenceCounter, SiteSettings
+
+
+def is_registration_open(association):
+    """
+    True if this association is currently accepting new public membership
+    applications. The switch is SiteSettings.registration_open, changed from
+    the admin (no code or environment edits needed) and stored in the
+    database, so it survives restarts.
+
+    An association with no SiteSettings row yet is treated as OPEN, so a
+    fresh install keeps working exactly as it did before this switch existed.
+    """
+    value = (
+        SiteSettings.objects.filter(association=association)
+        .values_list("registration_open", flat=True)
+        .first()
+    )
+    return True if value is None else value
 
 
 @transaction.atomic

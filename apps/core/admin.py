@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.utils import timezone
 
+from .admin_badges import status_badge
 from .models import Association, ContactMessage, Leadership, SequenceCounter, SiteSettings
 
 # Version 1.2 "Admin Experience" polish -- cosmetic labelling only via
@@ -11,12 +13,37 @@ admin.site.site_title = "SAMS Admin"
 admin.site.index_title = "Dashboard"
 
 
-class SiteSettingsInline(admin.StackedInline):
+REGISTRATION_PERMISSION = "core.manage_registration_status"
+
+
+class RegistrationControlMixin:
+    """
+    Makes the "registration is open" switch editable only by users holding
+    core.manage_registration_status. Everyone else who can edit Site Settings
+    still sees the current status, but read-only, so a posted form can never
+    change it (Django drops read-only fields from the submitted form).
+    """
+
+    def get_readonly_fields(self, request, obj=None):
+        readonly = list(super().get_readonly_fields(request, obj))
+        if not request.user.has_perm(REGISTRATION_PERMISSION):
+            readonly.append("registration_open")
+        return readonly
+
+
+class SiteSettingsInline(RegistrationControlMixin, admin.StackedInline):
     model = SiteSettings
     extra = 0
     max_num = 1
     can_delete = False
     fieldsets = (
+        (
+            "Membership registration",
+            {
+                "fields": ("registration_open",),
+                "description": "Open or close public membership registration. Takes effect immediately.",
+            },
+        ),
         ("Branding", {"fields": ("motto", "welcome_message", "hero_image")}),
         ("About page content", {"fields": ("about_text", "mission", "vision", "leadership_text")}),
         ("Contact details", {"fields": ("contact_email", "contact_phone", "address")}),
@@ -42,18 +69,40 @@ class AssociationAdmin(admin.ModelAdmin):
 
 
 @admin.register(SiteSettings)
-class SiteSettingsAdmin(admin.ModelAdmin):
+class SiteSettingsAdmin(RegistrationControlMixin, admin.ModelAdmin):
     """
     Registered standalone too (in addition to the inline above) so a
     Registration/Election Admin with only `view` on SiteSettings can find
     it directly without needing access to the parent Association record.
     """
 
-    list_display = ("association", "motto", "contact_email", "contact_phone", "updated_at")
+    list_display = ("association", "registration_status", "motto", "contact_email", "contact_phone", "updated_at")
+    list_filter = ("registration_open",)
     search_fields = ("association__name", "contact_email")
     readonly_fields = ("updated_at",)
     autocomplete_fields = ("association",)
     fieldsets = SiteSettingsInline.fieldsets + (("Record", {"fields": ("association", "updated_at")}),)
+    actions = ["open_registration", "close_registration"]
+
+    @admin.display(description="Membership registration", ordering="registration_open")
+    def registration_status(self, obj):
+        if obj.registration_open:
+            return status_badge("Open", "success")
+        return status_badge("Closed", "error")
+
+    def has_manage_registration_status_permission(self, request):
+        # Used by the two actions below (Django's `permissions=` hook).
+        return request.user.has_perm(REGISTRATION_PERMISSION)
+
+    @admin.action(description="Open membership registration", permissions=["manage_registration_status"])
+    def open_registration(self, request, queryset):
+        updated = queryset.update(registration_open=True, updated_at=timezone.now())
+        self.message_user(request, f"Membership registration is now OPEN ({updated} record(s) updated).")
+
+    @admin.action(description="Close membership registration", permissions=["manage_registration_status"])
+    def close_registration(self, request, queryset):
+        updated = queryset.update(registration_open=False, updated_at=timezone.now())
+        self.message_user(request, f"Membership registration is now CLOSED ({updated} record(s) updated).")
 
 
 @admin.register(Leadership)

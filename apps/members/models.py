@@ -21,6 +21,7 @@ from django.utils import timezone
 
 from apps.core.models import Association
 
+from .image_services import optimise_passport_photo, prepare_passport_upload
 from .utils import generate_application_number, generate_membership_id
 from .validators import nin_validator, phone_number_validator, validate_image_size
 
@@ -139,6 +140,25 @@ class Member(models.Model):
     def __str__(self):
         return f"{self.full_name} ({self.membership_id or 'unapproved'})"
 
+    def clean(self):
+        """
+        Validate and optimise a newly uploaded passport photograph so a bad
+        image becomes an ordinary field error ("could not be processed",
+        "too large in dimensions"...) in BOTH the public registration form
+        and the Django admin, instead of an HTTP 500 raised later from
+        save(). The optimised version replaces the upload in memory only;
+        nothing is written to disk here. See apps/members/image_services.py.
+        """
+        super().clean()
+        try:
+            prepare_passport_upload(
+                self,
+                "passport_photo",
+                max_bytes=validate_image_size.max_mb * 1024 * 1024,
+            )
+        except ValidationError as exc:
+            raise ValidationError({"passport_photo": exc})
+
     def save(self, *args, **kwargs):
         """
         v1.2.1 bug fix (root cause, not a patch): "Approved" is a promise
@@ -181,6 +201,15 @@ class Member(models.Model):
         always gone through (see core/utils.py:get_next_sequence) —
         concurrent approvals still serialise to distinct numbers, never
         a collision.
+
+        Passport photographs: a newly uploaded photograph is resized and
+        compressed (see image_services.py) -- normally already done by
+        clean() so a bad image is a form error; this call covers code paths
+        that skip validation. Only a NEW upload is ever processed: a stored
+        photograph is never re-processed, and a save restricted by
+        update_fields that does not include "passport_photo" never touches
+        the photo at all. If the database write fails after a NEW photograph
+        was stored, that new file is removed again so nothing is orphaned.
         """
         healed_fields = []
         update_fields = kwargs.get("update_fields")
@@ -207,7 +236,29 @@ class Member(models.Model):
         if healed_fields and update_fields is not None:
             kwargs["update_fields"] = set(update_fields) | set(healed_fields)
 
-        super().save(*args, **kwargs)
+        # Optimise only a newly uploaded passport photograph, and only when
+        # this save is actually going to write it.
+        update_fields = kwargs.get("update_fields")
+        writes_photo = update_fields is None or "passport_photo" in update_fields
+        has_new_upload = (
+            writes_photo
+            and bool(self.passport_photo)
+            and not self.passport_photo._committed
+        )
+        if writes_photo:
+            optimise_passport_photo(self.passport_photo)
+
+        try:
+            super().save(*args, **kwargs)
+        except Exception:
+            # Django writes an uploaded file BEFORE the database row. If the
+            # row then fails (e.g. a duplicate phone number slipping past
+            # the form in a race), the new file would be orphaned and eat
+            # quota. Remove only the file THIS call just wrote -- never a
+            # photograph that was already stored.
+            if has_new_upload and self.passport_photo._committed and self.passport_photo.name:
+                self.passport_photo.storage.delete(self.passport_photo.name)
+            raise
 
     def convert_to_alumni(self, graduation_year=None, converted_by=None, **extra_fields):
         """
@@ -289,10 +340,10 @@ class RegistrationApplication(models.Model):
     def clear_receipt(self):
         """
         Deletes the stored receipt file and clears the field, keeping the
-        rest of the application record (and its audit trail) intact. Not
-        called automatically on review — wire this up later to a
-        scheduled cleanup task once a retention window is decided, rather
-        than deleting proof-of-payment the instant a decision is made.
+        rest of the application record (and its audit trail) intact.
+        Called automatically by the review signal (signals.py) the moment
+        an application is approved or rejected, and also available as the
+        manual "Delete receipt images" admin action.
         """
         if self.receipt_image:
             self.receipt_image.delete(save=False)

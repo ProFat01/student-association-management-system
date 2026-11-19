@@ -101,11 +101,23 @@ class SiteSettings(models.Model):
     x_url = models.URLField(blank=True, verbose_name="X (Twitter) URL")
     instagram_url = models.URLField(blank=True)
     whatsapp_url = models.URLField(blank=True)
+    registration_open = models.BooleanField(
+        default=True,
+        verbose_name="Membership registration is open",
+        help_text=(
+            "Tick to accept new public membership applications. Untick to close registration: "
+            "visitors then see a 'registration is closed' message instead of the form. "
+            "Existing members, logins, elections and admin work are not affected."
+        ),
+    )
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Site Settings"
         verbose_name_plural = "Site Settings"
+        permissions = [
+            ("manage_registration_status", "Can open or close membership registration"),
+        ]
 
     def __str__(self):
         return f"Site settings — {self.association.short_name}"

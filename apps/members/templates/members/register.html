@@ -12,6 +12,17 @@
   <div class="alert alert-error">
     <p>Registration is not currently available. Please contact the administrator.</p>
   </div>
+{% elif registration_closed %}
+  <div class="alert alert-warning" role="status" data-registration-closed>
+    <h2>Registration is currently closed</h2>
+    <p>{{ association.name }} is not accepting new membership applications at this time. Thank you for your interest &mdash; please check back later, or contact the association for more information.</p>
+  </div>
+  <p class="lead u-max-38">Already applied? You can still check the progress of your application, and existing members can sign in to the member portal as usual.</p>
+  <p>
+    <a href="{% url 'members:status_check' %}" class="btn">Check Registration Status</a>
+    <a href="{% url 'members:portal_login' %}" class="btn btn-outline">Member Portal Login</a>
+    <a href="{% url 'core:contact' %}" class="btn btn-outline">Contact Us</a>
+  </p>
 {% else %}
 
   {% if form.non_field_errors %}

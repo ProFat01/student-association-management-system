@@ -37,6 +37,7 @@ ROLE_PERMISSIONS = {
         # core
         "core.view_association", "core.change_association", "core.add_association",
         "core.view_sitesettings", "core.change_sitesettings",
+        "core.manage_registration_status",
         "core.view_contactmessage", "core.change_contactmessage", "core.delete_contactmessage",
         # members
         "members.view_member", "members.add_member", "members.change_member", "members.delete_member",
@@ -61,6 +62,7 @@ ROLE_PERMISSIONS = {
     ],
     ROLE_REGISTRATION_ADMIN: [
         "core.view_association", "core.view_sitesettings",
+        "core.manage_registration_status",
         "members.view_member", "members.change_member", "members.approve_member", "members.manage_alumni_status",
         "members.view_registrationapplication", "members.change_registrationapplication", "members.review_application",
         "members.view_alumnirecord", "members.add_alumnirecord", "members.change_alumnirecord",
