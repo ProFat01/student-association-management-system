@@ -38,6 +38,41 @@ filters, assumes "eligible" can only ever mean "eligible to vote".
 """
 from __future__ import annotations
 
+import datetime
+
+from django.utils import timezone
+
+from apps.members.utils import latest_dob_for_age
+
+# Minimum age to vote, applied to EVERY election (every scope, every
+# filter combination, approved_members_only on or off). It is a rule about
+# the voter, not a property of one kind of election, so it is deliberately
+# a module constant here rather than an Election field -- changing it needs
+# no schema change, and no election can be configured to opt out of it.
+MINIMUM_VOTING_AGE = 18
+
+
+def election_reference_date(election) -> datetime.date:
+    """
+    The calendar date an election's age rule is measured against: the
+    local date (project TIME_ZONE) on which voting OPENS (start_datetime).
+
+    One fixed date per election, rather than "today", so a member's
+    eligibility cannot flip part-way through a multi-day voting window and
+    an old election's eligible-voter count does not drift as time passes.
+    A member who turns 18 on that date is eligible; one who turns 18 the
+    next day is not.
+    """
+    start = election.start_datetime
+    if timezone.is_aware(start):
+        start = timezone.localtime(start)
+    return start.date()
+
+
+def minimum_age_dob_cutoff(election) -> datetime.date:
+    """Latest date of birth that has reached MINIMUM_VOTING_AGE on the election's reference date."""
+    return latest_dob_for_age(election_reference_date(election), MINIMUM_VOTING_AGE)
+
 
 def eligible_members(election):
     """
@@ -64,6 +99,12 @@ def eligible_members(election):
       / Alumni only").
     - A blank/unset filter is never applied — "not set" always means "no
       restriction from this filter", not "match nothing".
+    - Minimum voting age (MINIMUM_VOTING_AGE = 18): the member must have
+      reached 18 on the election's reference date (the day voting opens --
+      see election_reference_date()), computed from the existing
+      Member.date_of_birth. Applies to every election regardless of scope
+      or any other setting. Done as one date_of_birth__lte filter, so a
+      NULL/unknown date of birth never matches (fails closed).
     """
     from apps.members.models import Member
 
@@ -91,6 +132,12 @@ def eligible_members(election):
 
     if election.eligibility_membership_category:
         qs = qs.filter(category=election.eligibility_membership_category)
+
+    # Minimum voting age -- unconditional (see MINIMUM_VOTING_AGE above).
+    # Every other eligibility rule above is untouched; this only narrows
+    # the result further, so no previously-ineligible member can become
+    # eligible because of it.
+    qs = qs.filter(date_of_birth__lte=minimum_age_dob_cutoff(election))
 
     return qs
 

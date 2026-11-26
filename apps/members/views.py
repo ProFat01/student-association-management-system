@@ -24,6 +24,7 @@ from . import card_services
 from .forms import MemberRegistrationForm, PortalLoginForm, StatusCheckForm
 from .models import Member, MembershipCard, RegistrationApplication
 from .services import FILTERABLE_MEMBER_FIELDS, filter_members, member_filter_choices
+from .utils import calculate_age
 
 PORTAL_SESSION_KEY = "portal_member_id"
 
@@ -234,7 +235,15 @@ def portal_card_view(request):
     return render(
         request,
         "members/card.html",
-        {"member": member, "card": card, "qr_url": card_services.build_verification_url(request, card)},
+        {
+            "member": member,
+            "card": card,
+            "qr_url": card_services.build_verification_url(request, card),
+            # Calculated on every request from the existing date_of_birth --
+            # never stored, so it is always the member's current age. Only
+            # the age is shown on the card, never the date of birth itself.
+            "member_age": calculate_age(member.date_of_birth),
+        },
     )
 
 
@@ -280,6 +289,7 @@ def staff_card_view(request, pk):
             "member": member,
             "card": card,
             "qr_url": card_services.build_verification_url(request, card),
+            "member_age": calculate_age(member.date_of_birth),
             "is_staff_view": True,
         },
     )

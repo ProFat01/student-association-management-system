@@ -1,17 +1,20 @@
-/* Membership Card System v1 — scoped to card.html and verify.html only.
-   Reuses base.css tokens (--font-display, --font-body, --font-record,
-   --space-*, --radius, --shadow-*) for spacing/type/shadow scale, but
-   defines its own local color palette on `.id-card` rather than
-   pulling in --civic-green etc. This is deliberate: the brief asks
-   for a specific institutional-ID palette (deep green #0F5D3E, gold
-   #D4AF37, soft cream, light gray) distinct from the rest of the
-   site's civic-green/brass identity, and scoping it locally means
-   nothing outside the card can regress from this change.
+/* Membership Card System v1 -> two-sided Membership Identity Card.
+   Scoped to card.html and verify.html only.
+
+   Palette is the original institutional-ID palette (deep green #0F5D3E,
+   gold #D4AF37, soft cream, light gray), defined locally on `.id-card`
+   rather than pulling in the site's --civic-green, so nothing outside the
+   card can regress from changes here.
+
+   SIZING: every dimension inside a card face is written in `cqw` (1% of
+   the card's own width -- `.id-card` is a size container). The face is
+   therefore one scalable piece of artwork: identical proportions on a
+   phone, a desktop and on paper, where the card is fixed at the CR80
+   standard of 85.60 mm x 53.98 mm (see the @media print block). There are
+   deliberately no separate print font sizes to drift out of step.
 
    .verify-badge / .verify-result / .verify-badge-valid / -invalid
-   (used by verify.html) are UNCHANGED below — only the .id-card-*
-   ruleset (verify.html doesn't use it) and .card-page/.card-actions
-   layout wrappers were touched. */
+   (used by verify.html) are UNCHANGED below. */
 
 .card-page {
   display: flex;
@@ -33,11 +36,38 @@
 }
 
 /* =============================================================
-   The card itself
+   Screen layout: FRONT and BACK side by side when there is room,
+   stacked on phones. Each face keeps the CR80 ratio at every width.
+   ============================================================= */
+
+.card-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 420px));
+  justify-content: center;
+  gap: var(--space-6) var(--space-8);
+  width: 100%;
+}
+
+.card-side {
+  min-width: 0;
+}
+
+.card-side-label {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* =============================================================
+   The card face (shared by front and back)
    ============================================================= */
 
 .id-card {
-  /* Local palette — see file header for why this isn't --civic-green */
+  /* Local palette -- see file header for why this isn't --civic-green */
   --id-green: #0f5d3e;
   --id-green-deep: #0a3f2a;
   --id-gold: #d4af37;
@@ -49,11 +79,14 @@
 
   width: 100%;
   max-width: 420px;
-  min-width: 0; /* let it shrink below its content's natural size instead of overflowing on very narrow screens */
+  min-width: 0;
   /* CR80 card ratio (85.60mm x 53.98mm) preserved at every screen size;
      the print stylesheet below locks this to the true physical mm. */
   aspect-ratio: 85.6 / 53.98;
   margin: 0 auto;
+
+  /* A size container: all children are measured in cqw (1% of this width). */
+  container-type: inline-size;
 
   display: flex;
   flex-direction: column;
@@ -70,28 +103,36 @@
   color: var(--id-ink);
 }
 
-/* --- Header --- */
+/* --- Header band (front and back) --- */
 
 .id-card-header {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 3.5%;
-  padding: 4.5% 5.5% 3%;
+  gap: 3cqw;
+  padding: 2.2cqw 4.5cqw;
   background: linear-gradient(135deg, var(--id-green) 0%, var(--id-green-deep) 100%);
   color: #fff;
 }
 
+.id-card-header-compact {
+  padding-top: 1.6cqw;
+  padding-bottom: 1.6cqw;
+}
+
 .id-card-logo {
   flex-shrink: 0;
-  width: 15%;
-  max-width: 46px;
-  min-width: 30px;
-  aspect-ratio: 1;
+  width: 7.6cqw;
+  height: 7.6cqw;
   border-radius: 50%;
   object-fit: cover;
   background: rgba(255, 255, 255, 0.15);
-  border: 2px solid var(--id-gold);
+  border: 0.4cqw solid var(--id-gold);
+}
+
+.id-card-header-compact .id-card-logo {
+  width: 6.4cqw;
+  height: 6.4cqw;
 }
 
 .id-card-header-text {
@@ -102,17 +143,21 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.7rem, 3.3vw, 1rem);
-  line-height: 1.15;
+  font-size: 4.1cqw;
+  line-height: 1.1;
   letter-spacing: 0.01em;
+  /* Explicit: base.css gives every <p> a grey colour that would otherwise
+     override the header's inherited white. */
+  color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .id-card-subtitle {
-  margin: 2px 0 0;
-  font-size: clamp(0.5rem, 1.9vw, 0.65rem);
+  margin: 0.5cqw 0 0;
+  font-size: 2.3cqw;
+  line-height: 1.1;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -121,28 +166,31 @@
 
 .id-card-divider {
   flex: 0 0 auto;
-  height: 3px;
+  height: 0.8cqw;
   background: linear-gradient(90deg, var(--id-gold) 0%, var(--id-gold-soft) 50%, var(--id-gold) 100%);
 }
 
-/* --- Body: photo + info --- */
+/* =============================================================
+   FRONT: photo | details | QR, with a thin issue/status footer
+   ============================================================= */
 
 .id-card-body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  gap: 4.5%;
-  padding: 4.5% 5.5%;
+  gap: 3cqw;
+  padding: 3cqw 4.5cqw 2.2cqw;
 }
 
+/* --- Photo + signature area (a blank rule for the holder to sign by
+   hand on the printed card, as on a physical university ID) --- */
+
 .id-card-photo-frame {
-  flex: 0 0 auto;
-  width: 27%;
-  max-width: 96px;
+  flex: 0 0 23cqw;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 3px;
+  gap: 0.8cqw;
 }
 
 .id-card-photo,
@@ -150,11 +198,12 @@
   display: block;
   width: 100%;
   aspect-ratio: 3 / 4;
-  border-radius: 10px;
-  border: 2.5px solid var(--id-gold);
-  box-shadow: 0 5px 12px rgba(15, 93, 62, 0.28);
+  border-radius: 1.8cqw;
+  border: 0.7cqw solid var(--id-gold);
+  box-shadow: 0 1.2cqw 2.4cqw rgba(15, 93, 62, 0.28);
   background: var(--id-gray);
-  object-fit: cover; /* crop to fill the frame — the photo is never stretched */
+  object-fit: cover; /* crop to fill the frame -- the photo is never stretched */
+  box-sizing: border-box;
 }
 
 .id-card-photo-placeholder {
@@ -163,36 +212,35 @@
   justify-content: center;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.1rem, 4.6vw, 1.7rem);
+  font-size: 9cqw;
   color: var(--id-green);
 }
-
-/* --- Signature area: a blank rule for the holder/registrar to sign
-   by hand on the printed card, same as a physical university ID —
-   purely decorative, no member data involved. --- */
 
 .id-card-signature {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 2px;
+  margin-top: 1.2cqw;
 }
 
 .id-card-signature-line {
   display: block;
   width: 100%;
-  border-top: 1px dotted var(--id-slate);
+  border-top: 0.3cqw dotted var(--id-slate);
 }
 
 .id-card-signature-label {
-  margin-top: 2px;
-  font-size: clamp(0.36rem, 1.4vw, 0.48rem);
+  margin-top: 0.5cqw;
+  font-size: 1.8cqw;
+  line-height: 1;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--id-slate);
   text-align: center;
 }
+
+/* --- Details column --- */
 
 .id-card-info {
   flex: 1 1 auto;
@@ -202,26 +250,165 @@
 }
 
 .id-card-name {
-  margin: 0 0 4px;
+  margin: 0 0 1.4cqw;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.76rem, 3.4vw, 1.05rem);
-  line-height: 1.2;
+  font-size: 4.3cqw;
+  line-height: 1.12;
   color: var(--id-green-deep);
-  white-space: nowrap;
+  flex: 0 0 auto; /* never let the column squeeze the name */
+  /* A long name wraps to a second line rather than being cut off. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+}
+
+.id-card-facts {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 1.5cqw;
+  row-gap: 1.1cqw;
+  margin: 0;
+  flex: 0 0 auto;
+}
+
+.id-card-fact {
+  min-width: 0;
+}
+
+.id-card-fact-wide { grid-column: span 6; }
+.id-card-fact-narrow { grid-column: span 2; }
+
+.id-card-facts dt {
+  margin: 0;
+  font-size: 1.85cqw;
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--id-slate);
+}
+
+.id-card-facts dd {
+  margin: 0;
+  font-size: 2.9cqw;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--id-ink);
+  overflow-wrap: anywhere;
+}
+
+/* Faculty / department: up to two lines, so nothing is cut off. */
+.id-card-facts dd.id-card-fact-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.id-card-facts dd.id-card-fact-strong {
+  font-family: var(--font-record);
+  font-size: 3.3cqw;
+  letter-spacing: 0.02em;
+  color: var(--id-green-deep);
+}
+
+/* Compact scale: applied by the template only when the name, faculty or
+   department is unusually long, so the full text still fits on the card
+   instead of being cut off. Typical members use the regular scale above. */
+.id-card-compact .id-card-name { font-size: 3.4cqw; margin-bottom: 1cqw; }
+.id-card-compact .id-card-facts { row-gap: 0.8cqw; }
+.id-card-compact .id-card-facts dt { font-size: 1.6cqw; }
+.id-card-compact .id-card-facts dd { font-size: 2.35cqw; }
+.id-card-compact .id-card-facts dd.id-card-fact-strong { font-size: 2.8cqw; }
+
+/* --- QR focal point (right of the details) --- */
+
+.id-card-qr-column {
+  flex: 0 0 16cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1cqw;
+}
+
+.id-card-qr-frame {
+  background: #fff;
+  padding: 0.9cqw;
+  border-radius: 1.6cqw;
+  border: 0.25cqw solid var(--id-gray);
+  box-shadow: 0 1cqw 2.2cqw rgba(15, 93, 62, 0.25);
+  line-height: 0;
+}
+
+.id-card-qr {
+  display: block;
+  width: 14cqw;
+  height: 14cqw;
+}
+
+.id-card-qr-caption {
+  margin: 0;
+  font-size: 1.9cqw;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--id-slate);
+  white-space: nowrap;
+}
+
+/* --- Footer strip: date of issue + membership status --- */
+
+.id-card-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3cqw;
+  padding: 1.2cqw 4.5cqw;
+  background: var(--id-gray);
+  border-top: 0.25cqw solid rgba(15, 93, 62, 0.15);
+}
+
+.id-card-footer-item {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+  min-width: 0;
+}
+
+.id-card-footer-label {
+  font-size: 1.8cqw;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--id-slate);
+}
+
+.id-card-footer-value {
+  font-size: 2.6cqw;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--id-ink);
+  white-space: nowrap;
 }
 
 /* --- Status badge --- */
 
 .id-card-badge {
   display: inline-block;
-  width: fit-content;
-  margin-bottom: 5px;
-  padding: 2px 9px;
+  padding: 0.5cqw 2cqw;
   border-radius: 999px;
-  font-size: clamp(0.44rem, 1.7vw, 0.58rem);
+  font-size: 2.1cqw;
+  line-height: 1.1;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -231,95 +418,163 @@
 .id-card-badge-pending  { background: #faf0d8; color: #8a5a00; }
 .id-card-badge-rejected { background: #f4e6e5; color: #8a3226; }
 
-/* --- Facts grid --- */
+/* =============================================================
+   BACK: statement, responsibilities, verification and conditions
+   ============================================================= */
 
-.id-card-facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 7px;
-  row-gap: 1px;
-  margin: 3px 0 0;
-  font-size: clamp(0.42rem, 1.7vw, 0.6rem);
+.id-card-back-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2cqw;
+  padding: 2.6cqw 4.5cqw 1.8cqw;
+  /* A faint diagonal weave: gives the reverse its own texture without
+     competing with the text. */
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(15, 93, 62, 0.035) 0,
+    rgba(15, 93, 62, 0.035) 0.5cqw,
+    transparent 0.5cqw,
+    transparent 2.2cqw
+  );
 }
 
-.id-card-facts dt {
-  color: var(--id-slate);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.id-card-facts dd {
+.id-card-statement {
   margin: 0;
-  font-weight: 700;
-  color: var(--id-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.id-card-facts dd.id-card-fact-strong {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 2.9cqw;
+  line-height: 1.32;
   color: var(--id-green-deep);
-  font-family: var(--font-record);
 }
 
-/* --- Footer: QR focal point --- */
+.id-card-back-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 4cqw;
+}
 
-.id-card-footer {
+.id-card-back-section {
+  min-width: 0;
+}
+
+.id-card-back-heading {
+  margin: 0 0 1cqw;
+  padding-bottom: 0.6cqw;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.7cqw;
+  line-height: 1.15;
+  color: var(--id-green);
+  border-bottom: 0.35cqw solid var(--id-gold);
+}
+
+.id-card-back-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.id-card-back-list li {
+  position: relative;
+  margin: 0 0 0.7cqw;
+  padding-left: 2.6cqw;
+  font-size: 2.25cqw;
+  line-height: 1.3;
+  color: var(--id-ink);
+}
+
+.id-card-back-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.2cqw;
+  top: 0.55cqw;
+  width: 0.9cqw;
+  height: 0.9cqw;
+  background: var(--id-gold);
+  transform: rotate(45deg);
+}
+
+.id-card-back-footer {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 3% 5.5% 4%;
-  background: var(--id-gray);
-  border-top: 1px solid rgba(15, 93, 62, 0.15);
+  gap: 3cqw;
+  padding: 1.5cqw 4.5cqw;
+  background: var(--id-green-deep);
+  color: #fff;
 }
 
-.id-card-footer-label {
+.id-card-back-issuer {
+  min-width: 0;
+}
+
+.id-card-back-issuer p,
+.id-card-back-id {
   margin: 0;
-  font-size: clamp(0.42rem, 1.7vw, 0.58rem);
+}
+
+.id-card-back-issuer-line {
+  font-size: 2.3cqw;
+  line-height: 1.25;
   font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--id-slate);
+  color: var(--id-gold-soft);
 }
 
-.id-card-footer-org {
-  margin: 2px 0 0;
-  font-size: clamp(0.42rem, 1.7vw, 0.58rem);
-  font-weight: 600;
-  color: var(--id-green-deep);
-  font-family: var(--font-record);
+.id-card-back-contact {
+  font-size: 2cqw;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.9);
+  overflow-wrap: anywhere;
 }
 
-.id-card-qr-frame {
+.id-card-back-id {
   flex: 0 0 auto;
-  background: #fff;
-  padding: 4px;
-  border-radius: 8px;
-  border: 1px solid var(--id-gray);
-  box-shadow: 0 4px 10px rgba(15, 93, 62, 0.25);
-  line-height: 0;
-}
-
-.id-card-qr {
-  display: block;
-  width: clamp(46px, 15vw, 64px);
-  height: clamp(46px, 15vw, 64px);
+  font-family: var(--font-record);
+  font-size: 3cqw;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
 }
 
 /* =============================================================
-   Screen layout below the card
+   Screen layout below the cards
    ============================================================= */
 
 .card-actions {
   max-width: 420px;
-  margin: var(--space-4) auto 0;
+  margin: var(--space-6) auto 0;
   display: flex;
   gap: var(--space-2);
   justify-content: center;
   flex-wrap: wrap; /* two buttons side by side on desktop, stacked-safe on very narrow phones */
+}
+
+/* --- How to print both sides (native <details>, no script needed) --- */
+
+.card-print-help {
+  max-width: 560px;
+  margin: var(--space-4) auto 0;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.card-print-help summary {
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.card-print-help ol {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-6);
+}
+
+.card-print-help li {
+  margin-bottom: var(--space-2);
 }
 
 /* --- Mobile print-tip dialog (Task 2) --- */
@@ -387,7 +642,14 @@
 }
 
 /* =============================================================
-   Print: lock to true CR80 physical dimensions (85.60mm x 53.98mm)
+   Print: both faces at true CR80 size (85.60mm x 53.98mm).
+
+   Page 1 = FRONT, page 2 = BACK. Each face sits in exactly the same
+   place on its page (centred horizontally, same distance from the top,
+   nothing above it), so with the printer's default two-sided setting
+   ("flip on long edge", portrait paper) the back lands behind the front.
+   Everything inside a face scales with the card width (cqw), so it is
+   not resized by any rule below -- only the face itself is fixed in mm.
    ============================================================= */
 
 @media print {
@@ -408,10 +670,31 @@
     background: #fff;
   }
 
+  /* Nothing above the card may differ between the two pages. */
+  .card-view {
+    padding: 0;
+    max-width: none;
+  }
+
   .card-page {
     display: block;
     padding: 0;
     overflow: visible;
+  }
+
+  .card-sheet {
+    display: block;
+  }
+
+  .card-side {
+    margin: 0;
+    break-inside: avoid;
+    page-break-inside: avoid; /* legacy alias for print engines that predate break-inside */
+  }
+
+  .card-side-front {
+    break-after: page;
+    page-break-after: always; /* legacy alias */
   }
 
   .id-card {
@@ -420,31 +703,13 @@
     max-width: none;
     min-width: 0;
     aspect-ratio: auto;
-    margin: 0 auto; /* centred on the printed page */
+    margin: 0 auto; /* centred horizontally on the printed page */
     border-radius: 3mm;
     border-color: #ccc;
     box-shadow: none;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     break-inside: avoid;
-    page-break-inside: avoid; /* legacy alias for print engines that predate break-inside */
+    page-break-inside: avoid;
   }
-
-  .id-card-header { padding: 2.2mm 3.2mm 1.6mm; gap: 2mm; }
-  .id-card-logo { max-width: 7mm; min-width: 7mm; }
-  .id-card-assoc-name { font-size: 3.2mm; }
-  .id-card-subtitle { font-size: 2mm; }
-  .id-card-divider { height: 0.6mm; }
-
-  .id-card-body { padding: 2.4mm 3.2mm; gap: 2.6mm; }
-  .id-card-photo-frame { max-width: 17mm; gap: 1mm; }
-  .id-card-name { font-size: 3mm; }
-  .id-card-badge { font-size: 1.9mm; padding: 0.4mm 2mm; margin-bottom: 1mm; }
-  .id-card-facts { font-size: 2mm; column-gap: 1.5mm; }
-  .id-card-signature-label { font-size: 1.5mm; }
-
-  .id-card-footer { padding: 1.6mm 3.2mm 2.2mm; }
-  .id-card-footer-label,
-  .id-card-footer-org { font-size: 1.8mm; }
-  .id-card-qr { width: 12mm; height: 12mm; }
 }

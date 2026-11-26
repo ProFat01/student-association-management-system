@@ -1,0 +1,917 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 539 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: messages, staticfiles
+  Apply all migrations: accounts, admin, analytics, auth, contenttypes, core, elections, members, sessions
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying core.0001_initial... OK
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying accounts.0001_initial... OK
+  Applying accounts.0002_announcement... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying core.0002_sitesettings_donation_details_and_more... OK
+  Applying members.0001_initial... OK
+  Applying elections.0001_initial... OK
+  Applying analytics.0001_initial... OK
+  Applying analytics.0002_initial... OK
+  Applying analytics.0003_alter_agedistributionsnapshot_age_bracket... OK
+  Applying analytics.0004_pagevisit... OK
+  Applying core.0003_leadership... OK
+  Applying core.0004_sitesettings_registration_open... OK
+  Applying elections.0002_rename_is_active_election_is_enabled_and_more... OK
+  Applying elections.0003_election_eligibility_engine... OK
+  Applying members.0002_alter_member_nin_number_alter_member_phone_number... OK
+  Applying members.0003_membership_card_v1... OK
+  Applying members.0004_member_email... OK
+  Applying members.0005_member_members_mem_associa_bab0d7_idx... OK
+  Applying sessions.0001_initial...test_analytics_admin_without_the_new_permission_gets_403 (apps.accounts.tests.test_communications.CommunicationCenterPermissionTests.test_analytics_admin_without_the_new_permission_gets_403) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\.venv\Lib\site-packages\django\core\handlers\base.py:62: UserWarning: No directory at: C:\Users\HP PC\Downloads\SAMS\student-association-management-system\staticfiles\
+  mw_instance = middleware(adapted_handler)
+ok
+test_anonymous_redirected (apps.accounts.tests.test_communications.CommunicationCenterPermissionTests.test_anonymous_redirected) ... ok
+test_compose_and_history_and_detail_are_all_gated_too (apps.accounts.tests.test_communications.CommunicationCenterPermissionTests.test_compose_and_history_and_detail_are_all_gated_too) ... ok
+test_registration_admin_without_the_new_permission_gets_403 (apps.accounts.tests.test_communications.CommunicationCenterPermissionTests.test_registration_admin_without_the_new_permission_gets_403) ... ok
+test_super_admin_can_access (apps.accounts.tests.test_communications.CommunicationCenterPermissionTests.test_super_admin_can_access) ... ok
+test_one_failed_mailjet_delivery_does_not_stop_the_batch (apps.accounts.tests.test_communications.ComposeAndSendTests.test_one_failed_mailjet_delivery_does_not_stop_the_batch)
+A Mailjet API failure for one recipient must not abort the rest. ... ERROR apps.accounts.notifications: Failed to send announcement email to member 3
+Traceback (most recent call last):
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\accounts\notifications.py", line 76, in send
+    mailjet_service.send_email(
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+apps.core.mailjet_service.MailjetServiceError: Mailjet API request failed: ConnectionError
+ERROR apps.accounts.notifications: Failed to send announcement email to member 1
+Traceback (most recent call last):
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\accounts\notifications.py", line 76, in send
+    mailjet_service.send_email(
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\accounts\notifications.py", line 76, in send
+    mailjet_service.send_email(
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+apps.core.mailjet_service.MailjetServiceError: Mailjet API request failed: ConnectionError
+ok
+test_preview_does_not_create_an_announcement_or_send_mail (apps.accounts.tests.test_communications.ComposeAndSendTests.test_preview_does_not_create_an_announcement_or_send_mail) ... ok
+test_selected_recipient_type_sends_only_to_chosen_members (apps.accounts.tests.test_communications.ComposeAndSendTests.test_selected_recipient_type_sends_only_to_chosen_members) ... ok
+test_selected_recipient_type_without_any_ids_is_rejected (apps.accounts.tests.test_communications.ComposeAndSendTests.test_selected_recipient_type_without_any_ids_is_rejected) ... ok
+test_send_creates_announcement_and_sends_only_to_members_with_email (apps.accounts.tests.test_communications.ComposeAndSendTests.test_send_creates_announcement_and_sends_only_to_members_with_email) ... ok
+test_sms_delivery_method_is_rejected_by_form_validation (apps.accounts.tests.test_communications.ComposeAndSendTests.test_sms_delivery_method_is_rejected_by_form_validation) ... ok
+test_announcement_created_by_deletion_keeps_the_history_row (apps.accounts.tests.test_communications.HistoryAndDetailTests.test_announcement_created_by_deletion_keeps_the_history_row)
+created_by=SET_NULL: deleting a staff account must not delete announcement history. ... ok
+test_detail_shows_counts (apps.accounts.tests.test_communications.HistoryAndDetailTests.test_detail_shows_counts) ... ok
+test_history_lists_the_announcement (apps.accounts.tests.test_communications.HistoryAndDetailTests.test_history_lists_the_announcement) ... ok
+test_only_email_provider_is_enabled (apps.accounts.tests.test_communications.NotificationProviderTests.test_only_email_provider_is_enabled) ... ok
+test_sms_and_push_providers_raise_if_ever_called_directly (apps.accounts.tests.test_communications.NotificationProviderTests.test_sms_and_push_providers_raise_if_ever_called_directly) ... ok
+test_all_returns_every_member (apps.accounts.tests.test_communications.RecipientResolutionTests.test_all_returns_every_member) ... ok
+test_approved_only (apps.accounts.tests.test_communications.RecipientResolutionTests.test_approved_only) ... ok
+test_custom_combines_filters (apps.accounts.tests.test_communications.RecipientResolutionTests.test_custom_combines_filters) ... ok
+test_pending_only (apps.accounts.tests.test_communications.RecipientResolutionTests.test_pending_only) ... ok
+test_selected_uses_explicit_ids_regardless_of_status (apps.accounts.tests.test_communications.RecipientResolutionTests.test_selected_uses_explicit_ids_regardless_of_status) ... ok
+test_analytics_admin_sees_only_analytics_section (apps.accounts.tests.test_views.DashboardAccessTests.test_analytics_admin_sees_only_analytics_section) ... ok
+test_anonymous_redirected_to_admin_login (apps.accounts.tests.test_views.DashboardAccessTests.test_anonymous_redirected_to_admin_login) ... ok
+test_django_superuser_without_any_group_sees_every_section (apps.accounts.tests.test_views.DashboardAccessTests.test_django_superuser_without_any_group_sees_every_section)
+has_perm() always returns True for is_superuser=True, regardless of group membership. ... ok
+test_election_admin_sees_only_elections_section (apps.accounts.tests.test_views.DashboardAccessTests.test_election_admin_sees_only_elections_section) ... ok
+test_plain_staff_with_no_group_sees_no_access_message (apps.accounts.tests.test_views.DashboardAccessTests.test_plain_staff_with_no_group_sees_no_access_message) ... ok
+test_registration_admin_sees_only_registration_section (apps.accounts.tests.test_views.DashboardAccessTests.test_registration_admin_sees_only_registration_section) ... ok
+test_super_admin_sees_every_section (apps.accounts.tests.test_views.DashboardAccessTests.test_super_admin_sees_every_section) ... ok
+test_contact_section_shows_unread_count_and_recent_messages (apps.accounts.tests.test_views.DashboardContentTests.test_contact_section_shows_unread_count_and_recent_messages) ... ok
+test_dashboard_nav_link_points_here_for_authenticated_users (apps.accounts.tests.test_views.DashboardContentTests.test_dashboard_nav_link_points_here_for_authenticated_users) ... ok
+test_elections_section_lists_elections_with_manage_link (apps.accounts.tests.test_views.DashboardContentTests.test_elections_section_lists_elections_with_manage_link) ... ok
+test_graceful_when_no_association_configured (apps.accounts.tests.test_views.DashboardContentTests.test_graceful_when_no_association_configured) ... ok
+test_registration_section_lists_pending_applications_with_review_link (apps.accounts.tests.test_views.DashboardContentTests.test_registration_section_lists_pending_applications_with_review_link) ... ok
+test_default_run_generates_everything (apps.analytics.tests.test_management_command.GenerateSnapshotsCommandTests.test_default_run_generates_everything) ... ok
+test_election_id_filter_targets_one_election (apps.analytics.tests.test_management_command.GenerateSnapshotsCommandTests.test_election_id_filter_targets_one_election) ... ok
+test_elections_only_skips_membership_snapshots (apps.analytics.tests.test_management_command.GenerateSnapshotsCommandTests.test_elections_only_skips_membership_snapshots) ... ok
+test_membership_only_skips_election_snapshots (apps.analytics.tests.test_management_command.GenerateSnapshotsCommandTests.test_membership_only_skips_election_snapshots) ... ok
+test_combined_filters_are_anded (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_combined_filters_are_anded) ... ok
+test_faculty_filter_narrows_total (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_faculty_filter_narrows_total) ... ok
+test_open_members_link_carries_the_same_querystring (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_open_members_link_carries_the_same_querystring) ... ok
+test_requires_login (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_requires_login) ... ok
+test_status_breakdown_matches_filtered_set (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_status_breakdown_matches_filtered_set) ... ok
+test_unfiltered_shows_every_member (apps.analytics.tests.test_member_management.MemberManagementDashboardTests.test_unfiltered_shows_every_member) ... ok
+test_member_list_matches_dashboard_count_for_same_filters (apps.analytics.tests.test_member_management.OpenMembersRoundTripTests.test_member_list_matches_dashboard_count_for_same_filters) ... ok
+test_age_distribution_counts_and_includes_all_brackets (apps.analytics.tests.test_services.AgeDistributionTests.test_age_distribution_counts_and_includes_all_brackets) ... ok
+test_age_distribution_includes_unapproved_members (apps.analytics.tests.test_services.AgeDistributionTests.test_age_distribution_includes_unapproved_members)
+Age analytics isn't qualified by approval status in the spec — a pending applicant's age still counts. ... ok
+test_each_bracket_boundary (apps.analytics.tests.test_services.AgeDistributionTests.test_each_bracket_boundary) ... ok
+test_ineligible_members_excluded_from_participation (apps.analytics.tests.test_services.AgeParticipationTests.test_ineligible_members_excluded_from_participation) ... ok
+test_participation_per_bracket (apps.analytics.tests.test_services.AgeParticipationTests.test_participation_per_bracket) ... ok
+test_course_distribution_asc (apps.analytics.tests.test_services.CourseAndInstitutionDistributionTests.test_course_distribution_asc) ... ok
+test_course_distribution_desc_default (apps.analytics.tests.test_services.CourseAndInstitutionDistributionTests.test_course_distribution_desc_default) ... ok
+test_institution_distribution (apps.analytics.tests.test_services.CourseAndInstitutionDistributionTests.test_institution_distribution) ... ok
+test_election_overview_counts (apps.analytics.tests.test_services.ElectionOverviewTests.test_election_overview_counts) ... ok
+test_counts_and_percentages (apps.analytics.tests.test_services.MembershipOverviewTests.test_counts_and_percentages) ... ok
+test_no_members_does_not_divide_by_zero (apps.analytics.tests.test_services.MembershipOverviewTests.test_no_members_does_not_divide_by_zero) ... ok
+test_clear_winner (apps.analytics.tests.test_services.PositionResultsWinnerTests.test_clear_winner) ... ok
+test_no_votes_yet_no_winner_no_crash (apps.analytics.tests.test_services.PositionResultsWinnerTests.test_no_votes_yet_no_winner_no_crash) ... ok
+test_tie_has_no_single_winner (apps.analytics.tests.test_services.PositionResultsWinnerTests.test_tie_has_no_single_winner) ... ok
+test_growth_by_month_label_format (apps.analytics.tests.test_services.RegistrationGrowthTests.test_growth_by_month_label_format) ... ok
+test_invalid_granularity_raises (apps.analytics.tests.test_services.RegistrationGrowthTests.test_invalid_granularity_raises) ... ok
+test_generate_age_distribution_snapshot_creates_all_brackets (apps.analytics.tests.test_services.SnapshotGenerationTests.test_generate_age_distribution_snapshot_creates_all_brackets) ... ok
+test_generate_election_result_snapshot_does_not_touch_is_published (apps.analytics.tests.test_services.SnapshotGenerationTests.test_generate_election_result_snapshot_does_not_touch_is_published) ... ok
+test_generate_membership_snapshot (apps.analytics.tests.test_services.SnapshotGenerationTests.test_generate_membership_snapshot) ... ok
+test_generate_membership_snapshot_is_idempotent_per_day (apps.analytics.tests.test_services.SnapshotGenerationTests.test_generate_membership_snapshot_is_idempotent_per_day) ... ok
+test_course_dashboard_respects_order_param (apps.analytics.tests.test_views.DashboardContentTests.test_course_dashboard_respects_order_param) ... ok
+test_election_detail_shows_results_and_age_participation (apps.analytics.tests.test_views.DashboardContentTests.test_election_detail_shows_results_and_age_participation) ... ok
+test_overview_shows_membership_and_election_numbers (apps.analytics.tests.test_views.DashboardContentTests.test_overview_shows_membership_and_election_numbers) ... ok
+test_analytics_admin_can_access_every_dashboard (apps.analytics.tests.test_views.DashboardPermissionTests.test_analytics_admin_can_access_every_dashboard) ... ok
+test_anonymous_redirected_to_admin_login_for_every_dashboard (apps.analytics.tests.test_views.DashboardPermissionTests.test_anonymous_redirected_to_admin_login_for_every_dashboard) ... ok
+test_election_detail_dashboard_permission_gated_too (apps.analytics.tests.test_views.DashboardPermissionTests.test_election_detail_dashboard_permission_gated_too) ... ok
+test_plain_staff_gets_403_for_every_dashboard (apps.analytics.tests.test_views.DashboardPermissionTests.test_plain_staff_gets_403_for_every_dashboard) ... ok
+test_superuser_can_access_dashboards_without_being_in_any_group (apps.analytics.tests.test_views.DashboardPermissionTests.test_superuser_can_access_dashboards_without_being_in_any_group) ... ok
+test_age_distribution_json (apps.analytics.tests.test_views.JsonApiTests.test_age_distribution_json) ... ok
+test_anonymous_gets_redirected_not_json (apps.analytics.tests.test_views.JsonApiTests.test_anonymous_gets_redirected_not_json) ... ok
+test_course_json_includes_order_and_results (apps.analytics.tests.test_views.JsonApiTests.test_course_json_includes_order_and_results) ... ok
+test_election_results_json (apps.analytics.tests.test_views.JsonApiTests.test_election_results_json) ... ok
+test_election_turnout_json (apps.analytics.tests.test_views.JsonApiTests.test_election_turnout_json) ... ok
+test_membership_json_shape (apps.analytics.tests.test_views.JsonApiTests.test_membership_json_shape) ... ok
+test_registration_growth_json (apps.analytics.tests.test_views.JsonApiTests.test_registration_growth_json) ... ok
+test_browser_breakdown (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_browser_breakdown) ... ok
+test_device_breakdown_counts_and_percentages (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_device_breakdown_counts_and_percentages) ... ok
+test_page_label_fallback_for_unmapped_key (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_page_label_fallback_for_unmapped_key) ... ok
+test_referrer_breakdown (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_referrer_breakdown) ... ok
+test_resolve_date_range_7d (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_resolve_date_range_7d) ... ok
+test_resolve_date_range_custom (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_resolve_date_range_custom) ... ok
+test_resolve_date_range_falls_back_for_unknown_key (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_resolve_date_range_falls_back_for_unknown_key) ... ok
+test_resolve_date_range_today (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_resolve_date_range_today) ... ok
+test_top_pages_ordering_and_percentage (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_top_pages_ordering_and_percentage) ... ok
+test_traffic_trend_grouped_by_date (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_traffic_trend_grouped_by_date) ... ok
+test_visitor_overview_counts_today (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_visitor_overview_counts_today) ... ok
+test_visitor_overview_excludes_other_days_from_today (apps.analytics.tests.test_visitor_analytics.AggregationTests.test_visitor_overview_excludes_other_days_from_today) ... ok
+test_classify_browser_chrome (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_browser_chrome) ... ok
+test_classify_browser_edge_over_chrome (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_browser_edge_over_chrome) ... ok
+test_classify_browser_firefox (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_browser_firefox) ... ok
+test_classify_browser_safari (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_browser_safari) ... ok
+test_classify_device_desktop_default (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_device_desktop_default) ... ok
+test_classify_device_mobile (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_device_mobile) ... ok
+test_classify_device_tablet (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_device_tablet) ... ok
+test_classify_device_unknown_for_empty (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_device_unknown_for_empty) ... ok
+test_classify_referrer_direct_when_empty (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_referrer_direct_when_empty) ... ok
+test_classify_referrer_internal_treated_as_direct (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_referrer_internal_treated_as_direct) ... ok
+test_classify_referrer_other_website (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_referrer_other_website) ... ok
+test_classify_referrer_search_engine (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_referrer_search_engine) ... ok
+test_classify_referrer_social (apps.analytics.tests.test_visitor_analytics.ClassificationHelperTests.test_classify_referrer_social) ... ok
+test_dashboard_query_count_does_not_scale_with_row_count (apps.analytics.tests.test_visitor_analytics.PerformanceTests.test_dashboard_query_count_does_not_scale_with_row_count) ... ok
+test_tracking_a_single_request_is_a_single_insert (apps.analytics.tests.test_visitor_analytics.PerformanceTests.test_tracking_a_single_request_is_a_single_insert) ... ok
+test_analytics_admin_can_access_dashboard (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_analytics_admin_can_access_dashboard) ... ok
+test_anonymous_redirected_to_admin_login (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_anonymous_redirected_to_admin_login) ... ok
+test_election_admin_does_not_get_visitor_analytics (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_election_admin_does_not_get_visitor_analytics) ... ok
+test_json_api_gated_the_same_way (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_json_api_gated_the_same_way) ... ok
+test_plain_staff_gets_403 (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_plain_staff_gets_403) ... ok
+test_setup_roles_grants_visitor_analytics_to_analytics_admin (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_setup_roles_grants_visitor_analytics_to_analytics_admin) ... ok
+test_setup_roles_grants_visitor_analytics_to_super_admin (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_setup_roles_grants_visitor_analytics_to_super_admin) ... ok
+test_superuser_can_access_without_group (apps.analytics.tests.test_visitor_analytics.PermissionTests.test_superuser_can_access_without_group) ... ok
+test_raw_ip_never_stored_on_model (apps.analytics.tests.test_visitor_analytics.PrivacyTests.test_raw_ip_never_stored_on_model) ... ok
+test_real_request_never_persists_raw_ip_string (apps.analytics.tests.test_visitor_analytics.PrivacyTests.test_real_request_never_persists_raw_ip_string) ... ok
+test_visitor_hash_is_not_the_raw_ip (apps.analytics.tests.test_visitor_analytics.PrivacyTests.test_visitor_hash_is_not_the_raw_ip) ... ok
+test_visitor_hash_rotates_daily (apps.analytics.tests.test_visitor_analytics.PrivacyTests.test_visitor_hash_rotates_daily) ... ok
+test_visitor_hash_stable_within_the_same_day (apps.analytics.tests.test_visitor_analytics.PrivacyTests.test_visitor_hash_stable_within_the_same_day) ... ok
+test_cleanup_deletes_only_rows_older_than_retention (apps.analytics.tests.test_visitor_analytics.RetentionTests.test_cleanup_deletes_only_rows_older_than_retention) ... ok
+test_cleanup_management_command_deletes (apps.analytics.tests.test_visitor_analytics.RetentionTests.test_cleanup_management_command_deletes) ... ok
+test_cleanup_management_command_dry_run_deletes_nothing (apps.analytics.tests.test_visitor_analytics.RetentionTests.test_cleanup_management_command_dry_run_deletes_nothing) ... ok
+test_cleanup_respects_default_settings_retention (apps.analytics.tests.test_visitor_analytics.RetentionTests.test_cleanup_respects_default_settings_retention) ... ok
+test_admin_pages_are_not_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_admin_pages_are_not_recorded) ... ok
+test_analytics_dashboard_pages_are_not_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_analytics_dashboard_pages_are_not_recorded)
+The analytics module must not inflate its own visitor stats. ... ok
+test_authenticated_staff_activity_excluded_even_on_public_pages (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_authenticated_staff_activity_excluded_even_on_public_pages)
+Section 5: staff/admin activity is excluded from public visitor stats by default. ... ok
+test_excluded_path_prefixes_helper (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_excluded_path_prefixes_helper) ... ok
+test_member_portal_session_recorded_as_member_visitor_type (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_member_portal_session_recorded_as_member_visitor_type) ... ok
+test_multiple_public_pages_each_recorded_once (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_multiple_public_pages_each_recorded_once) ... ok
+test_not_found_requests_are_not_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_not_found_requests_are_not_recorded) ... ok
+test_post_requests_are_not_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_post_requests_are_not_recorded) ... ok
+test_public_page_visit_is_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_public_page_visit_is_recorded) ... ok
+test_staff_dashboard_pages_are_not_recorded (apps.analytics.tests.test_visitor_analytics.TrackingMiddlewareTests.test_staff_dashboard_pages_are_not_recorded) ... ok
+test_no_inline_script_blocks_on_any_major_page (apps.core.tests.test_design_system.CspSafetyInvariantTests.test_no_inline_script_blocks_on_any_major_page) ... ok
+test_no_inline_style_attributes_on_any_major_page (apps.core.tests.test_design_system.CspSafetyInvariantTests.test_no_inline_style_attributes_on_any_major_page) ... ok
+test_site_js_loaded_as_external_file_not_inline (apps.core.tests.test_design_system.CspSafetyInvariantTests.test_site_js_loaded_as_external_file_not_inline) ... ok
+test_active_page_gets_is_active_class_on_its_own_nav_link (apps.core.tests.test_design_system.NavigationAndAlertTemplateLogicTests.test_active_page_gets_is_active_class_on_its_own_nav_link) ... ok
+test_inactive_pages_do_not_get_is_active_class (apps.core.tests.test_design_system.NavigationAndAlertTemplateLogicTests.test_inactive_pages_do_not_get_is_active_class) ... ok
+test_warning_level_message_renders_with_alert_warning_class (apps.core.tests.test_design_system.NavigationAndAlertTemplateLogicTests.test_warning_level_message_renders_with_alert_warning_class)
+No view in the codebase currently calls messages.warning() (only ... ok
+test_donation_details_appear_in_footer_on_any_page (apps.core.tests.test_frontend_display.DonationDisplayTests.test_donation_details_appear_in_footer_on_any_page) ... ok
+test_donation_details_appear_on_about_page (apps.core.tests.test_frontend_display.DonationDisplayTests.test_donation_details_appear_on_about_page) ... ok
+test_donation_details_appear_on_landing_page (apps.core.tests.test_frontend_display.DonationDisplayTests.test_donation_details_appear_on_landing_page) ... ok
+test_donation_section_absent_from_landing_page_when_not_configured (apps.core.tests.test_frontend_display.DonationDisplayTests.test_donation_section_absent_from_landing_page_when_not_configured) ... ok
+test_logo_renders_on_every_page_via_shared_base_template (apps.core.tests.test_frontend_display.LogoDisplayTests.test_logo_renders_on_every_page_via_shared_base_template)
+The logo lives in base.html's header, so it must appear on every page, not just home. ... ok
+test_logo_renders_on_homepage_when_uploaded (apps.core.tests.test_frontend_display.LogoDisplayTests.test_logo_renders_on_homepage_when_uploaded) ... ok
+test_no_broken_image_tag_when_logo_not_uploaded (apps.core.tests.test_frontend_display.LogoDisplayTests.test_no_broken_image_tag_when_logo_not_uploaded) ... ok
+test_active_election_shows_name_period_and_countdown_target (apps.core.tests.test_landing_page_experience.ActiveElectionSpotlightTests.test_active_election_shows_name_period_and_countdown_target) ... ok
+test_no_active_election_shows_exact_required_message (apps.core.tests.test_landing_page_experience.ActiveElectionSpotlightTests.test_no_active_election_shows_exact_required_message) ... ok
+test_donation_section_absent_when_not_configured (apps.core.tests.test_landing_page_experience.DonationSectionTests.test_donation_section_absent_when_not_configured) ... ok
+test_donation_section_shown_with_anchor_when_configured (apps.core.tests.test_landing_page_experience.DonationSectionTests.test_donation_section_shown_with_anchor_when_configured) ... ok
+test_footer_donate_link_only_appears_when_donation_configured (apps.core.tests.test_landing_page_experience.DonationSectionTests.test_footer_donate_link_only_appears_when_donation_configured) ... ok
+test_contact_section_renders_details_and_form_fields (apps.core.tests.test_landing_page_experience.EmbeddedContactSectionTests.test_contact_section_renders_details_and_form_fields) ... ok
+test_submitting_the_embedded_form_creates_a_contact_message (apps.core.tests.test_landing_page_experience.EmbeddedContactSectionTests.test_submitting_the_embedded_form_creates_a_contact_message)
+Proves the embedded form genuinely reuses contact_view unchanged ... ok
+test_footer_omits_logo_img_when_not_uploaded (apps.core.tests.test_landing_page_experience.FooterLogoTests.test_footer_omits_logo_img_when_not_uploaded) ... ok
+test_footer_shows_logo_when_uploaded (apps.core.tests.test_landing_page_experience.FooterLogoTests.test_footer_shows_logo_when_uploaded) ... ok
+test_soonest_closing_active_election_is_spotlighted_when_several_are_active (apps.core.tests.test_landing_page_experience.HeroConditionalVoteButtonTests.test_soonest_closing_active_election_is_spotlighted_when_several_are_active) ... ok
+test_vote_now_absent_when_only_closed_election_exists (apps.core.tests.test_landing_page_experience.HeroConditionalVoteButtonTests.test_vote_now_absent_when_only_closed_election_exists) ... ok
+test_vote_now_absent_when_only_upcoming_election_exists (apps.core.tests.test_landing_page_experience.HeroConditionalVoteButtonTests.test_vote_now_absent_when_only_upcoming_election_exists) ... ok
+test_vote_now_absent_with_no_elections_at_all (apps.core.tests.test_landing_page_experience.HeroConditionalVoteButtonTests.test_vote_now_absent_with_no_elections_at_all) ... ok
+test_vote_now_present_and_links_to_correct_election_when_active (apps.core.tests.test_landing_page_experience.HeroConditionalVoteButtonTests.test_vote_now_present_and_links_to_correct_election_when_active) ... ok
+test_hero_uses_data_attribute_not_inline_style_for_background_image (apps.core.tests.test_landing_page_experience.LandingPageCspSafetyTests.test_hero_uses_data_attribute_not_inline_style_for_background_image) ... ok
+test_no_inline_style_or_script_even_with_every_optional_section_populated (apps.core.tests.test_landing_page_experience.LandingPageCspSafetyTests.test_no_inline_style_or_script_even_with_every_optional_section_populated) ... ok
+test_preview_absent_for_closed_election_even_with_votes (apps.core.tests.test_landing_page_experience.LiveResultsPreviewTests.test_preview_absent_for_closed_election_even_with_votes) ... ok
+test_preview_shows_correct_vote_counts_and_percentages (apps.core.tests.test_landing_page_experience.LiveResultsPreviewTests.test_preview_shows_correct_vote_counts_and_percentages) ... ok
+test_preview_shows_honestly_with_zero_votes_when_election_is_active (apps.core.tests.test_landing_page_experience.LiveResultsPreviewTests.test_preview_shows_honestly_with_zero_votes_when_election_is_active)
+The brief's only stated condition for Section 6 is "if an ... ok
+test_election_status_shows_active_badge_and_votes_cast_when_active (apps.core.tests.test_landing_page_experience.StatisticsCardsTests.test_election_status_shows_active_badge_and_votes_cast_when_active) ... ok
+test_election_status_shows_none_badge_with_no_active_election (apps.core.tests.test_landing_page_experience.StatisticsCardsTests.test_election_status_shows_none_badge_with_no_active_election) ... ok
+test_membership_counts_render_as_real_numbers_not_placeholder_zero (apps.core.tests.test_landing_page_experience.StatisticsCardsTests.test_membership_counts_render_as_real_numbers_not_placeholder_zero) ... ok
+test_why_join_section_present_with_all_five_benefits (apps.core.tests.test_landing_page_experience.WhyJoinSectionTests.test_why_join_section_present_with_all_five_benefits) ... ok
+test_empty_state_not_shown_when_leaders_exist (apps.core.tests.test_leadership.LeadershipEmptyStateTests.test_empty_state_not_shown_when_leaders_exist) ... ok
+test_empty_state_shown_when_no_leaders (apps.core.tests.test_leadership.LeadershipEmptyStateTests.test_empty_state_shown_when_no_leaders) ... ok
+test_string_representation (apps.core.tests.test_leadership.LeadershipModelTests.test_string_representation) ... ok
+test_leaders_are_ordered_by_display_order (apps.core.tests.test_leadership.LeadershipOrderingTests.test_leaders_are_ordered_by_display_order) ... ok
+test_leadership_page_renders_successfully (apps.core.tests.test_leadership.LeadershipPageRenderTests.test_leadership_page_renders_successfully) ... ok
+test_leadership_page_url_works (apps.core.tests.test_leadership.LeadershipPageRenderTests.test_leadership_page_url_works) ... ok
+test_facebook_link_hidden_when_not_available (apps.core.tests.test_leadership.LeadershipPhotoAndFacebookTests.test_facebook_link_hidden_when_not_available) ... ok
+test_facebook_link_shown_when_available (apps.core.tests.test_leadership.LeadershipPhotoAndFacebookTests.test_facebook_link_shown_when_available) ... ok
+test_page_does_not_break_without_a_photo (apps.core.tests.test_leadership.LeadershipPhotoAndFacebookTests.test_page_does_not_break_without_a_photo) ... ok
+test_photo_renders_when_present (apps.core.tests.test_leadership.LeadershipPhotoAndFacebookTests.test_photo_renders_when_present) ... ok
+test_active_association_leaders_are_displayed (apps.core.tests.test_leadership.LeadershipScopingTests.test_active_association_leaders_are_displayed) ... ok
+test_inactive_leaders_are_not_displayed (apps.core.tests.test_leadership.LeadershipScopingTests.test_inactive_leaders_are_not_displayed) ... ok
+test_leaders_from_another_association_are_not_displayed (apps.core.tests.test_leadership.LeadershipScopingTests.test_leaders_from_another_association_are_not_displayed) ... ok
+test_reachability_url_contains_no_markdown_link_syntax (apps.core.tests.test_mailjet_diagnostic_command.ReachabilityUrlTests.test_reachability_url_contains_no_markdown_link_syntax) ... ok
+test_reachability_url_is_exactly_the_plain_mailjet_url (apps.core.tests.test_mailjet_diagnostic_command.ReachabilityUrlTests.test_reachability_url_is_exactly_the_plain_mailjet_url) ... ok
+test_requests_get_is_called_with_the_plain_url (apps.core.tests.test_mailjet_diagnostic_command.RunCheckReachabilityCallTests.test_requests_get_is_called_with_the_plain_url) ... ok
+test_explicit_from_email_and_name_override_defaults (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_explicit_from_email_and_name_override_defaults) ... ok
+test_failure_log_never_contains_the_api_secret (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_failure_log_never_contains_the_api_secret) ... ok
+test_network_exception_raises_mailjet_service_error_not_propagate_raw (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_network_exception_raises_mailjet_service_error_not_propagate_raw) ... ERROR apps.core.mailjet_service: Mailjet API request failed for member@example.com: ConnectionError
+ok
+test_non_200_status_raises_mailjet_service_error (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_non_200_status_raises_mailjet_service_error) ... ERROR apps.core.mailjet_service: Mailjet API returned status 401 for member@example.com
+ok
+test_rejected_message_status_raises_mailjet_service_error (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_rejected_message_status_raises_mailjet_service_error) ... ERROR apps.core.mailjet_service: Mailjet rejected message to member@example.com (status=error)
+ok
+test_sends_correct_payload_shape (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_sends_correct_payload_shape) ... ok
+test_success_returns_true (apps.core.tests.test_mailjet_service.SendEmailConfiguredTests.test_success_returns_true) ... ok
+test_logs_the_email_instead_of_sending (apps.core.tests.test_mailjet_service.SendEmailUnconfiguredTests.test_logs_the_email_instead_of_sending) ... ok
+test_returns_true_without_calling_the_client (apps.core.tests.test_mailjet_service.SendEmailUnconfiguredTests.test_returns_true_without_calling_the_client) ... INFO apps.core.mailjet_service: MAILJET_API_KEY/MAILJET_SECRET_KEY not configured — printing email instead of calling the Mailjet API.
+To:  <member@example.com>
+From:  <noreply@sams.test>
+Subject: Hi
+
+x
+ok
+test_create_and_default_unread (apps.core.tests.test_models.ContactMessageTests.test_create_and_default_unread) ... ok
+test_ordered_most_recent_first (apps.core.tests.test_models.ContactMessageTests.test_ordered_most_recent_first) ... FAIL
+test_does_not_duplicate_association_logo (apps.core.tests.test_models.SiteSettingsContentFieldsTests.test_does_not_duplicate_association_logo)
+PART 9 lists 'Logo' under Site Settings — Association.logo already covers this; SiteSettings has no second logo field. ... ok
+test_new_content_fields_save_and_round_trip (apps.core.tests.test_models.SiteSettingsContentFieldsTests.test_new_content_fields_save_and_round_trip) ... ok
+test_anonymous_user_cannot_change_registration_status (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_anonymous_user_cannot_change_registration_status) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\.venv\Lib\site-packages\django\core\handlers\base.py:62: UserWarning: No directory at: C:\Users\HP PC\Downloads\SAMS\student-association-management-system\staticfiles\
+  mw_instance = middleware(adapted_handler)
+ok
+test_change_form_has_a_clear_registration_section_for_authorised_admin (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_change_form_has_a_clear_registration_section_for_authorised_admin) ... ok
+test_changelist_shows_current_status_and_both_actions (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_changelist_shows_current_status_and_both_actions) ... ok
+test_closing_registration_does_not_block_other_admin_work (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_closing_registration_does_not_block_other_admin_work) ... ok
+test_closing_via_admin_blocks_public_applications_and_reopening_restores_them (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_closing_via_admin_blocks_public_applications_and_reopening_restores_them) ... ok
+test_registration_admin_can_close_and_reopen_with_the_actions (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_registration_admin_can_close_and_reopen_with_the_actions) ... ok
+test_roles_receive_the_permission_from_setup_roles (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_roles_receive_the_permission_from_setup_roles) ... ok
+test_roles_without_access_cannot_change_registration_status (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_roles_without_access_cannot_change_registration_status) ... ok
+test_staff_who_may_edit_site_settings_but_lack_the_permission_cannot_change_status (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_staff_who_may_edit_site_settings_but_lack_the_permission_cannot_change_status) ... ok
+test_superuser_can_close_and_reopen_with_the_settings_form (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_superuser_can_close_and_reopen_with_the_settings_form) ... ok
+test_superuser_can_close_then_reopen_with_the_actions (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_superuser_can_close_then_reopen_with_the_actions) ... ok
+test_view_only_staff_cannot_run_the_actions (apps.core.tests.test_registration_control.AdminRegistrationControlTests.test_view_only_staff_cannot_run_the_actions) ... ok
+test_closed_page_still_links_to_status_check_and_member_login (apps.core.tests.test_registration_control.PublicRegistrationTests.test_closed_page_still_links_to_status_check_and_member_login) ... ok
+test_closed_registration_rejects_a_submission_and_creates_nothing (apps.core.tests.test_registration_control.PublicRegistrationTests.test_closed_registration_rejects_a_submission_and_creates_nothing) ... ok
+test_closed_registration_shows_a_professional_message_and_no_form (apps.core.tests.test_registration_control.PublicRegistrationTests.test_closed_registration_shows_a_professional_message_and_no_form) ... ok
+test_closing_only_affects_the_public_application_form (apps.core.tests.test_registration_control.PublicRegistrationTests.test_closing_only_affects_the_public_application_form) ... ok
+test_existing_member_can_still_log_in_while_registration_is_closed (apps.core.tests.test_registration_control.PublicRegistrationTests.test_existing_member_can_still_log_in_while_registration_is_closed) ... ok
+test_registration_works_when_explicitly_open (apps.core.tests.test_registration_control.PublicRegistrationTests.test_registration_works_when_explicitly_open) ... ok
+test_registration_works_when_open_without_any_settings_row (apps.core.tests.test_registration_control.PublicRegistrationTests.test_registration_works_when_open_without_any_settings_row) ... ok
+test_reopening_allows_applications_again (apps.core.tests.test_registration_control.PublicRegistrationTests.test_reopening_allows_applications_again) ... ok
+test_success_page_of_an_earlier_application_still_works_while_closed (apps.core.tests.test_registration_control.PublicRegistrationTests.test_success_page_of_an_earlier_application_still_works_while_closed) ... ok
+test_association_without_a_settings_row_counts_as_open (apps.core.tests.test_registration_control.RegistrationSwitchModelTests.test_association_without_a_settings_row_counts_as_open) ... ok
+test_helper_follows_the_stored_value_every_time (apps.core.tests.test_registration_control.RegistrationSwitchModelTests.test_helper_follows_the_stored_value_every_time) ... ok
+test_registration_is_open_by_default (apps.core.tests.test_registration_control.RegistrationSwitchModelTests.test_registration_is_open_by_default) ... ok
+test_setting_is_stored_in_the_database (apps.core.tests.test_registration_control.RegistrationSwitchModelTests.test_setting_is_stored_in_the_database) ... ok
+test_about_page_renders_content_blocks (apps.core.tests.test_views.AboutPageTests.test_about_page_renders_content_blocks) ... ok
+test_about_page_shows_placeholder_when_content_missing (apps.core.tests.test_views.AboutPageTests.test_about_page_shows_placeholder_when_content_missing) ... ok
+test_get_shows_contact_details (apps.core.tests.test_views.ContactPageTests.test_get_shows_contact_details) ... ok
+test_invalid_email_rejected (apps.core.tests.test_views.ContactPageTests.test_invalid_email_rejected) ... ok
+test_missing_required_field_does_not_create_message (apps.core.tests.test_views.ContactPageTests.test_missing_required_field_does_not_create_message) ... ok
+test_valid_submission_creates_contact_message_and_redirects_with_flash (apps.core.tests.test_views.ContactPageTests.test_valid_submission_creates_contact_message_and_redirects_with_flash) ... ok
+test_cta_section_buttons_present (apps.core.tests.test_views.LandingPageTests.test_cta_section_buttons_present) ... ok
+test_election_status_sections_show_upcoming_active_and_completed (apps.core.tests.test_views.LandingPageTests.test_election_status_sections_show_upcoming_active_and_completed) ... ok
+test_graceful_when_no_association_configured (apps.core.tests.test_views.LandingPageTests.test_graceful_when_no_association_configured) ... ok
+test_hero_buttons_present (apps.core.tests.test_views.LandingPageTests.test_hero_buttons_present) ... ok
+test_hero_shows_name_motto_and_welcome_message (apps.core.tests.test_views.LandingPageTests.test_hero_shows_name_motto_and_welcome_message) ... ok
+test_hero_vote_now_hidden_when_no_active_election (apps.core.tests.test_views.LandingPageTests.test_hero_vote_now_hidden_when_no_active_election)
+Module 2 explicitly requires the hero's third CTA to be ... ok
+test_hero_vote_now_shown_when_election_is_active (apps.core.tests.test_views.LandingPageTests.test_hero_vote_now_shown_when_election_is_active) ... ok
+test_renders_for_anonymous_visitor (apps.core.tests.test_views.LandingPageTests.test_renders_for_anonymous_visitor) ... ok
+test_statistics_section_shows_live_membership_counts (apps.core.tests.test_views.LandingPageTests.test_statistics_section_shows_live_membership_counts) ... ok
+test_ballot_requires_login_session (apps.elections.tests.test_ballot_and_voting.BallotPageTests.test_ballot_requires_login_session) ... ok
+test_ballot_shows_all_positions_and_candidates (apps.elections.tests.test_ballot_and_voting.BallotPageTests.test_ballot_shows_all_positions_and_candidates) ... ok
+test_database_level_constraint_blocks_duplicate_vote_bypassing_the_view (apps.elections.tests.test_ballot_and_voting.DuplicateVotingPreventionTests.test_database_level_constraint_blocks_duplicate_vote_bypassing_the_view) ... ok
+test_partial_ballot_failure_in_one_atomic_block_rolls_back_entirely (apps.elections.tests.test_ballot_and_voting.DuplicateVotingPreventionTests.test_partial_ballot_failure_in_one_atomic_block_rolls_back_entirely)
+Directly exercises the same atomic-block pattern ballot_view uses ... ok
+test_resubmitting_the_same_ballot_does_not_create_duplicate_votes (apps.elections.tests.test_ballot_and_voting.DuplicateVotingPreventionTests.test_resubmitting_the_same_ballot_does_not_create_duplicate_votes)
+Simulates a double-click / browser back-button resubmit: two ... ok
+test_manual_manipulation_with_candidate_from_different_election_rejected (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_manual_manipulation_with_candidate_from_different_election_rejected) ... ok
+test_manual_manipulation_with_candidate_from_wrong_position_rejected (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_manual_manipulation_with_candidate_from_wrong_position_rejected)
+PART 6/10: tampering with the submitted candidate id is caught by ModelChoiceField's own queryset validation. ... ok
+test_second_ballot_visit_after_voting_is_redirected_not_re_shown (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_second_ballot_visit_after_voting_is_redirected_not_re_shown) ... ok
+test_submission_missing_a_position_is_rejected (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_submission_missing_a_position_is_rejected) ... ok
+test_successful_submission_creates_one_vote_per_position (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_successful_submission_creates_one_vote_per_position) ... ok
+test_vote_success_page_shows_completion_message (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_vote_success_page_shows_completion_message) ... ok
+test_voting_blocked_once_election_has_closed_mid_session (apps.elections.tests.test_ballot_and_voting.VoteSubmissionTests.test_voting_blocked_once_election_has_closed_mid_session)
+Re-checked at POST time, not just at login — covers PART 10's 'voting after election closes'. ... ok
+test_no_broken_image_when_candidate_has_no_photo (apps.elections.tests.test_candidate_photo_display.CandidatePhotoDisplayTests.test_no_broken_image_when_candidate_has_no_photo)
+Candidates without a photo must not render an empty/broken <img> tag. ... ok
+test_photo_displays_on_ballot_page (apps.elections.tests.test_candidate_photo_display.CandidatePhotoDisplayTests.test_photo_displays_on_ballot_page) ... ok
+test_photo_displays_on_election_detail_page (apps.elections.tests.test_candidate_photo_display.CandidatePhotoDisplayTests.test_photo_displays_on_election_detail_page) ... ok
+test_photo_displays_on_results_page (apps.elections.tests.test_candidate_photo_display.CandidatePhotoDisplayTests.test_photo_displays_on_results_page) ... ok
+test_analytics_election_overview_breaks_down_by_category (apps.elections.tests.test_eligibility.AnalyticsReuseTests.test_analytics_election_overview_breaks_down_by_category) ... ok
+test_eligible_voters_count_uses_engine (apps.elections.tests.test_eligibility.AnalyticsReuseTests.test_eligible_voters_count_uses_engine) ... ok
+test_approved_members_only_false_includes_unapproved (apps.elections.tests.test_eligibility.ApprovedMembersOnlyTests.test_approved_members_only_false_includes_unapproved) ... ok
+test_suspended_member_not_eligible_when_approved_members_only (apps.elections.tests.test_eligibility.ApprovedMembersOnlyTests.test_suspended_member_not_eligible_when_approved_members_only) ... ok
+test_election_created_without_eligibility_fields_behaves_as_national (apps.elections.tests.test_eligibility.BackwardCompatibilityTests.test_election_created_without_eligibility_fields_behaves_as_national) ... ok
+test_eligible_voters_count_matches_pre_2_0_voting_status_query (apps.elections.tests.test_eligibility.BackwardCompatibilityTests.test_eligible_voters_count_matches_pre_2_0_voting_status_query) ... ok
+test_all_filters_must_match (apps.elections.tests.test_eligibility.CustomElectionEligibilityTests.test_all_filters_must_match) ... ok
+test_only_matching_department_eligible (apps.elections.tests.test_eligibility.DepartmentElectionEligibilityTests.test_only_matching_department_eligible) ... ok
+test_only_matching_institution_and_faculty_eligible (apps.elections.tests.test_eligibility.FacultyElectionEligibilityTests.test_only_matching_institution_and_faculty_eligible) ... ok
+test_institution_election_may_include_alumni_via_category_filter_unset (apps.elections.tests.test_eligibility.InstitutionElectionEligibilityTests.test_institution_election_may_include_alumni_via_category_filter_unset) ... ok
+test_institution_election_restricted_to_undergraduate (apps.elections.tests.test_eligibility.InstitutionElectionEligibilityTests.test_institution_election_restricted_to_undergraduate) ... ok
+test_institution_match_is_case_insensitive (apps.elections.tests.test_eligibility.InstitutionElectionEligibilityTests.test_institution_match_is_case_insensitive) ... ok
+test_only_selected_institution_eligible (apps.elections.tests.test_eligibility.InstitutionElectionEligibilityTests.test_only_selected_institution_eligible) ... ok
+test_female_representative_election (apps.elections.tests.test_eligibility.LevelAndGenderElectionEligibilityTests.test_female_representative_election) ... ok
+test_female_representative_election_membership_category_configurable (apps.elections.tests.test_eligibility.LevelAndGenderElectionEligibilityTests.test_female_representative_election_membership_category_configurable) ... ok
+test_level_representative_election (apps.elections.tests.test_eligibility.LevelAndGenderElectionEligibilityTests.test_level_representative_election) ... ok
+test_every_approved_member_eligible_regardless_of_stray_filters (apps.elections.tests.test_eligibility.NationalElectionEligibilityTests.test_every_approved_member_eligible_regardless_of_stray_filters) ... ok
+test_national_alumni_only (apps.elections.tests.test_eligibility.NationalElectionEligibilityTests.test_national_alumni_only) ... ok
+test_national_with_membership_category_undergraduate_only (apps.elections.tests.test_eligibility.NationalElectionEligibilityTests.test_national_with_membership_category_undergraduate_only) ... ok
+test_unapproved_member_not_eligible (apps.elections.tests.test_eligibility.NationalElectionEligibilityTests.test_unapproved_member_not_eligible) ... ok
+test_department_without_faculty_is_invalid (apps.elections.tests.test_eligibility.ValidationFailureTests.test_department_without_faculty_is_invalid) ... ok
+test_faculty_without_institution_is_invalid (apps.elections.tests.test_eligibility.ValidationFailureTests.test_faculty_without_institution_is_invalid) ... ok
+test_national_election_ignores_invalid_combinations (apps.elections.tests.test_eligibility.ValidationFailureTests.test_national_election_ignores_invalid_combinations) ... ok
+test_ballot_view_rechecks_eligibility_server_side (apps.elections.tests.test_eligibility.VotingAccessTests.test_ballot_view_rechecks_eligibility_server_side)
+Simulates a manually-guessed/replayed session for an ineligible member (URL manipulation defense). ... ok
+test_eligible_member_can_reach_ballot (apps.elections.tests.test_eligibility.VotingAccessTests.test_eligible_member_can_reach_ballot) ... ok
+test_ineligible_member_blocked_at_login (apps.elections.tests.test_eligibility.VotingAccessTests.test_ineligible_member_blocked_at_login) ... ok
+test_vote_model_rejects_ineligible_member_at_model_layer (apps.elections.tests.test_eligibility.VotingAccessTests.test_vote_model_rejects_ineligible_member_at_model_layer)
+Defense in depth: even a direct Vote.full_clean() bypassing the views must reject this. ... ok
+test_closed_election_results_unaffected_no_in_progress_notice (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_closed_election_results_unaffected_no_in_progress_notice)
+Confirms this fix didn't change final-result behavior for closed elections. ... ok
+test_election_detail_shows_live_results_link_for_active_election (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_election_detail_shows_live_results_link_for_active_election) ... ok
+test_election_list_shows_live_results_link_for_active_election (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_election_list_shows_live_results_link_for_active_election) ... ok
+test_homepage_active_column_shows_live_results_link (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_homepage_active_column_shows_live_results_link) ... ok
+test_results_page_accessible_and_shows_live_data_during_active_election (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_results_page_accessible_and_shows_live_data_during_active_election) ... ok
+test_results_page_shows_in_progress_notice_during_active_election (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_results_page_shows_in_progress_notice_during_active_election) ... ok
+test_upcoming_election_has_no_results_link_anywhere (apps.elections.tests.test_live_results_visibility.LiveResultsVisibilityTests.test_upcoming_election_has_no_results_link_anywhere)
+Results links should only appear for active/closed elections, never upcoming ones. ... ok
+test_ballot_page_shows_manifesto_next_to_candidate (apps.elections.tests.test_manifesto_display.ManifestoDisplayTests.test_ballot_page_shows_manifesto_next_to_candidate) ... ok
+test_ballot_radio_inputs_still_submit_correctly_with_manual_markup (apps.elections.tests.test_manifesto_display.ManifestoDisplayTests.test_ballot_radio_inputs_still_submit_correctly_with_manual_markup)
+The hand-rendered radio inputs (added for manifesto display) must still produce a working, valid submission. ... ok
+test_election_detail_page_handles_candidate_with_no_manifesto (apps.elections.tests.test_manifesto_display.ManifestoDisplayTests.test_election_detail_page_handles_candidate_with_no_manifesto) ... ok
+test_election_detail_page_shows_manifesto (apps.elections.tests.test_manifesto_display.ManifestoDisplayTests.test_election_detail_page_shows_manifesto) ... ok
+test_candidate_position_must_be_contested_in_election (apps.elections.tests.test_models.CandidateValidationTests.test_candidate_position_must_be_contested_in_election)
+Secretary was never added to election.positions, so a candidate for it must be rejected. ... ok
+test_duplicate_candidate_name_for_same_position_same_election_rejected (apps.elections.tests.test_models.CandidateValidationTests.test_duplicate_candidate_name_for_same_position_same_election_rejected) ... ok
+test_multiple_different_candidates_for_same_position_allowed (apps.elections.tests.test_models.CandidateValidationTests.test_multiple_different_candidates_for_same_position_allowed)
+The whole point of an election — this must NOT be blocked by the duplicate constraint. ... ok
+test_same_candidate_name_allowed_in_a_different_election (apps.elections.tests.test_models.CandidateValidationTests.test_same_candidate_name_allowed_in_a_different_election)
+Re-running for the same office in a different election year is fine. ... ok
+test_valid_candidate_for_contested_position_accepted (apps.elections.tests.test_models.CandidateValidationTests.test_valid_candidate_for_contested_position_accepted) ... ok
+test_active_election (apps.elections.tests.test_models.ElectionStatusTests.test_active_election) ... ok
+test_closed_election (apps.elections.tests.test_models.ElectionStatusTests.test_closed_election) ... ok
+test_end_before_start_rejected (apps.elections.tests.test_models.ElectionStatusTests.test_end_before_start_rejected) ... ok
+test_is_voting_open_requires_is_enabled_even_during_active_window (apps.elections.tests.test_models.ElectionStatusTests.test_is_voting_open_requires_is_enabled_even_during_active_window)
+is_active() is pure clock logic; is_voting_open also respects the admin's enable/disable switch. ... ok
+test_upcoming_election (apps.elections.tests.test_models.ElectionStatusTests.test_upcoming_election) ... ok
+test_create_position_with_description_and_display_order (apps.elections.tests.test_models.PositionTests.test_create_position_with_description_and_display_order) ... ok
+test_duplicate_position_title_per_association_rejected (apps.elections.tests.test_models.PositionTests.test_duplicate_position_title_per_association_rejected) ... ok
+test_positions_ordered_by_display_order (apps.elections.tests.test_models.PositionTests.test_positions_ordered_by_display_order) ... ok
+test_anonymous_redirected_to_admin_login (apps.elections.tests.test_results_and_dashboard.AdminDashboardTests.test_anonymous_redirected_to_admin_login) ... ok
+test_election_admin_can_view_dashboard_with_correct_numbers (apps.elections.tests.test_results_and_dashboard.AdminDashboardTests.test_election_admin_can_view_dashboard_with_correct_numbers) ... ok
+test_staff_without_election_permission_gets_403 (apps.elections.tests.test_results_and_dashboard.AdminDashboardTests.test_staff_without_election_permission_gets_403) ... ok
+test_results_page_is_public_no_login_required (apps.elections.tests.test_results_and_dashboard.PublicResultsPageTests.test_results_page_is_public_no_login_required) ... ok
+test_results_page_renders_counts_and_percentages (apps.elections.tests.test_results_and_dashboard.PublicResultsPageTests.test_results_page_renders_counts_and_percentages) ... ok
+test_eligible_voters_count_only_counts_voting_status_true_members (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_eligible_voters_count_only_counts_voting_status_true_members) ... ok
+test_results_by_position_counts_and_percentages (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_results_by_position_counts_and_percentages) ... ok
+test_results_with_no_votes_yet_shows_zero_without_dividing_by_zero (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_results_with_no_votes_yet_shows_zero_without_dividing_by_zero) ... ok
+test_turnout_percentage_calculation (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_turnout_percentage_calculation) ... ok
+test_turnout_percentage_zero_eligible_voters_does_not_divide_by_zero (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_turnout_percentage_zero_eligible_voters_does_not_divide_by_zero) ... ok
+test_voters_count_counts_distinct_members_not_vote_rows (apps.elections.tests.test_results_and_dashboard.ResultsCalculationTests.test_voters_count_counts_distinct_members_not_vote_rows)
+A member casting votes for multiple positions still counts once towards turnout. ... ok
+test_authenticate_by_membership_id_and_phone_succeeds (apps.elections.tests.test_voting_access.VotingLoginFormAuthenticateTests.test_authenticate_by_membership_id_and_phone_succeeds) ... ok
+test_authenticate_by_nin_and_phone_succeeds (apps.elections.tests.test_voting_access.VotingLoginFormAuthenticateTests.test_authenticate_by_nin_and_phone_succeeds) ... ok
+test_member_with_voting_status_revoked_rejected (apps.elections.tests.test_voting_access.VotingLoginFormAuthenticateTests.test_member_with_voting_status_revoked_rejected)
+Covers PART 4's 'Not suspended' — voting_status=False is how suspension is represented. ... ok
+test_unapproved_member_rejected_with_clear_eligibility_message (apps.elections.tests.test_voting_access.VotingLoginFormAuthenticateTests.test_unapproved_member_rejected_with_clear_eligibility_message) ... ok
+test_wrong_phone_number_rejected_with_generic_message (apps.elections.tests.test_voting_access.VotingLoginFormAuthenticateTests.test_wrong_phone_number_rejected_with_generic_message) ... ok
+test_already_voted_member_redirected_straight_to_success (apps.elections.tests.test_voting_access.VotingLoginViewTests.test_already_voted_member_redirected_straight_to_success) ... ok
+test_login_blocked_when_election_is_closed (apps.elections.tests.test_voting_access.VotingLoginViewTests.test_login_blocked_when_election_is_closed) ... ok
+test_login_blocked_when_election_is_upcoming (apps.elections.tests.test_voting_access.VotingLoginViewTests.test_login_blocked_when_election_is_upcoming) ... ok
+test_successful_login_redirects_to_ballot_and_sets_session (apps.elections.tests.test_voting_access.VotingLoginViewTests.test_successful_login_redirects_to_ballot_and_sets_session) ... ok
+test_each_member_gets_a_distinct_card_uuid (apps.members.tests.test_card.MembershipCardModelTests.test_each_member_gets_a_distinct_card_uuid) ... ok
+test_get_or_create_for_is_idempotent (apps.members.tests.test_card.MembershipCardModelTests.test_get_or_create_for_is_idempotent) ... ok
+test_anonymous_redirected_to_portal_login (apps.members.tests.test_card.PortalCardViewTests.test_anonymous_redirected_to_portal_login) ... ok
+test_card_qr_endpoint_returns_png (apps.members.tests.test_card.PortalCardViewTests.test_card_qr_endpoint_returns_png) ... ok
+test_logged_in_member_can_view_own_card (apps.members.tests.test_card.PortalCardViewTests.test_logged_in_member_can_view_own_card) ... ok
+test_rejected_member_loses_card_access (apps.members.tests.test_card.PortalCardViewTests.test_rejected_member_loses_card_access) ... ok
+test_generate_qr_png_returns_valid_png_bytes (apps.members.tests.test_card.QrGenerationTests.test_generate_qr_png_returns_valid_png_bytes) ... ok
+test_anonymous_redirected_to_admin_login (apps.members.tests.test_card.StaffCardViewTests.test_anonymous_redirected_to_admin_login) ... ok
+test_registration_admin_can_view_member_card (apps.members.tests.test_card.StaffCardViewTests.test_registration_admin_can_view_member_card) ... ok
+test_staff_without_member_permission_gets_403 (apps.members.tests.test_card.StaffCardViewTests.test_staff_without_member_permission_gets_403) ... ok
+test_unapproved_member_card_shows_invalid (apps.members.tests.test_card.VerifyMemberViewTests.test_unapproved_member_card_shows_invalid) ... ok
+test_unknown_uuid_shows_invalid_not_404 (apps.members.tests.test_card.VerifyMemberViewTests.test_unknown_uuid_shows_invalid_not_404) ... ok
+test_valid_card_shows_valid_member (apps.members.tests.test_card.VerifyMemberViewTests.test_valid_card_shows_valid_member) ... ok
+test_verification_page_does_not_expose_sensitive_fields (apps.members.tests.test_card.VerifyMemberViewTests.test_verification_page_does_not_expose_sensitive_fields) ... ok
+test_verification_url_is_absolute_and_uses_card_uuid (apps.members.tests.test_card.VerifyMemberViewTests.test_verification_url_is_absolute_and_uses_card_uuid) ... ok
+test_arbitrary_course_text_not_in_the_seed_list_is_rejected (apps.members.tests.test_forms.MemberRegistrationFormTests.test_arbitrary_course_text_not_in_the_seed_list_is_rejected) ... ok
+test_arbitrary_institution_text_not_in_the_seed_list_is_rejected (apps.members.tests.test_forms.MemberRegistrationFormTests.test_arbitrary_institution_text_not_in_the_seed_list_is_rejected) ... ok
+test_duplicate_both_phone_and_nin (apps.members.tests.test_forms.MemberRegistrationFormTests.test_duplicate_both_phone_and_nin) ... ok
+test_duplicate_nin_only (apps.members.tests.test_forms.MemberRegistrationFormTests.test_duplicate_nin_only) ... ok
+test_duplicate_phone_only (apps.members.tests.test_forms.MemberRegistrationFormTests.test_duplicate_phone_only) ... ok
+test_form_renders_grouped_course_choices_and_other_option (apps.members.tests.test_forms.MemberRegistrationFormTests.test_form_renders_grouped_course_choices_and_other_option) ... ok
+test_gender_is_required (apps.members.tests.test_forms.MemberRegistrationFormTests.test_gender_is_required) ... ok
+test_invalid_gender_value_rejected (apps.members.tests.test_forms.MemberRegistrationFormTests.test_invalid_gender_value_rejected) ... ok
+test_invalid_nin_length_rejected_with_clear_message (apps.members.tests.test_forms.MemberRegistrationFormTests.test_invalid_nin_length_rejected_with_clear_message) ... ok
+test_invalid_phone_prefix_rejected_with_clear_message (apps.members.tests.test_forms.MemberRegistrationFormTests.test_invalid_phone_prefix_rejected_with_clear_message) ... ok
+test_no_duplicate_detected_flag_on_clean_submission (apps.members.tests.test_forms.MemberRegistrationFormTests.test_no_duplicate_detected_flag_on_clean_submission) ... ok
+test_selecting_a_listed_course_saves_it_verbatim (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_a_listed_course_saves_it_verbatim) ... ok
+test_selecting_a_listed_institution_saves_it_verbatim (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_a_listed_institution_saves_it_verbatim) ... ok
+test_selecting_other_and_typing_a_custom_course_saves_the_typed_value (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_other_and_typing_a_custom_course_saves_the_typed_value) ... ok
+test_selecting_other_and_typing_a_custom_institution_saves_the_typed_value (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_other_and_typing_a_custom_institution_saves_the_typed_value) ... ok
+test_selecting_other_course_without_typing_anything_is_rejected (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_other_course_without_typing_anything_is_rejected) ... ok
+test_selecting_other_without_typing_anything_is_rejected (apps.members.tests.test_forms.MemberRegistrationFormTests.test_selecting_other_without_typing_anything_is_rejected) ... ok
+test_successful_registration_creates_member_and_pending_application (apps.members.tests.test_forms.MemberRegistrationFormTests.test_successful_registration_creates_member_and_pending_application) ... ok
+test_valid_gender_choice_is_saved_on_the_member (apps.members.tests.test_forms.MemberRegistrationFormTests.test_valid_gender_choice_is_saved_on_the_member) ... ok
+test_a_modelform_shows_an_error_for_a_bad_image (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_a_modelform_shows_an_error_for_a_bad_image) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('image file is truncated (48 bytes not processed)')
+ok
+test_clean_optimises_in_memory_and_save_does_not_repeat_the_work (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_clean_optimises_in_memory_and_save_does_not_repeat_the_work) ... ok
+test_database_failure_after_form_style_validation_leaves_no_new_file (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_database_failure_after_form_style_validation_leaves_no_new_file) ... ok
+test_database_failure_after_upload_leaves_no_new_file_programmatic_save (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_database_failure_after_upload_leaves_no_new_file_programmatic_save) ... ok
+test_deliberate_voting_suspension_is_still_respected (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_deliberate_voting_suspension_is_still_respected) ... ok
+test_existing_business_logic_still_runs_alongside_optimisation (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_existing_business_logic_still_runs_alongside_optimisation) ... ok
+test_failed_replacement_keeps_the_old_photo_and_leaves_no_new_file (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_failed_replacement_keeps_the_old_photo_and_leaves_no_new_file) ... ok
+test_failed_save_with_no_new_upload_never_deletes_the_stored_photo (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_failed_save_with_no_new_upload_never_deletes_the_stored_photo) ... ok
+test_full_clean_reports_a_bad_image_as_a_passport_photo_field_error (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_full_clean_reports_a_bad_image_as_a_passport_photo_field_error) ... WARNING apps.members.image_services: Passport photo could not be processed: UnidentifiedImageError('cannot identify image file <_io.BytesIO object at 0x0000020702019E90>')
+ok
+test_full_clean_twice_then_save_still_decodes_only_once (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_full_clean_twice_then_save_still_decodes_only_once) ... ok
+test_invalid_image_in_save_raises_validation_error_and_stores_nothing (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_invalid_image_in_save_raises_validation_error_and_stores_nothing) ... WARNING apps.members.image_services: Passport photo could not be processed: UnidentifiedImageError('cannot identify image file <_io.BytesIO object at 0x00000207020494E0>')
+ok
+test_member_save_optimises_a_new_upload (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_member_save_optimises_a_new_upload) ... ok
+test_prepared_marker_survives_the_imagefield_descriptor (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_prepared_marker_survives_the_imagefield_descriptor) ... ok
+test_processing_error_during_save_writes_nothing (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_processing_error_during_save_writes_nothing) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('boom')
+ok
+test_save_without_prior_clean_decodes_exactly_once (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_save_without_prior_clean_decodes_exactly_once) ... ok
+test_stored_photo_is_not_decoded_again_on_later_saves (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_stored_photo_is_not_decoded_again_on_later_saves) ... ok
+test_update_fields_including_passport_photo_processes_the_new_upload (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_update_fields_including_passport_photo_processes_the_new_upload) ... ok
+test_update_fields_without_passport_photo_never_processes_a_pending_upload (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_update_fields_without_passport_photo_never_processes_a_pending_upload) ... ok
+test_updating_unrelated_fields_does_not_touch_the_stored_passport (apps.members.tests.test_image_services.MemberSaveIntegrationTests.test_updating_unrelated_fields_does_not_touch_the_stored_passport) ... ok
+test_build_optimised_passport_returns_exif_free_bytes_for_small_exif_jpeg (apps.members.tests.test_image_services.PassportImageServiceTests.test_build_optimised_passport_returns_exif_free_bytes_for_small_exif_jpeg) ... ok
+test_decompression_bomb_error_becomes_validation_error (apps.members.tests.test_image_services.PassportImageServiceTests.test_decompression_bomb_error_becomes_validation_error) ... ok
+test_default_limits_are_tighter_for_formats_that_decode_in_full (apps.members.tests.test_image_services.PassportImageServiceTests.test_default_limits_are_tighter_for_formats_that_decode_in_full) ... ok
+test_empty_field_is_ignored (apps.members.tests.test_image_services.PassportImageServiceTests.test_empty_field_is_ignored) ... ok
+test_encoder_failure_midway_is_a_validation_error_and_stores_nothing (apps.members.tests.test_image_services.PassportImageServiceTests.test_encoder_failure_midway_is_a_validation_error_and_stores_nothing) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('encoder died')
+ok
+test_exif_is_detected_in_jpeg_png_and_webp (apps.members.tests.test_image_services.PassportImageServiceTests.test_exif_is_detected_in_jpeg_png_and_webp) ... ok
+test_exif_is_removed_from_png_and_webp_uploads (apps.members.tests.test_image_services.PassportImageServiceTests.test_exif_is_removed_from_png_and_webp_uploads) ... ok
+test_exif_orientation_is_applied_before_resizing_and_metadata_removed (apps.members.tests.test_image_services.PassportImageServiceTests.test_exif_orientation_is_applied_before_resizing_and_metadata_removed) ... ok
+test_exif_segment_without_readable_tags_is_still_treated_as_exif (apps.members.tests.test_image_services.PassportImageServiceTests.test_exif_segment_without_readable_tags_is_still_treated_as_exif) ... ok
+test_existing_committed_image_is_not_reprocessed (apps.members.tests.test_image_services.PassportImageServiceTests.test_existing_committed_image_is_not_reprocessed) ... ok
+test_file_labelled_png_but_containing_jpeg_is_stored_as_jpeg (apps.members.tests.test_image_services.PassportImageServiceTests.test_file_labelled_png_but_containing_jpeg_is_stored_as_jpeg) ... ok
+test_filename_stem_is_preserved_and_extension_follows_real_format (apps.members.tests.test_image_services.PassportImageServiceTests.test_filename_stem_is_preserved_and_extension_follows_real_format) ... ok
+test_garbage_bytes_are_rejected_with_validation_error (apps.members.tests.test_image_services.PassportImageServiceTests.test_garbage_bytes_are_rejected_with_validation_error) ... WARNING apps.members.image_services: Passport photo could not be processed: UnidentifiedImageError('cannot identify image file <_io.BytesIO object at 0x0000020701F93FB0>')
+ok
+test_image_above_pixel_limit_is_rejected_before_decoding (apps.members.tests.test_image_services.PassportImageServiceTests.test_image_above_pixel_limit_is_rejected_before_decoding) ... ok
+test_image_exactly_at_the_limit_is_left_at_that_size (apps.members.tests.test_image_services.PassportImageServiceTests.test_image_exactly_at_the_limit_is_left_at_that_size) ... ok
+test_image_just_inside_pixel_limit_is_accepted (apps.members.tests.test_image_services.PassportImageServiceTests.test_image_just_inside_pixel_limit_is_accepted) ... ok
+test_large_jpeg_is_resized_to_maximum_600_pixels (apps.members.tests.test_image_services.PassportImageServiceTests.test_large_jpeg_is_resized_to_maximum_600_pixels) ... ok
+test_large_upload_becomes_much_smaller_on_disk (apps.members.tests.test_image_services.PassportImageServiceTests.test_large_upload_becomes_much_smaller_on_disk) ... ok
+test_optimisation_never_makes_an_already_small_file_bigger (apps.members.tests.test_image_services.PassportImageServiceTests.test_optimisation_never_makes_an_already_small_file_bigger) ... ok
+test_palette_png_with_transparency_keeps_transparency_after_resize (apps.members.tests.test_image_services.PassportImageServiceTests.test_palette_png_with_transparency_keeps_transparency_after_resize) ... ok
+test_png_and_webp_have_their_own_tighter_limit_than_jpeg (apps.members.tests.test_image_services.PassportImageServiceTests.test_png_and_webp_have_their_own_tighter_limit_than_jpeg) ... ok
+test_png_format_is_preserved (apps.members.tests.test_image_services.PassportImageServiceTests.test_png_format_is_preserved) ... ok
+test_png_transparency_is_preserved (apps.members.tests.test_image_services.PassportImageServiceTests.test_png_transparency_is_preserved) ... ok
+test_png_with_text_chunk_style_exif_is_detected (apps.members.tests.test_image_services.PassportImageServiceTests.test_png_with_text_chunk_style_exif_is_detected) ... ok
+test_portrait_jpeg_is_limited_by_height (apps.members.tests.test_image_services.PassportImageServiceTests.test_portrait_jpeg_is_limited_by_height) ... ok
+test_small_image_is_not_enlarged (apps.members.tests.test_image_services.PassportImageServiceTests.test_small_image_is_not_enlarged) ... ok
+test_small_upright_jpeg_with_exif_is_reencoded_even_when_larger (apps.members.tests.test_image_services.PassportImageServiceTests.test_small_upright_jpeg_with_exif_is_reencoded_even_when_larger)
+Regression test for the EXIF leak in the size fallback. ... ok
+test_small_upright_jpeg_without_exif_keeps_the_size_fallback (apps.members.tests.test_image_services.PassportImageServiceTests.test_small_upright_jpeg_without_exif_keeps_the_size_fallback)
+Images with NO EXIF still get the original bytes back if re-encoding is bigger. ... ok
+test_truncated_jpeg_is_rejected_with_validation_error (apps.members.tests.test_image_services.PassportImageServiceTests.test_truncated_jpeg_is_rejected_with_validation_error) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('image file is truncated (7 bytes not processed)')
+ok
+test_unsupported_but_valid_image_format_is_rejected (apps.members.tests.test_image_services.PassportImageServiceTests.test_unsupported_but_valid_image_format_is_rejected) ... ok
+test_webp_format_is_preserved (apps.members.tests.test_image_services.PassportImageServiceTests.test_webp_format_is_preserved) ... ok
+test_admin_edit_without_a_new_photo_does_not_touch_the_stored_photo (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_admin_edit_without_a_new_photo_does_not_touch_the_stored_photo) ... ok
+test_admin_upload_decodes_the_photo_only_once (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_admin_upload_decodes_the_photo_only_once) ... ok
+test_admin_upload_of_a_bad_image_is_a_form_error_not_a_500 (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_admin_upload_of_a_bad_image_is_a_form_error_not_a_500) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('image file is truncated (7 bytes not processed)')
+ok
+test_admin_upload_of_a_large_photo_is_optimised (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_admin_upload_of_a_large_photo_is_optimised) ... ok
+test_failed_registration_leaves_no_passport_file_behind (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_failed_registration_leaves_no_passport_file_behind) ... ok
+test_registration_decodes_the_photo_only_once (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_decodes_the_photo_only_once) ... ok
+test_registration_processing_error_midway_is_a_form_error_and_leaves_nothing (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_processing_error_midway_is_a_form_error_and_leaves_nothing) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('boom')
+ok
+test_registration_still_rejects_files_over_5_mb (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_still_rejects_files_over_5_mb) ... ok
+test_registration_with_image_over_pixel_limit_is_a_form_error (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_with_image_over_pixel_limit_is_a_form_error) ... ok
+test_registration_with_large_photo_stores_an_optimised_passport (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_with_large_photo_stores_an_optimised_passport) ... ok
+test_registration_with_truncated_jpeg_is_a_form_error_not_a_500 (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_with_truncated_jpeg_is_a_form_error_not_a_500) ... WARNING apps.members.image_services: Passport photo could not be processed: OSError('image file is truncated (12 bytes not processed)')
+ok
+test_registration_with_unsupported_format_is_a_form_error (apps.members.tests.test_image_services.RegistrationAndAdminTests.test_registration_with_unsupported_format_is_a_form_error) ... ok
+test_a_corrupt_optimised_image_never_replaces_the_original (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_a_corrupt_optimised_image_never_replaces_the_original) ... ok
+test_a_failed_swap_leaves_the_original_and_no_temp_file (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_a_failed_swap_leaves_the_original_and_no_temp_file) ... ok
+test_a_mode_must_be_chosen (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_a_mode_must_be_chosen) ... ok
+test_a_result_that_is_not_smaller_never_replaces_the_original (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_a_result_that_is_not_smaller_never_replaces_the_original) ... ok
+test_a_second_run_does_not_touch_photos_optimised_by_the_first (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_a_second_run_does_not_touch_photos_optimised_by_the_first) ... ok
+test_confirm_replaces_the_photo_in_place_with_a_smaller_valid_image (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_confirm_replaces_the_photo_in_place_with_a_smaller_valid_image) ... ok
+test_dry_run_and_confirm_cannot_be_combined (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_dry_run_and_confirm_cannot_be_combined) ... ok
+test_dry_run_changes_nothing_and_reports_expected_saving (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_dry_run_changes_nothing_and_reports_expected_saving) ... ok
+test_dry_run_limit_only_looks_at_the_requested_number (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_dry_run_limit_only_looks_at_the_requested_number) ... ok
+test_extension_mismatch_is_skipped_and_reported (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_extension_mismatch_is_skipped_and_reported) ... ok
+test_limit_must_be_positive (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_limit_must_be_positive) ... ok
+test_limit_processes_a_batch_and_a_rerun_continues_with_the_rest (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_limit_processes_a_batch_and_a_rerun_continues_with_the_rest) ... ok
+test_missing_file_is_skipped_and_the_member_record_is_kept (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_missing_file_is_skipped_and_the_member_record_is_kept) ... ok
+test_no_members_is_reported_cleanly (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_no_members_is_reported_cleanly) ... ok
+test_one_bad_photo_does_not_stop_the_others (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_one_bad_photo_does_not_stop_the_others) ... WARNING apps.members.image_services: Passport photo could not be processed: UnidentifiedImageError('cannot identify image file <_io.BytesIO object at 0x0000020701BAEFC0>')
+ok
+test_original_file_permissions_are_preserved (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_original_file_permissions_are_preserved) ... skipped 'POSIX permission bits'
+test_photo_that_cannot_be_improved_is_left_byte_identical (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_photo_that_cannot_be_improved_is_left_byte_identical) ... ok
+test_png_photo_stays_a_png_with_the_same_name (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_png_photo_stays_a_png_with_the_same_name) ... ok
+test_unreadable_file_is_skipped_and_reported (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_unreadable_file_is_skipped_and_reported) ... WARNING apps.members.image_services: Passport photo could not be processed: UnidentifiedImageError('cannot identify image file <_io.BytesIO object at 0x0000020703795210>')
+ok
+test_unreferenced_files_are_reported_but_never_touched (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_unreferenced_files_are_reported_but_never_touched) ... ok
+test_unsupported_image_format_is_skipped_and_reported (apps.members.tests.test_optimise_existing_passports.OptimiseExistingPassportsTests.test_unsupported_image_format_is_skipped_and_reported) ... ok
+test_cache_is_isolated_per_association (apps.members.tests.test_staff_list.MemberFilterChoicesCachingTests.test_cache_is_isolated_per_association) ... ok
+test_returns_distinct_sorted_non_blank_values (apps.members.tests.test_staff_list.MemberFilterChoicesCachingTests.test_returns_distinct_sorted_non_blank_values) ... ok
+test_second_call_is_served_from_cache_not_the_database (apps.members.tests.test_staff_list.MemberFilterChoicesCachingTests.test_second_call_is_served_from_cache_not_the_database) ... ok
+test_member_without_email_shows_reserved_send_email (apps.members.tests.test_staff_list.StaffMemberListTests.test_member_without_email_shows_reserved_send_email) ... ok
+test_quick_actions_present_for_member_with_email (apps.members.tests.test_staff_list.StaffMemberListTests.test_quick_actions_present_for_member_with_email) ... ok
+test_requires_login (apps.members.tests.test_staff_list.StaffMemberListTests.test_requires_login) ... ok
+test_role_with_view_member_permission_can_view (apps.members.tests.test_staff_list.StaffMemberListTests.test_role_with_view_member_permission_can_view) ... ok
+test_send_sms_is_a_reserved_placeholder_not_a_link (apps.members.tests.test_staff_list.StaffMemberListTests.test_send_sms_is_a_reserved_placeholder_not_a_link) ... ok
+test_staff_without_view_member_permission_gets_403 (apps.members.tests.test_staff_list.StaffMemberListTests.test_staff_without_view_member_permission_gets_403) ... ok
+test_academic_fields_optional_registration_succeeds_without_them (apps.members.tests.test_v1_1_features.AcademicFieldsRegistrationTests.test_academic_fields_optional_registration_succeeds_without_them) ... ok
+test_academic_fields_stored_when_provided (apps.members.tests.test_v1_1_features.AcademicFieldsRegistrationTests.test_academic_fields_stored_when_provided) ... ok
+test_academic_fields_visible_in_portal_profile (apps.members.tests.test_v1_1_features.AcademicFieldsRegistrationTests.test_academic_fields_visible_in_portal_profile)
+If a member has faculty/dept/level, the portal profile shows them. ... ok
+test_portal_profile_omits_empty_academic_fields (apps.members.tests.test_v1_1_features.AcademicFieldsRegistrationTests.test_portal_profile_omits_empty_academic_fields)
+Members without academic fields should not see empty dt/dd rows. ... ok
+test_registration_form_shows_faculty_department_level_fields (apps.members.tests.test_v1_1_features.AcademicFieldsRegistrationTests.test_registration_form_shows_faculty_department_level_fields) ... ok
+test_send_approval_email_body_contains_member_name (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_body_contains_member_name) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_body_contains_membership_id (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_body_contains_membership_id) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_body_contains_portal_and_card_links (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_body_contains_portal_and_card_links) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_calls_mailjet_service_once (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_calls_mailjet_service_once) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_correct_recipient (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_correct_recipient) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_correct_subject (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_correct_subject) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_mailjet_failure_returns_false_does_not_raise (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_mailjet_failure_returns_false_does_not_raise)
+A Mailjet API failure must be caught and logged, never raised. ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_send_approval_email_no_email_returns_false_sends_nothing (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_no_email_returns_false_sends_nothing) ... ok
+test_send_approval_email_sends_both_html_and_text (apps.members.tests.test_v1_1_features.ApprovalEmailServiceTests.test_send_approval_email_sends_both_html_and_text)
+Both an HTML and a plain-text body must be passed to Mailjet. ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA2-2026-0001)
+ok
+test_approval_succeeds_even_when_mailjet_fails (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_approval_succeeds_even_when_mailjet_fails)
+This is the core safety guarantee: a Mailjet API failure must NEVER ... ERROR apps.members.email_service: Failed to send approval email to member 1 (membership_id=MSA3-2026-0001). Approval is unaffected.
+Traceback (most recent call last):
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\members\email_service.py", line 75, in send_approval_email
+    _send(member, request)
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\members\email_service.py", line 141, in _send
+    mailjet_service.send_email(
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP PC\AppData\Local\Python\pythoncore-3.12-64\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+apps.core.mailjet_service.MailjetServiceError: Mailjet API request failed: ConnectionError
+ok
+test_approving_member_with_email_sends_email (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_approving_member_with_email_sends_email) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA3-2026-0001)
+ok
+test_approving_member_without_email_sends_no_email (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_approving_member_without_email_sends_no_email) ... ok
+test_bulk_approve_action_sends_email_for_each_member_with_email (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_bulk_approve_action_sends_email_for_each_member_with_email)
+The admin's bulk 'Approve selected applications' action goes through ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA3-2026-0001)
+INFO apps.members.email_service: Approval email sent to member 2 (membership_id=MSA3-2026-0002)
+INFO apps.members.email_service: Approval email sent to member 3 (membership_id=MSA3-2026-0003)
+ok
+test_email_sent_after_membership_id_is_assigned (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_email_sent_after_membership_id_is_assigned)
+The welcome email body must contain the real membership_id. ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA3-2026-0001)
+ok
+test_re_saving_approved_application_does_not_send_duplicate_email (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_re_saving_approved_application_does_not_send_duplicate_email)
+Saving an already-approved application again (e.g. fixing a note) ... INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA3-2026-0001)
+ok
+test_rejection_does_not_send_email (apps.members.tests.test_v1_1_features.ApprovalEmailSignalIntegrationTests.test_rejection_does_not_send_email)
+Rejections must never trigger a welcome email. ... ok
+test_email_defaults_to_empty_string (apps.members.tests.test_v1_1_features.EmailFieldModelTests.test_email_defaults_to_empty_string)
+Existing members that predate this field have email='' — never None. ... ok
+test_email_field_validates_format (apps.members.tests.test_v1_1_features.EmailFieldModelTests.test_email_field_validates_format)
+An invalid email should fail full_clean. ... ok
+test_email_optional_at_model_level (apps.members.tests.test_v1_1_features.EmailFieldModelTests.test_email_optional_at_model_level)
+Creating a member without email must not raise. ... ok
+test_email_stored_and_retrieved (apps.members.tests.test_v1_1_features.EmailFieldModelTests.test_email_stored_and_retrieved) ... ok
+test_existing_members_unaffected_after_migration (apps.members.tests.test_v1_1_features.EmailFieldModelTests.test_existing_members_unaffected_after_migration)
+Members created before the email field was added retain a blank ... ok
+test_registration_form_shows_email_field (apps.members.tests.test_v1_1_features.EmailFieldRegistrationFormTests.test_registration_form_shows_email_field) ... ok
+test_registration_with_email_stores_email (apps.members.tests.test_v1_1_features.EmailFieldRegistrationFormTests.test_registration_with_email_stores_email) ... ok
+test_registration_with_invalid_email_rejected (apps.members.tests.test_v1_1_features.EmailFieldRegistrationFormTests.test_registration_with_invalid_email_rejected) ... ok
+test_registration_without_email_succeeds (apps.members.tests.test_v1_1_features.EmailFieldRegistrationFormTests.test_registration_without_email_succeeds)
+Email is optional — omitting it must not block registration. ... ok
+test_portal_profile_omits_email_row_when_not_provided (apps.members.tests.test_v1_1_features.PortalProfileEmailDisplayTests.test_portal_profile_omits_email_row_when_not_provided) ... ok
+test_portal_profile_shows_email_when_present (apps.members.tests.test_v1_1_features.PortalProfileEmailDisplayTests.test_portal_profile_shows_email_when_present) ... INFO apps.core.mailjet_service: MAILJET_API_KEY/MAILJET_SECRET_KEY not configured — printing email instead of calling the Mailjet API.
+To: Fatima Yusuf <visible@example.com>
+From:  <>
+Subject: Welcome to Malam Sidi Students Association
+
+Welcome to Malam Sidi Students Association
+================================================
+
+Dear Fatima Yusuf,
+
+We are pleased to inform you that your application to join the
+Malam Sidi Students Association has been reviewed and officially approved.
+
+YOUR MEMBERSHIP ID
+------------------
+MSA-2026-0001
+
+Please keep your Membership ID safe. You will need it to log in to your
+Member Portal, vote in elections, and verify your membership card.
+
+NEXT STEPS
+----------
+View your Membership Card:
+/members/portal/card/
+
+Open your Member Portal:
+/members/portal/login/
+
+You are now an active member of the Malam Sidi Students Association.
+Your membership card is available in your portal and can be printed or
+saved as a PDF for your records.
+
+If you have any questions, please contact us.
+
+Warm regards,
+Malam Sidi Students Association
+
+--
+This email was sent because your membership application was approved.
+Built by ProFat Technologies — https://DevProf.pythonanywhere.com
+
+INFO apps.members.email_service: Approval email sent to member 1 (membership_id=MSA-2026-0001)
+ok
+test_duplicate_registration_shows_recovery_message_and_cta (apps.members.tests.test_views.RegisterViewTests.test_duplicate_registration_shows_recovery_message_and_cta) ... ok
+test_get_register_page (apps.members.tests.test_views.RegisterViewTests.test_get_register_page) ... ok
+test_register_page_displays_gender_field (apps.members.tests.test_views.RegisterViewTests.test_register_page_displays_gender_field) ... ok
+test_register_page_lists_gombe_and_national_institutions (apps.members.tests.test_views.RegisterViewTests.test_register_page_lists_gombe_and_national_institutions) ... ok
+test_register_page_lists_grouped_course_choices (apps.members.tests.test_views.RegisterViewTests.test_register_page_lists_grouped_course_choices) ... ok
+test_registration_saves_a_listed_course (apps.members.tests.test_views.RegisterViewTests.test_registration_saves_a_listed_course) ... ok
+test_registration_saves_a_listed_institution (apps.members.tests.test_views.RegisterViewTests.test_registration_saves_a_listed_institution) ... ok
+test_registration_saves_gender_on_the_member (apps.members.tests.test_views.RegisterViewTests.test_registration_saves_gender_on_the_member) ... ok
+test_registration_unavailable_when_no_association_configured (apps.members.tests.test_views.RegisterViewTests.test_registration_unavailable_when_no_association_configured) ... ok
+test_registration_via_other_course_without_typed_value_fails (apps.members.tests.test_views.RegisterViewTests.test_registration_via_other_course_without_typed_value_fails) ... ok
+test_registration_via_other_saves_the_typed_course (apps.members.tests.test_views.RegisterViewTests.test_registration_via_other_saves_the_typed_course) ... ok
+test_registration_via_other_saves_the_typed_institution (apps.members.tests.test_views.RegisterViewTests.test_registration_via_other_saves_the_typed_institution) ... ok
+test_registration_via_other_without_typed_value_fails (apps.members.tests.test_views.RegisterViewTests.test_registration_via_other_without_typed_value_fails) ... ok
+test_registration_without_gender_fails (apps.members.tests.test_views.RegisterViewTests.test_registration_without_gender_fails) ... ok
+test_successful_registration_redirects_to_success_page_with_application_number (apps.members.tests.test_views.RegisterViewTests.test_successful_registration_redirects_to_success_page_with_application_number) ... ok
+test_get_status_check_page (apps.members.tests.test_views.StatusCheckViewTests.test_get_status_check_page) ... ok
+test_lookup_by_application_number_approved_shows_membership_id (apps.members.tests.test_views.StatusCheckViewTests.test_lookup_by_application_number_approved_shows_membership_id) ... ok
+test_lookup_by_application_number_pending (apps.members.tests.test_views.StatusCheckViewTests.test_lookup_by_application_number_pending) ... ok
+test_lookup_by_application_number_rejected_shows_reason (apps.members.tests.test_views.StatusCheckViewTests.test_lookup_by_application_number_rejected_shows_reason) ... ok
+test_lookup_by_nin_and_phone (apps.members.tests.test_views.StatusCheckViewTests.test_lookup_by_nin_and_phone) ... ok
+test_lookup_not_found (apps.members.tests.test_views.StatusCheckViewTests.test_lookup_not_found) ... ok
+test_nin_phone_mode_requires_both_fields (apps.members.tests.test_views.StatusCheckViewTests.test_nin_phone_mode_requires_both_fields) ... ok
+test_approved_member_missing_membership_id_is_healed_on_save (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_approved_member_missing_membership_id_is_healed_on_save)
+Simulates pre-existing bad production data: Approved, but membership_id never got set ... ok
+test_approved_member_with_voting_status_false_is_healed_on_save (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_approved_member_with_voting_status_false_is_healed_on_save) ... ok
+test_delayed_approval_after_newer_applicants_gets_next_available_id_not_a_historical_slot (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_delayed_approval_after_newer_applicants_gets_next_available_id_not_a_historical_slot)
+An applicant who sat Pending while later applicants were approved must not collide with, ... ok
+test_directly_approving_a_member_outside_the_application_workflow_still_heals (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_directly_approving_a_member_outside_the_application_workflow_still_heals)
+Covers the actual root cause: approval_status changed on Member directly ... ok
+test_healing_many_stale_approved_members_produces_no_duplicate_ids (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_healing_many_stale_approved_members_produces_no_duplicate_ids)
+Backward compatibility: several pre-existing Approved-but-broken records, ... ok
+test_membership_card_and_qr_verification_work_after_healing (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_membership_card_and_qr_verification_work_after_healing) ... ok
+test_previously_rejected_then_reapproved_gets_a_valid_membership_id (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_previously_rejected_then_reapproved_gets_a_valid_membership_id) ... ok
+test_saving_an_already_approved_member_twice_does_not_change_or_duplicate_the_id (apps.members.tests.test_workflow.ApprovalInvariantSelfHealingTests.test_saving_an_already_approved_member_twice_does_not_change_or_duplicate_the_id) ... ok
+test_approval_generates_membership_id_and_sets_eligibility (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_approval_generates_membership_id_and_sets_eligibility) ... ok
+test_editing_a_reviewed_application_again_does_not_re_trigger_member_sync (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_editing_a_reviewed_application_again_does_not_re_trigger_member_sync)
+Saving an already-approved application again (e.g. fixing a typo ... ok
+test_membership_id_increments_across_members (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_membership_id_increments_across_members) ... ok
+test_receipt_deleted_from_disk_after_approval (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_receipt_deleted_from_disk_after_approval) ... ok
+test_receipt_deleted_from_disk_after_rejection (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_receipt_deleted_from_disk_after_rejection) ... ok
+test_rejection_requires_a_reason (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_rejection_requires_a_reason) ... ok
+test_rejection_with_reason_updates_member_and_blocks_voting (apps.members.tests.test_workflow.ApprovalWorkflowTests.test_rejection_with_reason_updates_member_and_blocks_voting) ... ok
+test_application_numbers_are_unique_and_sequential (apps.members.tests.test_workflow.UniquenessConstraintTests.test_application_numbers_are_unique_and_sequential) ... ok
+test_duplicate_nin_rejected_at_db_level (apps.members.tests.test_workflow.UniquenessConstraintTests.test_duplicate_nin_rejected_at_db_level) ... ok
+test_duplicate_phone_number_rejected_at_db_level (apps.members.tests.test_workflow.UniquenessConstraintTests.test_duplicate_phone_number_rejected_at_db_level) ... ok
+test_backup_creates_valid_restorable_database_copy (apps.core.tests.test_backup_command.BackupCommandTests.test_backup_creates_valid_restorable_database_copy) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:36: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_backup_includes_media_archive_by_default (apps.core.tests.test_backup_command.BackupCommandTests.test_backup_includes_media_archive_by_default) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:63: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_missing_database_file_raises_clear_error (apps.core.tests.test_backup_command.BackupCommandTests.test_missing_database_file_raises_clear_error) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:116: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_no_media_flag_skips_media_archive (apps.core.tests.test_backup_command.BackupCommandTests.test_no_media_flag_skips_media_archive) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:81: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_non_sqlite_engine_is_rejected_with_a_clear_message (apps.core.tests.test_backup_command.BackupCommandTests.test_non_sqlite_engine_is_rejected_with_a_clear_message) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:109: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_retention_removes_oldest_backups_beyond_keep_count (apps.core.tests.test_backup_command.BackupCommandTests.test_retention_removes_oldest_backups_beyond_keep_count) ... C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_backup_command.py:96: UserWarning: Overriding setting DATABASES can lead to unexpected behavior.
+  with override_settings(
+ok
+test_base_css_exists_and_is_not_empty (apps.core.tests.test_design_system.StaticAssetAvailabilityTests.test_base_css_exists_and_is_not_empty) ... ok
+test_components_css_exists_and_is_not_empty (apps.core.tests.test_design_system.StaticAssetAvailabilityTests.test_components_css_exists_and_is_not_empty) ... ok
+test_site_js_exists_and_is_not_empty (apps.core.tests.test_design_system.StaticAssetAvailabilityTests.test_site_js_exists_and_is_not_empty) ... ok
+test_rejects_non_digits (apps.members.tests.test_validators.NinValidatorTests.test_rejects_non_digits) ... ok
+test_rejects_wrong_length (apps.members.tests.test_validators.NinValidatorTests.test_rejects_wrong_length) ... ok
+test_valid_nin_accepted (apps.members.tests.test_validators.NinValidatorTests.test_valid_nin_accepted) ... ok
+test_rejects_invalid_prefix (apps.members.tests.test_validators.PhoneNumberValidatorTests.test_rejects_invalid_prefix) ... ok
+test_rejects_non_digits (apps.members.tests.test_validators.PhoneNumberValidatorTests.test_rejects_non_digits) ... ok
+test_rejects_wrong_length (apps.members.tests.test_validators.PhoneNumberValidatorTests.test_rejects_wrong_length) ... ok
+test_valid_phone_numbers_accepted (apps.members.tests.test_validators.PhoneNumberValidatorTests.test_valid_phone_numbers_accepted) ... ok
+
+======================================================================
+FAIL: test_ordered_most_recent_first (apps.core.tests.test_models.ContactMessageTests.test_ordered_most_recent_first)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\HP PC\Downloads\SAMS\student-association-management-system\apps\core\tests\test_models.py", line 53, in test_ordered_most_recent_first
+    self.assertEqual(list(ContactMessage.objects.all()), [second, first])
+AssertionError: Lists differ: [<ContactMessage: First — A>, <ContactMessage: Second — B>] != [<ContactMessage: Second — B>, <ContactMessage: First — A>]
+
+First differing element 0:
+<ContactMessage: First — A>
+<ContactMessage: Second — B>
+
+- [<ContactMessage: First — A>, <ContactMessage: Second — B>]
+?                   ^^^^^   ^                    ^^^^^^   ^
+
++ [<ContactMessage: Second — B>, <ContactMessage: First — A>]
+?                   ^^^^^^   ^                    ^^^^^   ^
+
+
+----------------------------------------------------------------------
+Ran 539 tests in 513.742s
+
+FAILED (failures=1, skipped=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Membership/age snapshot generated for MSA.
+Election result snapshots generated for 1 election(s).
+Election result snapshots generated for 1 election(s).
+Election result snapshots generated for 1 election(s).
+Membership/age snapshot generated for MSA.
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Deleted 1 PageVisit row(s) older than 90 days.
+Dry run: 1 PageVisit row(s) older than 2026-08-21 (90 day retention) would be deleted.
+Deleted 1 PageVisit row(s) older than 90 days.
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+Created group 'Super Admin' with 45 permission(s).
+Created group 'Registration Admin' with 13 permission(s).
+Created group 'Election Admin' with 17 permission(s).
+Created group 'Analytics Admin' with 10 permission(s).
+  Database backed up to C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_tltymcd0\20261119_120253\db.sqlite3
+Backup complete: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_tltymcd0\20261119_120253
+  Database backed up to C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_tcxlu909\20261119_120253\db.sqlite3
+  Media backed up to C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_tcxlu909\20261119_120253\media.tar.gz
+Backup complete: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_tcxlu909\20261119_120253
+  Database backed up to C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_fesxn2y6\20261119_120254\db.sqlite3
+Backup complete: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_fesxn2y6\20261119_120254
+  Database backed up to C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_55stk_2q\20261119_120255\db.sqlite3
+  Removed old backup: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_55stk_2q\20260102_000000
+  Removed old backup: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_55stk_2q\20260101_000000
+Backup complete: C:\Users\HPPC~1\AppData\Local\Temp\sams_test_backups_55stk_2q\20261119_120255

@@ -9,78 +9,158 @@
 {% endblock %}
 
 {% block content %}
-<div class="container section">
-<h1>{% if is_staff_view %}Membership Card — {{ member.full_name }}{% else %}My Membership Card{% endif %}</h1>
+<div class="container section card-view">
+<h1 class="card-title no-print">{% if is_staff_view %}Membership Card — {{ member.full_name }}{% else %}My Membership Card{% endif %}</h1>
 
+{% with assoc=member.association short=member.association.short_name|default:member.association.name %}
 <div class="card-page">
-  <div class="id-card">
+  <div class="card-sheet">
 
-    <div class="id-card-header">
-      {% if member.association.logo %}
-        <img src="{{ member.association.logo.url }}" alt="" class="id-card-logo">
-      {% endif %}
-      <div class="id-card-header-text">
-        <p class="id-card-assoc-name">{{ member.association.name }}</p>
-        <p class="id-card-subtitle">Membership Card</p>
-      </div>
-    </div>
-    <div class="id-card-divider" aria-hidden="true"></div>
+    {# ===================== FRONT ===================== #}
+    <section class="card-side card-side-front" aria-labelledby="card-front-label">
+      <h2 class="card-side-label no-print" id="card-front-label">Front</h2>
 
-    <div class="id-card-body">
-      <div class="id-card-photo-frame">
-        {% if member.passport_photo %}
-          <img src="{{ member.passport_photo.url }}" alt="{{ member.full_name }}" class="id-card-photo">
-        {% else %}
-          <div class="id-card-photo id-card-photo-placeholder" aria-hidden="true">{{ member.full_name|first|upper }}</div>
-        {% endif %}
-        <div class="id-card-signature" aria-hidden="true">
-          <span class="id-card-signature-line"></span>
-          <span class="id-card-signature-label">Signature</span>
+      <div class="id-card id-card-front{% if member.full_name|length > 26 or member.faculty|length > 32 or member.department|length > 32 %} id-card-compact{% endif %}" role="group" aria-label="Membership identity card, front">
+
+        <div class="id-card-header">
+          {% if assoc.logo %}
+            <img src="{{ assoc.logo.url }}" alt="" class="id-card-logo">
+          {% endif %}
+          <div class="id-card-header-text">
+            <p class="id-card-assoc-name">{{ assoc.name }}</p>
+            <p class="id-card-subtitle">Membership Identity Card</p>
+          </div>
         </div>
+        <div class="id-card-divider" aria-hidden="true"></div>
+
+        <div class="id-card-body">
+          <div class="id-card-photo-frame">
+            {% if member.passport_photo %}
+              <img src="{{ member.passport_photo.url }}" alt="{{ member.full_name }}" class="id-card-photo">
+            {% else %}
+              <div class="id-card-photo id-card-photo-placeholder" aria-hidden="true">{{ member.full_name|first|upper }}</div>
+            {% endif %}
+            <div class="id-card-signature" aria-hidden="true">
+              <span class="id-card-signature-line"></span>
+              <span class="id-card-signature-label">Signature</span>
+            </div>
+          </div>
+
+          <div class="id-card-info">
+            <p class="id-card-name">{{ member.full_name }}</p>
+
+            <dl class="id-card-facts">
+              <div class="id-card-fact id-card-fact-wide">
+                <dt>Membership ID</dt>
+                <dd class="id-card-fact-strong">{{ member.membership_id|default:"Pending" }}</dd>
+              </div>
+              {% if member.faculty %}
+                <div class="id-card-fact id-card-fact-wide"><dt>Faculty</dt><dd class="id-card-fact-clamp">{{ member.faculty }}</dd></div>
+              {% endif %}
+              {% if member.department %}
+                <div class="id-card-fact id-card-fact-wide"><dt>Department</dt><dd class="id-card-fact-clamp">{{ member.department }}</dd></div>
+              {% endif %}
+              {% if member.level %}
+                <div class="id-card-fact id-card-fact-narrow"><dt>Level</dt><dd>{{ member.level }}</dd></div>
+              {% endif %}
+              {% if member.gender %}
+                <div class="id-card-fact id-card-fact-narrow"><dt>Gender</dt><dd>{{ member.get_gender_display }}</dd></div>
+              {% endif %}
+              <div class="id-card-fact id-card-fact-narrow"><dt>Age</dt><dd>{{ member_age }} year{{ member_age|pluralize }}</dd></div>
+            </dl>
+          </div>
+
+          <div class="id-card-qr-column">
+            <div class="id-card-qr-frame">
+              {% if is_staff_view %}
+                <img src="{% url 'members:staff_card_qr' member.pk %}" alt="QR code — scan to verify this membership card at {{ qr_url }}" class="id-card-qr">
+              {% else %}
+                <img src="{% url 'members:portal_card_qr' %}" alt="QR code — scan to verify this membership card at {{ qr_url }}" class="id-card-qr">
+              {% endif %}
+            </div>
+            <p class="id-card-qr-caption">Scan to verify</p>
+          </div>
+        </div>
+
+        <div class="id-card-footer">
+          <p class="id-card-footer-item">
+            <span class="id-card-footer-label">Date of issue</span>
+            <span class="id-card-footer-value">{{ card.issued_at|date:"d M Y" }}</span>
+          </p>
+          <p class="id-card-footer-item">
+            <span class="id-card-footer-label">Status</span>
+            {% if member.approval_status == "approved" %}
+              <span class="id-card-badge id-card-badge-approved">Approved</span>
+            {% elif member.approval_status == "pending" %}
+              <span class="id-card-badge id-card-badge-pending">Pending</span>
+            {% else %}
+              <span class="id-card-badge id-card-badge-rejected">Rejected</span>
+            {% endif %}
+          </p>
+        </div>
+
       </div>
+    </section>
 
-      <div class="id-card-info">
-        <p class="id-card-name">{{ member.full_name }}</p>
+    {# ===================== BACK ===================== #}
+    <section class="card-side card-side-back" aria-labelledby="card-back-label">
+      <h2 class="card-side-label no-print" id="card-back-label">Back</h2>
 
-        {% if member.approval_status == "approved" %}
-          <span class="id-card-badge id-card-badge-approved">Approved</span>
-        {% elif member.approval_status == "pending" %}
-          <span class="id-card-badge id-card-badge-pending">Pending</span>
-        {% else %}
-          <span class="id-card-badge id-card-badge-rejected">Rejected</span>
-        {% endif %}
+      <div class="id-card id-card-back" role="group" aria-label="Membership identity card, back">
 
-        <dl class="id-card-facts">
-          <dt>Mem. No.</dt>
-          <dd class="id-card-fact-strong">{{ member.membership_id|default:"Pending" }}</dd>
+        <div class="id-card-header id-card-header-compact">
+          {% if assoc.logo %}
+            <img src="{{ assoc.logo.url }}" alt="" class="id-card-logo">
+          {% endif %}
+          <div class="id-card-header-text">
+            <p class="id-card-assoc-name">{{ assoc.name }}</p>
+            <p class="id-card-subtitle">Membership Identity Card</p>
+          </div>
+        </div>
+        <div class="id-card-divider" aria-hidden="true"></div>
 
-          {% if member.faculty %}<dt>Faculty</dt><dd>{{ member.faculty }}</dd>{% endif %}
-          {% if member.department %}<dt>Dept.</dt><dd>{{ member.department }}</dd>{% endif %}
-          {% if member.level %}<dt>Level</dt><dd>{{ member.level }}</dd>{% endif %}
-          {% if member.gender %}<dt>Gender</dt><dd>{{ member.get_gender_display }}</dd>{% endif %}
-          {% if member.phone_number %}<dt>Phone</dt><dd>{{ member.phone_number }}</dd>{% endif %}
-          <dt>Issued</dt>
-          <dd>{{ card.issued_at|date:"d M Y" }}</dd>
-        </dl>
+        <div class="id-card-back-body">
+          <p class="id-card-statement">This card identifies the holder as a member of the {{ assoc.name }}{% if assoc.short_name %} ({{ assoc.short_name }}){% endif %}.</p>
+
+          <div class="id-card-back-columns">
+            <section class="id-card-back-section">
+              <h3 class="id-card-back-heading">Holder&rsquo;s responsibilities</h3>
+              <ul class="id-card-back-list">
+                <li>Keep this card safe and do not lend it to anyone.</li>
+                <li>Show it when asked to confirm your membership.</li>
+                <li>Report a lost card to {{ short }} Administration.</li>
+              </ul>
+            </section>
+
+            <section class="id-card-back-section">
+              <h3 class="id-card-back-heading">Verification and conditions</h3>
+              <ul class="id-card-back-list">
+                <li>Scan the QR code on the front to verify this card online.</li>
+                <li>This card remains the property of {{ short }} and is valid only while membership is approved.</li>
+                <li>If found, please return it to {{ short }} Administration.</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+
+        <div class="id-card-back-footer">
+          <div class="id-card-back-issuer">
+            <p class="id-card-back-issuer-line">Issued by {{ short }} Administration</p>
+            {% with site=assoc.site_settings %}
+              {% if site.contact_email or site.contact_phone %}
+                <p class="id-card-back-contact">{% if site.contact_email %}{{ site.contact_email }}{% endif %}{% if site.contact_email and site.contact_phone %} &nbsp;|&nbsp; {% endif %}{% if site.contact_phone %}{{ site.contact_phone }}{% endif %}</p>
+              {% endif %}
+            {% endwith %}
+          </div>
+          <p class="id-card-back-id">{{ member.membership_id|default:"" }}</p>
+        </div>
+
       </div>
-    </div>
-
-    <div class="id-card-footer">
-      <div class="id-card-footer-text">
-        <p class="id-card-footer-label">Scan to Verify</p>
-        <p class="id-card-footer-org">{{ member.association.short_name|default:member.association.name }}</p>
-      </div>
-      <div class="id-card-qr-frame">
-        {% if is_staff_view %}
-          <img src="{% url 'members:staff_card_qr' member.pk %}" alt="QR code — scan to verify this membership card at {{ qr_url }}" class="id-card-qr">
-        {% else %}
-          <img src="{% url 'members:portal_card_qr' %}" alt="QR code — scan to verify this membership card at {{ qr_url }}" class="id-card-qr">
-        {% endif %}
-      </div>
-    </div>
+    </section>
 
   </div>
 </div>
+{% endwith %}
 
 <div class="card-actions no-print">
   <button type="button" class="btn" id="print-card-btn">Print / Save as PDF</button>
@@ -88,6 +168,16 @@
     <a href="{% url 'members:portal_dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
   {% endif %}
 </div>
+
+<details class="card-print-help no-print">
+  <summary>How to print both sides</summary>
+  <ol>
+    <li>Select <strong>Print / Save as PDF</strong>. Page 1 is the front of the card and page 2 is the back.</li>
+    <li>Set the scale to <strong>100% (actual size)</strong> and turn off headers and footers, so the card prints at its true size of 85.6&nbsp;&times;&nbsp;54&nbsp;mm.</li>
+    <li>For double-sided printing, choose <strong>two-sided</strong> with portrait paper and <strong>flip on long edge</strong>. Both sides are placed in the same position on their pages, so they line up when the sheet is turned over.</li>
+    <li>If your printer cannot print on both sides, print the two pages separately and attach them back to back.</li>
+  </ol>
+</details>
 
 <dialog id="mobile-print-dialog" class="no-print card-print-dialog">
   <p class="card-print-dialog-title">Best results on mobile</p>

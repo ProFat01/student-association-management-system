@@ -24,6 +24,7 @@ from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
 
+from apps.elections.eligibility import minimum_age_dob_cutoff
 from apps.elections.models import Election
 
 from .models import AgeDistributionSnapshot, ElectionResultSnapshot, MembershipSnapshot, PageVisit
@@ -226,6 +227,12 @@ def age_participation(election, as_of=None) -> list:
     eligible_members = (
         members_for_association(election.association)
         .filter(voting_status=True)
+        # Minimum voting age: members under 18 on the election's reference
+        # date are not eligible (see apps/elections/eligibility.py), so
+        # they must not be counted as "eligible" in any age bracket either.
+        # Only this one filter was added; the rest of this population
+        # query is unchanged.
+        .filter(date_of_birth__lte=minimum_age_dob_cutoff(election))
         .exclude(date_of_birth__isnull=True)
         .values_list("id", "date_of_birth")
     )
